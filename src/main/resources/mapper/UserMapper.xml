@@ -10,4 +10,9 @@
         from senior;
     </select>
 
+    <insert id="insertUser" parameterType="com.widyu.healthcare.users.dto.UserDTO">
+        INSERT INTO User(id, password, name, tel, mail, address_code, address_detail)
+        VALUES(#{id}, #{password}, #{name}, #{tel}, #{mail}, #{addressCode}, #{addressDetail})
+    </insert>
+
 </mapper>

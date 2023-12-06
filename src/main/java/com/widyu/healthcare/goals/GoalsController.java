@@ -1,3 +1,47 @@
+package com.widyu.healthcare.goals;
+
+import com.google.firebase.database.annotations.NotNull;
+import com.widyu.healthcare.goals.model.Goal;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@RequestMapping("/goals")
+@RequiredArgsConstructor
+public class GoalsController {
+
+    @Autowired
+    private GoalsService goalsService;
+
+    @GetMapping("/allGoals/{userIdx}")
+    public List<Goal> getAllGoals(@PathVariable long userIdx){
+        return goalsService.getGoalsById(userIdx);
+    }
+
+    @PostMapping("/insert")
+    public void insertGoal(@RequestBody Goal goal) {
+        goalsService.insertGoal(goal);
+    }
+
+    @DeleteMapping("/delete/{userIdx}/{goalIdx}")
+    public void deleteGoal(@PathVariable long userIdx, long goalIdx){
+        goalsService.deleteGoal(userIdx, goalIdx);
+    }
+
+    @PutMapping("/edit/{goalIdx}")
+    public void editGoal(@PathVariable long goalIdx, @RequestBody Goal goal){
+        goalsService.updateGoal(goalIdx, goal);
+    }
+}
+
 // 부양자 전체 목표 조회 (홈) : 목표 제목, 설명, 이미지, 시간대, 전체 달성률, 달성률 응원 메세지, 시니어 달성률 리턴
 
 // 시니어 전체 목표 조회 (홈) : 목표 제목, 설명, 이미지, 시간대, 전체 달성률, 달성률 응원 메세지

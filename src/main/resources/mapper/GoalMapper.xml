@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.widyu.healthcare.goals.GoalsMapper">
+
+    <select id="getGoalsById" parameterType="java.lang.Long" resultType="com.widyu.healthcare.goals.model.Goal">
+        SELECT * FROM goals WHERE userIdx = #{id}
+    </select>
+
+    <insert id = "insertGoal" parameterType="com.widyu.healthcare.goals.model.Goal">
+        INSERT INTO goals (goalIdx, userIdx) VALUES (#{goalIdx}, #{userIdx})
+    </insert>
+
+    <delete id="deleteGoal">
+        DELETE
+        FROM Goal
+        WHERE userIdx = #{userIdx} AND goalIdx = #{goalIdx}
+    </delete>
+
+    <update id = "updateGoal" parameterType="com.widyu.healthcare.goals.model.Goal">
+        UPDATE Goal
+        SET time = #{time},
+            area = #{area}
+        WHERE userIdx = #{userIdx} AND goalIdx = #{goalIdx}
+    </update>
+
+</mapper>

@@ -12,6 +12,6 @@ public @interface LoginCheck {
     UserType type();
 
     public static enum UserType {
-        SENIOR, GUARDIANCE
+        SENIOR, GUARDIAN
     }
 }

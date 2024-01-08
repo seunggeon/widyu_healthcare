@@ -3,9 +3,9 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.widyu.healthcare.goals.GoalsStatusMapper">
+<mapper namespace="com.widyu.healthcare.mapper.GoalsStatusMapper">
 
-    <insert id="insertGoalStatus" parameterType="com.widyu.healthcare.goals.model.GoalStatus">
+    <insert id="insertGoalStatus" parameterType="com.widyu.healthcare.dto.goals.GoalStatus">
         INSERT INTO goalsstatus (goalIdx, time) VALUES (#{goalIdx}, #{userIdx})
     </insert>
 

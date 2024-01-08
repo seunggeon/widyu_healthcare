@@ -1,6 +1,9 @@
-FROM openjdk:17-jdk-alpine
-LABEL authors="seunkun"
-WORKDIR /work
-COPY /build/libs/healthcare-0.0.1-SNAPSHOT.jar app.jar
+FROM openjdk:17-alpine
+WORKDIR /app
+COPY . .
+
+RUN ./mvnw clean package
+ARG JAR_FILE_PATH=target/*.jar
+COPY ${JAR_FILE_PATH} app.jar
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "/work/app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]

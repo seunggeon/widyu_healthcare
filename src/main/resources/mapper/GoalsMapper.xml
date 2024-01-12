@@ -5,11 +5,15 @@
 
 <mapper namespace="com.widyu.healthcare.mapper.GoalsMapper">
 
-    <select id="getGoalsById" parameterType="java.lang.Long" resultType="com.widyu.healthcare.dto.goals.Goal">
+    <select id="getGoalsById" parameterType="java.lang.Long" resultType="com.widyu.healthcare.goals.model.Goal">
         SELECT * FROM goals WHERE userIdx = #{id}
     </select>
 
-    <insert id = "insertGoal" parameterType="com.widyu.healthcare.dto.goals.Goal">
+    <select id="getGoalByGoalId" parameterType="java.lang.Long" resultType="com.widyu.healthcare.goals.model.Goal">
+        SELECT * FROM goals WHERE userIdx = #{userIdx} AND goalIdx = #{goalIdx}
+    </select>
+
+    <insert id = "insertGoal" parameterType="com.widyu.healthcare.goals.model.Goal">
         INSERT INTO goals (goalIdx, userIdx) VALUES (#{goalIdx}, #{userIdx})
     </insert>
 
@@ -19,10 +23,10 @@
         WHERE userIdx = #{userIdx} AND goalIdx = #{goalIdx}
     </delete>
 
-    <update id = "updateGoal" parameterType="com.widyu.healthcare.dto.goals.Goal">
+    <update id = "updateGoal" parameterType="com.widyu.healthcare.goals.model.Goal">
         UPDATE Goal
         SET time = #{time},
-            area = #{area}
+        area = #{area}
         WHERE userIdx = #{userIdx} AND goalIdx = #{goalIdx}
     </update>
 

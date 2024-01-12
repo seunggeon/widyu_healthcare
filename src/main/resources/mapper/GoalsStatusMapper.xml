@@ -15,10 +15,21 @@
         WHERE userIdx = #{userIdx} AND goalIdx = #{goalIdx}
     </delete>
 
+    <update id="updateGoalStatusUrl" parameterType="com.widyu.healthcare.dto.goals.GoalStatus">
+        UPDATE goalsstatus
+        SET ImgUrl = #{url}
+        WHERE goalIdx = #{goalIdx} AND time = #{time}
+    </update>
+
     <select id="countGoalStatus" parameterType="java.lang.Long" resultType="int">
         SELECT COUNT(*)
         FROM goalsstatus
         WHERE userIdx = #{userIdx} AND goalIdx = #{goalIdx}
+    </select>
+
+    <select id="getGoalStatusByGoalId" parameterType="map" resultType="com.widyu.healthcare.dto.goals.GoalStatus">
+        SELECT * FROM goalsstatis
+        WHERE goalIdx = #{params.goalIdx, jdbcType=BIGINT} AND time = #{params.time, jdbcType=TIMESTAMP}
     </select>
 
 </mapper>

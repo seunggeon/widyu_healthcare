@@ -28,6 +28,12 @@ public class GoalsService {
         return goalsMapper.getGoalsById(id);
     }
 
+    // 특정 단일 목표 조회
+    public Goal getGoalByGoalId(long userIdx, long goalIdx){
+
+        return goalsMapper.getGoalByGoalId(userIdx, goalIdx);
+    }
+
     // 목표 생성
     public void insertGoal(Goal goal){
         goalsMapper.insertGoal(goal);

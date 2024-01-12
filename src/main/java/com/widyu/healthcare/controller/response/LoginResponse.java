@@ -19,6 +19,9 @@ public class LoginResponse {
     private UsersDTO userInfo;
 
     public static final LoginResponse FAIL = new LoginResponse(LoginStatus.FAIL);
+    public static final LoginResponse DELETED = new LoginResponse(LoginStatus.DELETED);
+
+    // userInfo return
     public static LoginResponse success(UsersDTO userInfo) {
         return new LoginResponse(LoginStatus.SUCCESS, userInfo);
     }

@@ -12,10 +12,8 @@ import java.util.List;
 @RequestMapping("/goals")
 @RequiredArgsConstructor
 public class GoalsController {
-
     @Autowired
     private GoalsService goalsService;
-
     @GetMapping("/allGoals/{userIdx}")
     public List<Goal> getAllGoals(@PathVariable long userIdx){
         return goalsService.getGoalsById(userIdx);

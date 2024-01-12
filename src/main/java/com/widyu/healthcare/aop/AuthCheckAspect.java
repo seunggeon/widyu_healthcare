@@ -22,9 +22,9 @@ public class AuthCheckAspect {
         log.debug("AOP - User Login Check Started");
 
         HttpSession session = ((ServletRequestAttributes)(RequestContextHolder.currentRequestAttributes())).getRequest().getSession();
-        String Id = SessionUtil.getLoginGuardianId(session);
+        Integer id = SessionUtil.getLoginGuardianId(session);
 
-        if (Id == null) {
+        if (id == null) {
             throw new HttpStatusCodeException(HttpStatus.UNAUTHORIZED, "NO_LOGIN") {};
         }
     }
@@ -33,9 +33,9 @@ public class AuthCheckAspect {
         log.debug("AOP - User Login Check Started");
 
         HttpSession session = ((ServletRequestAttributes)(RequestContextHolder.currentRequestAttributes())).getRequest().getSession();
-        String inviteCode = SessionUtil.getLoginSeniorId(session);
+        Integer id = SessionUtil.getLoginSeniorId(session);
 
-        if (inviteCode == null) {
+        if (id == null) {
             throw new HttpStatusCodeException(HttpStatus.UNAUTHORIZED, "NO_LOGIN") {};
         }
     }

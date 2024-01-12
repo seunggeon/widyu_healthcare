@@ -11,10 +11,10 @@ import lombok.ToString;
 @ToString
 public class UsersDTO {
     public enum Status {
-        ACTIVE, DELETED
+        ACTIVE, DELETE
     }
 
-    private String userIdx;
+    private Integer userIdx;
 
     @NonNull
     private String id;

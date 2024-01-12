@@ -8,6 +8,7 @@ import com.widyu.healthcare.service.GuardianService;
 import jakarta.servlet.http.HttpSession;
 import lombok.*;
 import lombok.extern.log4j.Log4j2;
+import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ import com.widyu.healthcare.utils.SessionUtil;
 public class GuardianController {
     @Autowired
     private GuardianService guardianService;
-    @PostMapping
+    @PostMapping("register")
     @ResponseStatus(HttpStatus.CREATED)
     public void signUp(@RequestBody @NotNull UsersDTO userInfo) {
         if (UsersDTO.hasNullDataBeforeGuardianSignup(userInfo)) {
@@ -30,6 +31,7 @@ public class GuardianController {
     }
 
     @PostMapping("login")
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<LoginResponse> login(@RequestBody @NonNull GuardianLoginRequest loginRequest,
                                                HttpSession session) {
         ResponseEntity<LoginResponse> responseEntity = null;
@@ -44,10 +46,10 @@ public class GuardianController {
                     HttpStatus.UNAUTHORIZED);
         } else if (UsersDTO.Status.ACTIVE.equals(userInfo.getStatus())) {
             loginResponse = LoginResponse.success(userInfo);
-            SessionUtil.setLoginGuardianId(session, id);
+            SessionUtil.setLoginGuardianId(session, userInfo.getUserIdx());
             responseEntity = new ResponseEntity<LoginResponse>(loginResponse, HttpStatus.OK);
         } else {
-            log.error("login 부양자 ERROR" + responseEntity);
+            log.error("login 부양자 ERROR" + userInfo);
             throw new RuntimeException("login 부양자 ERROR!");
         }
         return responseEntity;
@@ -56,6 +58,13 @@ public class GuardianController {
     @LoginCheck(type = UserType.GUARDIAN)
     public void logout(HttpSession session) {
         SessionUtil.logoutGuardian(session);
+    }
+
+    @GetMapping("info/seniors")
+    @LoginCheck(type = UserType.GUARDIAN)
+    public List<UsersDTO> getAllSeniors(HttpSession session) {
+        Integer userIdx = SessionUtil.getLoginGuardianId(session);
+        return guardianService.getAllSeniors(userIdx);
     }
 
     //************* Request ***********//

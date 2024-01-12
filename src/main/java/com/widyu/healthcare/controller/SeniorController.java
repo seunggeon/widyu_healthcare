@@ -21,41 +21,43 @@ import org.springframework.web.bind.annotation.*;
 public class SeniorController {
     @Autowired
     private SeniorService seniorService;
-    @PostMapping
+    @PostMapping("register")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity signUp(@RequestBody @NotNull UsersDTO userInfo) {
         ResponseEntity responseEntity = null;
 
         if (UsersDTO.hasNullDataBeforeSeniorSignup(userInfo)) {
-            throw new NullPointerException("회원가입시 필수 데이터를 모두 입력해야 합니다.");
+            throw new NullPointerException("회원가입 시 필수 데이터를 모두 입력해야 합니다.");
         }
         String inviteCode = seniorService.insertAndGetInviteCode(userInfo);
         if (inviteCode != null) {
             responseEntity = new ResponseEntity(inviteCode, HttpStatus.OK);
-        }
-        else {
+        } else {
             responseEntity = new ResponseEntity(HttpStatus.UNAUTHORIZED);
         }
         return responseEntity;
     }
 
     @PostMapping("login")
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<LoginResponse> login(@RequestBody @NonNull SeniorLoginRequest loginRequest, HttpSession session) {
         ResponseEntity<LoginResponse> responseEntity = null;
+        LoginResponse loginResponse = null;
         String inviteCode = loginRequest.getInviteCode();
-        LoginResponse loginResponse;
+
         UsersDTO userInfo = seniorService.login(inviteCode);
-        if (userInfo == null) {
+        if (userInfo == null) { // 회원정보가 없음
             loginResponse = LoginResponse.FAIL;
             responseEntity = new ResponseEntity<LoginResponse>(loginResponse,
                     HttpStatus.UNAUTHORIZED);
-        } else if (UsersDTO.Status.ACTIVE.equals(userInfo.getStatus())) {
+        } else if (UsersDTO.Status.ACTIVE.equals(userInfo.getStatus())) { // 회원 정보가 존재
             loginResponse = LoginResponse.success(userInfo);
-            SessionUtil.setLoginSeniorId(session, userInfo.getInviteCode());
+            SessionUtil.setLoginSeniorId(session, userInfo.getUserIdx());
             responseEntity = new ResponseEntity<LoginResponse>(loginResponse, HttpStatus.OK);
         } else {
-            log.error("login Senior ERROR" + responseEntity);
-            throw new RuntimeException("login Senior ERROR!");
+            loginResponse = LoginResponse.DELETED;
+            responseEntity = new ResponseEntity<LoginResponse>(loginResponse,
+                    HttpStatus.UNAUTHORIZED);
         }
         return responseEntity;
     }

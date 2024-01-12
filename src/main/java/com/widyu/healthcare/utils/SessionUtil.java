@@ -1,6 +1,7 @@
 package com.widyu.healthcare.utils;
 
 import jakarta.servlet.http.HttpSession;
+import com.widyu.healthcare.dto.users.UsersDTO;
 import lombok.NonNull;
 
 public class SessionUtil {
@@ -10,20 +11,20 @@ public class SessionUtil {
 
     // 인스턴스화 방지
     private SessionUtil() {}
-    public static String getLoginGuardianId(HttpSession session) {
-        return (String) session.getAttribute(LOGIN_GUADIANCE_ID);
+    public static Integer getLoginGuardianId(HttpSession session) {
+        return (Integer) session.getAttribute(LOGIN_GUADIANCE_ID);
     }
-    public static void setLoginGuardianId(HttpSession session, String id) {
-        session.setAttribute(LOGIN_GUADIANCE_ID, id);
+    public static void setLoginGuardianId(HttpSession session, Integer userIdx) {
+        session.setAttribute(LOGIN_GUADIANCE_ID, userIdx);
     }
     public static void logoutGuardian(HttpSession session) {
         session.removeAttribute(LOGIN_GUADIANCE_ID);
     }
-    public static String getLoginSeniorId(HttpSession session) {
-        return (String) session.getAttribute(LOGIN_SENIOR_ID);
+    public static Integer getLoginSeniorId(HttpSession session) {
+        return (Integer) session.getAttribute(LOGIN_SENIOR_ID);
     }
-    public static void setLoginSeniorId(HttpSession session, String id) {
-        session.setAttribute(LOGIN_SENIOR_ID, id);
+    public static void setLoginSeniorId(HttpSession session, Integer userIdx) {
+        session.setAttribute(LOGIN_SENIOR_ID, userIdx);
     }
     public static void logoutSenior(HttpSession session) {
         session.removeAttribute(LOGIN_SENIOR_ID);

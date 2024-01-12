@@ -24,7 +24,7 @@
     <select id="findByIdAndPassword" resultType="com.widyu.healthcare.dto.users.UsersDTO">
         SELECT *
         FROM users
-        WHERE  id = #{id}
+        WHERE id = #{id}
           AND password = #{password}
           AND status != 'DELETE'
     </select>
@@ -32,8 +32,20 @@
     <select id="findByInviteCode" resultType="com.widyu.healthcare.dto.users.UsersDTO">
         SELECT *
         FROM users
-        WHERE  inviteCode = #{inviteCode}
+        WHERE inviteCode = #{inviteCode}
           AND status != 'DELETE'
     </select>
+
+    <select id="getAllSeniors" resultType="com.widyu.healthcare.dto.users.UsersDTO">
+        SELECT *
+        FROM users
+        WHERE userIdx IN (
+            SELECT seniorIdx
+            FROM relations
+            WHERE userIdx = #{userIdx}
+            ) AND status != 'DELETE'
+        LIMIT 10
+    </select>
+
 
 </mapper>

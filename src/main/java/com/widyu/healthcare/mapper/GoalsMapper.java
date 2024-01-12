@@ -9,6 +9,7 @@ import java.util.List;
 public interface GoalsMapper {
 
     List<Goal> getGoalsById(long userIdx);
+    Goal getGoalByGoalId(long userIdx, long goalIdx);
     void insertGoal(Goal goal);
     void updateGoal(long goalId, Goal goal);
     void deleteGoal(long userIdx, long goalIdx);

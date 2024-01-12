@@ -34,10 +34,8 @@ public class S3Service {
 
 
     @Autowired
-    public S3Service(AmazonS3 amazonS3Client, GoalsStatusMapper goalsStatusMapper, String bucket, String defaultUrl) {
+    public S3Service(AmazonS3 amazonS3Client, GoalsStatusMapper goalsStatusMapper) {
         this.amazonS3Client = amazonS3Client;
-        this.bucket = bucket;
-        this.defaultUrl = defaultUrl;
         this.goalsStatusMapper = goalsStatusMapper;
     }
 

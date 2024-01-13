@@ -1,12 +1,12 @@
 package com.widyu.healthcare.dto.goals;
 
+import com.google.firebase.database.annotations.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 public class Goal {
 

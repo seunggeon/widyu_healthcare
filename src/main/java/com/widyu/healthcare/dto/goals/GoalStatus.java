@@ -2,7 +2,9 @@ package com.widyu.healthcare.dto.goals;
 
 import lombok.*;
 
+import java.sql.Time;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Data
 @Getter
@@ -11,7 +13,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class GoalStatus {
 
-    private LocalDateTime time;
+    private Long goalIdx;
+    private LocalTime time;
     private int status;
     private int pillNum;
     private String ImgUrl;

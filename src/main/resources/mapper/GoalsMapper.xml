@@ -14,8 +14,12 @@
     </select>
 
     <insert id = "insertGoal" parameterType="com.widyu.healthcare.dto.goals.Goal">
-        INSERT INTO goals (goalIdx, userIdx) VALUES (#{goalIdx}, #{userIdx})
+        INSERT INTO goals (userIdx, title, description, type, day, term, startDate, endDate) VALUES (#{userIdx}, #{title}, #{description}, #{type}, #{day}, #{term}, #{startDate}, #{endDate})
     </insert>
+
+    <select id="getGoalIdx" parameterType="com.widyu.healthcare.dto.goals.Goal" resultType="java.lang.Long">
+        SELECT goalIdx FROM goals WHERE userIdx = #{userIdx}
+    </select>
 
     <delete id="deleteGoal">
         DELETE

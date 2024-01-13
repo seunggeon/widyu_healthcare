@@ -6,7 +6,7 @@
 <mapper namespace="com.widyu.healthcare.mapper.GoalsStatusMapper">
 
     <insert id="insertGoalStatus" parameterType="com.widyu.healthcare.dto.goals.GoalStatus">
-        INSERT INTO goalsstatus (goalIdx, time) VALUES (#{goalIdx}, #{userIdx})
+        INSERT INTO goalsstatus (goalIdx, time, pillNum) VALUES (#{goalIdx}, #{time}, #{pillNum})
     </insert>
 
     <delete id="deleteGoalStatus" parameterType="java.lang.Long">

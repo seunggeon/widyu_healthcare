@@ -4,11 +4,14 @@ import com.widyu.healthcare.mapper.GoalsStatusMapper;
 import com.widyu.healthcare.dto.goals.Goal;
 import com.widyu.healthcare.dto.goals.GoalStatus;
 import com.widyu.healthcare.mapper.GoalsMapper;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+
+@Log4j2
 @Service
 public class GoalsService {
 
@@ -37,7 +40,10 @@ public class GoalsService {
     // 목표 생성
     public void insertGoal(Goal goal){
         goalsMapper.insertGoal(goal);
+        Long goalIdx = goalsMapper.getGoalIdx(goal);
+
         for (GoalStatus goalStatus : goal.getGoalStatusList()) {
+            goalStatus.setGoalIdx(goalIdx);
             goalsStatusMapper.insertGoalStatus(goalStatus);
         }
     }

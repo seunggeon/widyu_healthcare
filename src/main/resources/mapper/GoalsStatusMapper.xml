@@ -46,4 +46,10 @@
         LIMIT 1;
     </select>
 
+    <update id="updateStatusSuccess" parameterType="java.lang.Long">
+        UPDATE goalsstatus
+        SET status=#{1}
+        WHERE goalStatusIdx=#{goalStatusIdx}
+    </update>
+
 </mapper>

@@ -65,4 +65,9 @@ public class GoalsService {
         goalsStatusMapper.deleteGoalStatus(goalIdx);
         goalsMapper.deleteGoal(userIdx, goalIdx);
     }
+
+    // 목표 상태 수정 (성공)
+    public void updateStatusSuccess(long goalStatusIdx){
+        goalsStatusMapper.updateStatusSuccess(goalStatusIdx);
+    }
 }

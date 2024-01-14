@@ -49,6 +49,11 @@ public class GoalsController {
     public void editGoal(@RequestBody Goal goal){
         goalsService.updateGoal(goal);
     }
+
+    @PatchMapping("/success/{goalStatusIdx}")
+    public void editStatusSuccess(@PathVariable long goalStatusIdx){
+        goalsService.updateStatusSuccess(goalStatusIdx);
+    }
 }
 
 // 부양자 전체 목표 조회 (홈) : 목표 제목, 설명, 이미지, 시간대, 전체 달성률, 달성률 응원 메세지, 시니어 달성률 리턴

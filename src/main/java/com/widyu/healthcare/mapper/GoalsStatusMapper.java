@@ -16,5 +16,6 @@ public interface GoalsStatusMapper {
     int countGoalStatus(long userIdx, long goalIdx);
     GoalStatus getGoalStatusByGoalId(long goalIdx, LocalDateTime time);
     long getGoalStatusIdx(GoalStatus goalStatus);
+    void updateStatusSuccess(long goalStatusIdx);
 
 }

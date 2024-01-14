@@ -13,12 +13,16 @@
         SELECT * FROM goals WHERE userIdx = #{userIdx} AND goalIdx = #{goalIdx}
     </select>
 
-    <insert id = "insertGoal" parameterType="com.widyu.healthcare.dto.goals.Goal">
+    <insert id = "insertGoal" parameterType="com.widyu.healthcare.dto.goals.Goal" useGeneratedKeys="true" keyProperty="goalIdx">
         INSERT INTO goals (userIdx, title, description, type, day, term, startDate, endDate) VALUES (#{userIdx}, #{title}, #{description}, #{type}, #{day}, #{term}, #{startDate}, #{endDate})
     </insert>
 
     <select id="getGoalIdx" parameterType="com.widyu.healthcare.dto.goals.Goal" resultType="java.lang.Long">
-        SELECT goalIdx FROM goals WHERE userIdx = #{userIdx}
+        SELECT goalIdx
+        FROM goals
+        WHERE userIdx = #{userIdx} AND title=#{title} AND description=#{description}
+        ORDER BY createdDate DESC
+        LIMIT 1;
     </select>
 
     <delete id="deleteGoal">

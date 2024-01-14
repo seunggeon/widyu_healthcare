@@ -8,11 +8,13 @@ import java.time.LocalDateTime;
 @Mapper
 public interface GoalsStatusMapper {
 
-    void insertGoalStatus(GoalStatus goalStatus);
+    long insertGoalStatus(GoalStatus goalStatus);
 
-    void deleteGoalStatus(long userIdx, long goalIdx);
+    void deleteGoalStatus(long goalIdx);
     void updateGoalStatusUrl(String url, long goalIdx, LocalDateTime time);
     void updateGoalStatus(GoalStatus goalStatus);
     int countGoalStatus(long userIdx, long goalIdx);
     GoalStatus getGoalStatusByGoalId(long goalIdx, LocalDateTime time);
+    long getGoalStatusIdx(GoalStatus goalStatus);
+
 }

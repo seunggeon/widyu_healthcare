@@ -12,6 +12,7 @@ import java.time.LocalTime;
 @AllArgsConstructor
 public class GoalStatus {
 
+    private Long goalStatusIdx;
     private Long goalIdx;
     private LocalTime time;
     private int status;

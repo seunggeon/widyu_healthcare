@@ -7,38 +7,41 @@ import com.widyu.healthcare.dto.goals.Goal;
 import com.widyu.healthcare.utils.SessionUtil;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
 @RestController
+@Log4j2
 @RequestMapping("/goals")
 @RequiredArgsConstructor
 public class GoalsController {
     @Autowired
     private GoalsService goalsService;
 
-    @GetMapping("/all")
+    @GetMapping("/all/{userIdx}")
     @LoginCheck(type = UserType.GUARDIAN)
-    public List<Goal> getAllGoals(HttpSession session){
+    public List<Goal> getAllGoals(@PathVariable long userIdx, HttpSession session){
 
-        Integer userIdx = SessionUtil.getLoginGuardianId(session);
+        //Integer userIdx = SessionUtil.getLoginGuardianId(session);
         return goalsService.getGoalsById(userIdx);
     }
 
     @PostMapping("/insert")
     @ResponseStatus(HttpStatus.OK)
-    public void insertGoal(@RequestBody Goal goal) {
+    public Goal insertGoal(@RequestBody Goal goal) {
 
-        goalsService.insertGoal(goal);
+        return goalsService.insertGoal(goal);
     }
 
     @DeleteMapping("/delete/{goalIdx}")
     public void deleteGoal(@PathVariable long goalIdx, HttpSession session){
 
-        Integer userIdx = SessionUtil.getLoginGuardianId(session);
+        Long userIdx = Long.valueOf(SessionUtil.getLoginGuardianId(session));
         goalsService.deleteGoal(userIdx, goalIdx);
     }
 

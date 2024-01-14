@@ -38,14 +38,17 @@ public class GoalsService {
     }
 
     // 목표 생성
-    public void insertGoal(Goal goal){
+    public Goal insertGoal(Goal goal){
         goalsMapper.insertGoal(goal);
         Long goalIdx = goalsMapper.getGoalIdx(goal);
 
         for (GoalStatus goalStatus : goal.getGoalStatusList()) {
             goalStatus.setGoalIdx(goalIdx);
             goalsStatusMapper.insertGoalStatus(goalStatus);
+            Long goalStatusIdx = goalsStatusMapper.getGoalStatusIdx(goalStatus);
+            goalStatus.setGoalStatusIdx(goalStatusIdx);
         }
+        return goal;
     }
 
     // 목표 수정
@@ -59,7 +62,7 @@ public class GoalsService {
 
     // 목표 삭제
     public void deleteGoal(long userIdx, long goalIdx){
-        goalsStatusMapper.deleteGoalStatus(userIdx, goalIdx);
+        goalsStatusMapper.deleteGoalStatus(goalIdx);
         goalsMapper.deleteGoal(userIdx, goalIdx);
     }
 }

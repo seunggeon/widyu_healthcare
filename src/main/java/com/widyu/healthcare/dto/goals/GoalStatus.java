@@ -9,7 +9,6 @@ import java.time.LocalTime;
 @Data
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
 public class GoalStatus {
 

@@ -21,6 +21,12 @@
         WHERE goalIdx = #{goalIdx} AND time = #{time}
     </update>
 
+    <update id="updateGoalStatus" parameterType="com.widyu.healthcare.dto.goals.GoalStatus">
+        UPDATE goalsstatus
+        SET time=#{time}, pillNum=#{pillNum}
+        WHERE goalIdx=#{goalIdx}
+    </update>
+
     <select id="countGoalStatus" parameterType="java.lang.Long" resultType="int">
         SELECT COUNT(*)
         FROM goalsstatus

@@ -23,14 +23,13 @@
 
     <delete id="deleteGoal">
         DELETE
-        FROM Goal
+        FROM Goals
         WHERE userIdx = #{userIdx} AND goalIdx = #{goalIdx}
     </delete>
 
     <update id = "updateGoal" parameterType="com.widyu.healthcare.dto.goals.Goal">
-        UPDATE Goal
-        SET time = #{time},
-        area = #{area}
+        UPDATE Goals
+        SET title=#{title}, description=#{description}, type=#{type}, day=#{day}, term=#{term}, startDate=#{startDate}, endDate=#{endDate}
         WHERE userIdx = #{userIdx} AND goalIdx = #{goalIdx}
     </update>
 

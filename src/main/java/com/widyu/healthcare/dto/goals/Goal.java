@@ -15,7 +15,7 @@ public class Goal {
     private String title;
     private String description;
     private Type type;
-    private List<String> day;
+    private String day;
     private String term;
     private LocalDateTime startDate;
     private LocalDateTime endDate;

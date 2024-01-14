@@ -12,7 +12,7 @@ public interface GoalsMapper {
     Goal getGoalByGoalId(long userIdx, long goalIdx);
     void insertGoal(Goal goal);
     long getGoalIdx(Goal goal);
-    void updateGoal(long goalId, Goal goal);
+    void updateGoal(Goal goal);
     void deleteGoal(long userIdx, long goalIdx);
 
 }

@@ -49,9 +49,12 @@ public class GoalsService {
     }
 
     // 목표 수정
-    public void updateGoal(long goalId, Goal goal){
+    public void updateGoal(Goal goal){
 
-        goalsMapper.updateGoal(goalId, goal);
+        goalsMapper.updateGoal(goal);
+        for (GoalStatus goalStatus : goal.getGoalStatusList()) {
+            goalsStatusMapper.updateGoalStatus(goalStatus);
+        }
     }
 
     // 목표 삭제

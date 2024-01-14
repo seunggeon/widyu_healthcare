@@ -42,9 +42,9 @@ public class GoalsController {
         goalsService.deleteGoal(userIdx, goalIdx);
     }
 
-    @PatchMapping("/edit/{goalIdx}")
-    public void editGoal(@PathVariable long goalIdx, @RequestBody Goal goal){
-        goalsService.updateGoal(goalIdx, goal);
+    @PatchMapping("/edit")
+    public void editGoal(@RequestBody Goal goal){
+        goalsService.updateGoal(goal);
     }
 }
 

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.widyu.healthcare.mapper.SeniorsMapper">
+
+    <select id="checkId" resultType="int">
+        select count(id)
+        from users
+        WHERE id = #{id}
+    </select>
+
+    <insert id="insertGuardian" parameterType="com.widyu.healthcare.dto.users.UsersDTO">
+        INSERT INTO users(id, password)
+        VALUES(#{id}, #{password})
+    </insert>
+
+    <insert id="insertSenior" parameterType="com.widyu.healthcare.dto.users.UsersDTO">
+        INSERT INTO users(name, phone, birth, age, address, type, inviteCode, isDisease)
+        VALUES( #{name}, #{phone}, #{birth}, #{age}, #{address}, #{type}, #{inviteCode}, #{isDisease})
+    </insert>
+
+    <select id="findByIdAndPassword" resultType="com.widyu.healthcare.dto.users.UsersDTO">
+        SELECT *
+        FROM users
+        WHERE id = #{id}
+          AND password = #{password}
+          AND status != 'DELETE'
+    </select>
+
+    <select id="findByInviteCode" resultType="com.widyu.healthcare.dto.users.UsersDTO">
+        SELECT *
+        FROM users
+        WHERE inviteCode = #{inviteCode}
+          AND status != 'DELETE'
+    </select>
+
+    <select id="findSeniorsById" resultType="com.widyu.healthcare.dto.users.UsersDTO">
+        SELECT *
+        FROM users
+        WHERE userIdx IN (
+            SELECT seniorIdx
+            FROM relations
+            WHERE userIdx = #{userIdx}
+            ) AND status != 'DELETE'
+        LIMIT 10
+    </select>
+
+
+</mapper>

@@ -16,7 +16,6 @@ public class UsersDTO {
 
     private Integer userIdx;
 
-    @NonNull
     private String id;
 
     @NonNull

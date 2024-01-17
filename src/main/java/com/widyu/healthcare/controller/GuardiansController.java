@@ -3,12 +3,11 @@ package com.widyu.healthcare.controller;
 import com.google.firebase.database.annotations.NotNull;
 import com.widyu.healthcare.aop.LoginCheck;
 import com.widyu.healthcare.aop.LoginCheck.UserType;
-import com.widyu.healthcare.controller.response.LoginResponse;
-import com.widyu.healthcare.service.GuardianService;
+import com.widyu.healthcare.dto.SuccessResponse;
+import com.widyu.healthcare.service.GuardiansService;
 import jakarta.servlet.http.HttpSession;
 import lombok.*;
 import lombok.extern.log4j.Log4j2;
-import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,54 +16,51 @@ import com.widyu.healthcare.dto.users.UsersDTO;
 import com.widyu.healthcare.utils.SessionUtil;
 @Log4j2
 @RestController
-@RequestMapping("/guardian")
-public class GuardianController {
+@RequestMapping("/api/v1/guardian")
+public class GuardiansController {
     @Autowired
-    private GuardianService guardianService;
+    private GuardiansService guardianService;
     @PostMapping("register")
-    @ResponseStatus(HttpStatus.CREATED)
-    public void signUp(@RequestBody @NotNull UsersDTO userInfo) {
+    public ResponseEntity<?> register(@RequestBody @NotNull UsersDTO userInfo) {
         if (UsersDTO.hasNullDataBeforeGuardianSignup(userInfo)) {
+            log.error("insert Senior ERROR! {}", userInfo);
             throw new NullPointerException("회원가입 시 필수 데이터를 모두 입력해야 합니다.");
         }
         guardianService.insert(userInfo);
+        SuccessResponse response = new SuccessResponse(true, "보호자 회원가입 성공", null);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping("login")
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<LoginResponse> login(@RequestBody @NonNull GuardianLoginRequest loginRequest,
+    public ResponseEntity<?> login(@RequestBody @NonNull GuardianLoginRequest loginRequest,
                                                HttpSession session) {
-        ResponseEntity<LoginResponse> responseEntity = null;
-        String id = loginRequest.getId();
-        String password = loginRequest.getPassword();
-        LoginResponse loginResponse;
-        UsersDTO userInfo = guardianService.login(id, password);
+        UsersDTO guardianInfo = guardianService.login(loginRequest.getId(), loginRequest.getPassword());
 
-        if (userInfo == null) {
-            loginResponse = LoginResponse.FAIL;
-            responseEntity = new ResponseEntity<LoginResponse>(loginResponse,
-                    HttpStatus.UNAUTHORIZED);
-        } else if (UsersDTO.Status.ACTIVE.equals(userInfo.getStatus())) {
-            loginResponse = LoginResponse.success(userInfo);
-            SessionUtil.setLoginGuardianId(session, userInfo.getUserIdx());
-            responseEntity = new ResponseEntity<LoginResponse>(loginResponse, HttpStatus.OK);
-        } else {
-            log.error("login 부양자 ERROR" + userInfo);
-            throw new RuntimeException("login 부양자 ERROR!");
+        if (UsersDTO.Status.ACTIVE.equals(guardianInfo.getStatus())) {
+            SessionUtil.setLoginGuardianId(session, guardianInfo.getUserIdx());
+            log.info("session 저장 성공", guardianInfo.getUserIdx());
         }
-        return responseEntity;
+        SuccessResponse response = new SuccessResponse(true, "보호자 로그인 성공", null);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @GetMapping("logout")
     @LoginCheck(type = UserType.GUARDIAN)
-    public void logout(HttpSession session) {
+    public ResponseEntity<?> logout(HttpSession session) {
         SessionUtil.logoutGuardian(session);
+        SuccessResponse response = new SuccessResponse(true, "보호자 로그아웃 성공", null);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("info/seniors")
     @LoginCheck(type = UserType.GUARDIAN)
-    public List<UsersDTO> getAllSeniors(HttpSession session) {
-        Integer userIdx = SessionUtil.getLoginGuardianId(session);
-        return guardianService.getAllSeniors(userIdx);
+    public ResponseEntity<?> getAllSeniors(HttpSession session) {
+        guardianService.getSeniorsOrNull(SessionUtil.getLoginGuardianId(session));
+        SuccessResponse response = new SuccessResponse(true, "시니어 로그아웃 성공", null);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     //************* Request ***********//

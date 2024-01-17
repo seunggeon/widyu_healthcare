@@ -3,37 +3,42 @@ package com.widyu.healthcare.service;
 import java.util.UUID;
 
 import com.widyu.healthcare.dto.users.UsersDTO;
-import com.widyu.healthcare.mapper.UsersMapper;
+import com.widyu.healthcare.mapper.SeniorsMapper;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.widyu.healthcare.error.exception.DuplicateIdException;
 
 import static com.widyu.healthcare.aop.LoginCheck.UserType.SENIOR;
 
-@Service
 @Log4j2
-public class SeniorService {
+@Service
+public class SeniorsService {
     @Autowired
-    private UsersMapper usersMapper;
-
+    private SeniorsMapper seniorsMapper;
     public String insertAndGetInviteCode(UsersDTO userInfo) {
 
         String inviteCode = this.generateUniqueID();
         userInfo.setInviteCode(inviteCode);
         userInfo.setType(SENIOR);
 
-        int insertCount = usersMapper.insertSenior(userInfo);
+        int insertCount = seniorsMapper.insert(userInfo);
 
         if (insertCount != 1) {
             inviteCode = null;
-            log.error("insert Senior ERROR! {}", userInfo);
+            log.error("insert Senior ERROR! userinfo is null {}", userInfo);
             throw new RuntimeException(
                     "insert Senior ERROR! 회원가입 메서드를 확인해주세요\n" + "Params : " + userInfo);
         }
         return inviteCode;
     }
     public UsersDTO login(String inviteCode) {
-        UsersDTO userInfo = usersMapper.findByInviteCode(inviteCode);
+        UsersDTO userInfo = seniorsMapper.findByInviteCode(inviteCode);
+        if(userInfo == null){
+            log.error("login Senior ERROR! userinfo is null {}", inviteCode);
+            throw new DuplicateIdException("login Senior ERROR! 회원정보가 없습니다.\n" + "Params : " + inviteCode);
+        }
+
         return userInfo;
     }
 

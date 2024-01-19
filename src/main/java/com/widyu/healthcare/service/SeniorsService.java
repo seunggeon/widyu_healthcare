@@ -8,6 +8,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.widyu.healthcare.error.exception.DuplicateIdException;
+import org.springframework.transaction.annotation.Transactional;
 
 import static com.widyu.healthcare.aop.LoginCheck.UserType.SENIOR;
 
@@ -16,6 +17,7 @@ import static com.widyu.healthcare.aop.LoginCheck.UserType.SENIOR;
 public class SeniorsService {
     @Autowired
     private SeniorsMapper seniorsMapper;
+    @Transactional(rollbackFor = RuntimeException.class)
     public UsersDTO insertAndSetRelations(long guardianIdx, UsersDTO seniorInfo) {
 
         String inviteCode = this.generateUniqueID();

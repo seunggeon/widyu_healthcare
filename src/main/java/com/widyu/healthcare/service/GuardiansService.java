@@ -34,7 +34,7 @@ public class GuardiansService {
                     "insert Guardiance ERROR! 회원가입 메서드를 확인해주세요\n" + "Params : " + userInfo);
         }
     }
-    public UsersDTO login(String id, String password) {
+    public UsersDTO loginByIdAndPassword(String id, String password) {
         String cryptoPassword = SHA256Util.encryptSHA256(password);
         UsersDTO userInfo = guardiansMapper.findByIdAndPassword(id, cryptoPassword);
         if(userInfo == null){
@@ -46,7 +46,7 @@ public class GuardiansService {
         return guardiansMapper.checkId(id) == 1;
     }
 
-    public List<UsersDTO> getSeniorsOrNull(Integer userIdx){
+    public List<UsersDTO> getSeniorsOrNull(long userIdx){
         List<UsersDTO> seniors = guardiansMapper.findSeniorsById(userIdx);
 
         return seniors;

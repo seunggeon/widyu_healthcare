@@ -10,6 +10,8 @@ import java.util.List;
 public interface SeniorsMapper {
 
     public int insert(UsersDTO encryptedUser);
+    public int insertRelationWithSenior(long guardianIdx, long seniorIdx);
+    public void updateRelationWithSenior(long guardianIdx, long seniorIdx);
     public UsersDTO findByInviteCode(@Param("inviteCode") String inviteCode);
 
 }

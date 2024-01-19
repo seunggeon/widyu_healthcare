@@ -4,6 +4,7 @@ import com.google.firebase.database.annotations.NotNull;
 import com.widyu.healthcare.aop.LoginCheck;
 import com.widyu.healthcare.aop.LoginCheck.UserType;
 import com.widyu.healthcare.dto.SuccessResponse;
+import com.widyu.healthcare.error.exception.DuplicateIdException;
 import com.widyu.healthcare.service.GuardiansService;
 import jakarta.servlet.http.HttpSession;
 import lombok.*;
@@ -14,6 +15,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.widyu.healthcare.dto.users.UsersDTO;
 import com.widyu.healthcare.utils.SessionUtil;
+
+import java.util.List;
+
 @Log4j2
 @RestController
 @RequestMapping("/api/v1/guardian")
@@ -35,13 +39,12 @@ public class GuardiansController {
     @PostMapping("login")
     public ResponseEntity<?> login(@RequestBody @NonNull GuardianLoginRequest loginRequest,
                                                HttpSession session) {
-        UsersDTO guardianInfo = guardianService.login(loginRequest.getId(), loginRequest.getPassword());
-
+        UsersDTO guardianInfo = guardianService.loginByIdAndPassword(loginRequest.getId(), loginRequest.getPassword());
         if (UsersDTO.Status.ACTIVE.equals(guardianInfo.getStatus())) {
             SessionUtil.setLoginGuardianId(session, guardianInfo.getUserIdx());
             log.info("session 저장 성공", guardianInfo.getUserIdx());
         }
-        SuccessResponse response = new SuccessResponse(true, "보호자 로그인 성공", null);
+        SuccessResponse response = new SuccessResponse(true, "보호자 로그인 성공", guardianInfo);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -57,8 +60,8 @@ public class GuardiansController {
     @GetMapping("info/seniors")
     @LoginCheck(type = UserType.GUARDIAN)
     public ResponseEntity<?> getAllSeniors(HttpSession session) {
-        guardianService.getSeniorsOrNull(SessionUtil.getLoginGuardianId(session));
-        SuccessResponse response = new SuccessResponse(true, "시니어 로그아웃 성공", null);
+        List<UsersDTO> seniorsInfo = guardianService.getSeniorsOrNull(SessionUtil.getLoginGuardianId(session));
+        SuccessResponse response = new SuccessResponse(true, "보호자", seniorsInfo);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

@@ -25,13 +25,10 @@
     </select>
 
     <select id="findSeniorsById" resultType="com.widyu.healthcare.dto.users.UsersDTO">
-        SELECT *
-        FROM users
-        WHERE userIdx IN (
-            SELECT seniorIdx
-            FROM relations
-            WHERE userIdx = #{userIdx}
-            ) AND status != 'DELETE'
+        SELECT seniorIdx, description
+        FROM relations
+        WHERE guardianIdx = #{userIdx}
+        AND status != 'DELETE'
         LIMIT 10
     </select>
 

@@ -61,7 +61,7 @@ public class GuardiansController {
     @LoginCheck(type = UserType.GUARDIAN)
     public ResponseEntity<?> getAllSeniors(HttpSession session) {
         List<UsersDTO> seniorsInfo = guardianService.getSeniorsOrNull(SessionUtil.getLoginGuardianId(session));
-        SuccessResponse response = new SuccessResponse(true, "보호자", seniorsInfo);
+        SuccessResponse response = new SuccessResponse(true, "보호자의 모든 시니어 조회", seniorsInfo);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

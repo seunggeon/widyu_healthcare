@@ -21,20 +21,21 @@ import org.springframework.web.bind.annotation.*;
 public class SeniorsController {
     @Autowired
     private SeniorsService seniorService;
-    @PostMapping("register")
-    public ResponseEntity<?> register(@RequestBody @NotNull UsersDTO userInfo) {
+    @PostMapping("register/{guardianIdx}")
+    public ResponseEntity<?> register(@PathVariable long guardianIdx, @RequestBody @NotNull UsersDTO userInfo) {
         if (UsersDTO.hasNullDataBeforeSeniorSignup(userInfo)) {
             throw new NullPointerException("회원가입 시 필수 데이터를 모두 입력해야 합니다.");
         }
-        String inviteCode = seniorService.insertAndGetInviteCode(userInfo);
-        SuccessResponse response = new SuccessResponse(true, "시니어 회원가 성공", inviteCode);
+        UsersDTO seniorInfo = seniorService.insertAndSetRelations(guardianIdx, userInfo);
+        // Data 에는 DB에서 받아온 DTO 객체로 넣기
+        SuccessResponse response = new SuccessResponse(true, "시니어 회원가입 성공", seniorInfo);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping("login")
     public ResponseEntity<?> login(@RequestBody @NonNull SeniorLoginRequest loginRequest, HttpSession session) {
-        UsersDTO seniorInfo = seniorService.login(loginRequest.getInviteCode());
+        UsersDTO seniorInfo = seniorService.loginByInviteCode(loginRequest.getInviteCode());
         if (UsersDTO.Status.ACTIVE.equals(seniorInfo.getStatus())) {
             SessionUtil.setLoginSeniorId(session, seniorInfo.getUserIdx());
             log.info("session 저장 성공", seniorInfo.getUserIdx());

@@ -11,19 +11,19 @@ public class SessionUtil {
 
     // 인스턴스화 방지
     private SessionUtil() {}
-    public static Integer getLoginGuardianId(HttpSession session) {
-        return (Integer) session.getAttribute(LOGIN_GUADIANCE_ID);
+    public static long getLoginGuardianId(HttpSession session) {
+        return (long) session.getAttribute(LOGIN_GUADIANCE_ID);
     }
-    public static void setLoginGuardianId(HttpSession session, Integer userIdx) {
+    public static void setLoginGuardianId(HttpSession session, long userIdx) {
         session.setAttribute(LOGIN_GUADIANCE_ID, userIdx);
     }
     public static void logoutGuardian(HttpSession session) {
         session.removeAttribute(LOGIN_GUADIANCE_ID);
     }
-    public static Integer getLoginSeniorId(HttpSession session) {
-        return (Integer) session.getAttribute(LOGIN_SENIOR_ID);
+    public static long getLoginSeniorId(HttpSession session) {
+        return (long) session.getAttribute(LOGIN_SENIOR_ID);
     }
-    public static void setLoginSeniorId(HttpSession session, Integer userIdx) {
+    public static void setLoginSeniorId(HttpSession session, long userIdx) {
         session.setAttribute(LOGIN_SENIOR_ID, userIdx);
     }
     public static void logoutSenior(HttpSession session) {

@@ -12,5 +12,5 @@ public interface GuardiansMapper {
     public int checkId(String id);
     public int insert(UsersDTO encryptedUser);
     public UsersDTO findByIdAndPassword(@Param("id") String id, @Param("password") String password);
-    public List<UsersDTO> findSeniorsById(@Param("userIdx") Integer userIdx);
+    public List<UsersDTO> findSeniorsById(@Param("userIdx") long userIdx);
 }

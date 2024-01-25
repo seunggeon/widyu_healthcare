@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.widyu.healthcare.mapper.SeniorsMapper">
+
+    <insert id="insert" parameterType="com.widyu.healthcare.dto.users.UsersDTO">
+        INSERT INTO users(name, phone, birth, age, address, type, inviteCode, isDisease)
+        VALUES( #{name}, #{phone}, #{birth}, #{age}, #{address}, #{type}, #{inviteCode}, #{isDisease})
+        <selectKey resultType="long" keyProperty="userIdx" keyColumn="userIdx" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+
+    <insert id="insertRelationWithSenior" >
+        INSERT INTO relations(seniorIdx, guardianIdx)
+        VALUES( #{seniorIdx}, #{guardianIdx} )
+    </insert>
+
+    <update id="updateRelationWithSenior" parameterType="long">
+        UPDATE relations
+        SET seniorIdx = #{seniorIdx}
+        WHERE guardianIdx = #{guardianIdx}
+    </update>
+
+    <select id="findByInviteCode" resultType="com.widyu.healthcare.dto.users.UsersDTO">
+        SELECT *
+        FROM users
+        WHERE inviteCode = #{inviteCode}
+          AND status != 'DELETE'
+    </select>
+
+</mapper>

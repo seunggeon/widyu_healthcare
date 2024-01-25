@@ -14,9 +14,8 @@ public class UsersDTO {
         ACTIVE, DELETE
     }
 
-    private Integer userIdx;
+    public long userIdx;
 
-    @NonNull
     private String id;
 
     @NonNull

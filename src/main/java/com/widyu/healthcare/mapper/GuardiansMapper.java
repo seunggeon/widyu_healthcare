@@ -7,12 +7,10 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 @Mapper
-public interface UsersMapper {
+public interface GuardiansMapper {
 
     public int checkId(String id);
-    public int insertGuardian(UsersDTO encryptedUser);
-    public int insertSenior(UsersDTO encryptedUser);
+    public int insert(UsersDTO encryptedUser);
     public UsersDTO findByIdAndPassword(@Param("id") String id, @Param("password") String password);
-    public UsersDTO findByInviteCode(@Param("inviteCode") String inviteCode);
-    public List<UsersDTO> getAllSeniors(@Param("userIdx") Integer userIdx);
+    public List<UsersDTO> findSeniorsById(@Param("userIdx") long userIdx);
 }

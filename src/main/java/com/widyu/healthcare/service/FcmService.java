@@ -22,7 +22,7 @@ public class FcmService {
     private final String API_URL = "https://fcm.googleapis.com/v1/projects/widyu-1fb84/messages:send";
     private final ObjectMapper objectMapper;
 
-    public void sendMessageTo(String targetToken, String title, String body) throws IOException {
+    public void sendMessage(String targetToken, String title, String body) throws IOException {
         String message = makeMessage(targetToken, title, body);
 
         OkHttpClient client = new OkHttpClient();

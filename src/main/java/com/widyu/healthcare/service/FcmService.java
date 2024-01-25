@@ -2,6 +2,7 @@ package com.widyu.healthcare.service;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.common.net.HttpHeaders;
 import com.widyu.healthcare.dto.FcmDTO;
@@ -19,7 +20,7 @@ import java.util.List;
 public class FcmService {
 
     private final String API_URL = "https://fcm.googleapis.com/v1/projects/widyu-1fb84/messages:send";
-    //private final ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
     public void sendMessageTo(String targetToken, String title, String body) throws IOException {
         String message = makeMessage(targetToken, title, body);
@@ -35,8 +36,11 @@ public class FcmService {
                 .build();
 
         Response response = client.newCall(request).execute();
+        System.out.println("response = " + response);
+        if (!response.isSuccessful()) {
+            throw new IOException("FCM request failed with code: " + response.code() + ", message: " + response.message());
 
-        System.out.println(response.body().string());
+        }
     }
 
     private String makeMessage(String targetToken, String title, String body) throws JsonParseException, JsonProcessingException {
@@ -51,8 +55,7 @@ public class FcmService {
                                 .build()
                         ).build()).validateOnly(false).build();
 
-        return "ok";
-        //return objectMapper.writeValueAsString(fcmMessage);
+        return objectMapper.writeValueAsString(fcmMessage);
     }
 
     private String getAccessToken() throws IOException {

@@ -11,7 +11,8 @@ public interface GoalsStatusMapper {
     void insertGoalStatus(GoalStatus goalStatus);
 
     void deleteGoalStatus(long userIdx, long goalIdx);
-    void updateGoalStatusUrl(String url, long goalIdx, LocalDateTime time);
+    void updateGoalStatusUrl(String url, long goalStatusIdx);
     int countGoalStatus(long userIdx, long goalIdx);
     GoalStatus getGoalStatusByGoalId(long goalIdx, LocalDateTime time);
+    String getUrlByGoalStatusId(long goalStatusIdx);
 }

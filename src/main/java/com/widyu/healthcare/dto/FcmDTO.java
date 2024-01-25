@@ -31,4 +31,9 @@ public class FcmDTO {
         private String body;
         private String image;
     }
+
+    public static boolean hasNullDataBeforeFcmSend(FcmDTO fcmDTO){
+        return fcmDTO.getMessage() == null || fcmDTO.getMessage().getToken() == null ||
+                fcmDTO.getMessage().getNotification() == null || fcmDTO.getMessage().getNotification().getTitle() == null;
+    }
 }

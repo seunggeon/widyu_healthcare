@@ -1,7 +1,10 @@
 package com.widyu.healthcare.service;
 
 import com.amazonaws.AmazonClientException;
+import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.s3.transfer.Upload;
@@ -15,8 +18,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDateTime;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @Log4j2
@@ -24,7 +30,7 @@ import java.util.UUID;
 public class S3Service {
 
     @Value("${cloud.aws.s3.bucket}")
-    private String bucket;
+    private String bucketName;
 
     @Value("${cloud.aws.s3.bucket.url}")
     private String defaultUrl;
@@ -41,81 +47,48 @@ public class S3Service {
 
 
     // 목표 인증 파일 업로드
-    public void insertFile(long goalIdx, LocalDateTime time, MultipartFile multipartFile) throws IOException {
+    public void insertFile(long goalStatusIdx, MultipartFile multipartFile) throws IOException {
 
-        goalsStatusMapper.getGoalStatusByGoalId(goalIdx, time);
         String url = upload(multipartFile);
-        goalsStatusMapper.updateGoalStatusUrl(url, goalIdx, time);
+        goalsStatusMapper.updateGoalStatusUrl(url, goalStatusIdx);
     }
 
     // 목표 인증 파일 삭제
-    public void deleteFile(long goalIdx, LocalDateTime time){
+    public void deleteFile(long goalStatusIdx) throws IOException {
 
-        GoalStatus goalStatus = goalsStatusMapper.getGoalStatusByGoalId(goalIdx, time);
-        delete(goalStatus.getImgUrl());
-        goalsStatusMapper.updateGoalStatusUrl(null, goalIdx, time);
+        String url = goalsStatusMapper.getUrlByGoalStatusId(goalStatusIdx);
+        delete(url.split("/")[3]);
+        goalsStatusMapper.updateGoalStatusUrl(null, goalStatusIdx);
     }
 
-    private String upload(MultipartFile uploadFile) throws IOException {
-        String orignalName = uploadFile.getOriginalFilename();
-        String url;
-        try{
-            //확장자를 찾기 위한 코드
-            final String ext = orignalName.substring(orignalName.lastIndexOf('.'));
-            //파일이름 암호화
-            final String saveName = getUuid() + ext;
-            //파일 객체 생성
-            File file = new File(System.getProperty("user.dir") + saveName);
-            //파일 변환
-            uploadFile.transferTo(file);
-            //S3 파일 업로드
-            uploadOnS3(saveName, file);
-            //주소 할당
-            url = defaultUrl + saveName;
-            //파일 삭제
-            file.delete();
-        } catch (StringIndexOutOfBoundsException e){
-            url = null;
+    private String upload(MultipartFile multipartFile) throws IOException {
+
+        String fileName = multipartFile.getOriginalFilename();
+        ObjectMetadata objectMetadata = new ObjectMetadata();
+        objectMetadata.setContentType(multipartFile.getContentType());
+        try (InputStream inputStream = multipartFile.getInputStream()) {
+            amazonS3Client.putObject(new PutObjectRequest(bucketName, fileName, inputStream, objectMetadata)
+                    .withCannedAcl(CannedAccessControlList.PublicRead));
+        } catch (IOException e) {
+            throw new IOException("S3 file upload ERROR!", e);
         }
+        String url =  amazonS3Client.getUrl(bucketName, fileName).toString();
+
         return url;
     }
 
     //파일 삭제
-    public String delete(String url) {
+    public void delete(String url) throws IOException {
 
-        String result = "success";
+        if(amazonS3Client.doesObjectExist(bucketName, url)){
+            throw new FileNotFoundException("S3 file not found ERROR!");
+        }
 
         try {
-            boolean isObjectExist = amazonS3Client.doesObjectExist(bucket, url);
-            if (isObjectExist) {
-                amazonS3Client.deleteObject(bucket, url);
-            } else {
-                result = "file not found";
-            }
-        } catch (Exception e) {
-            log.debug("Delete File failed", e);
-        }
-        return result;
-    }
-
-    private static String getUuid(){
-        return UUID.randomUUID().toString().replaceAll("-", "");
-    }
-
-    private void uploadOnS3(final String findName, final File file){
-        //AWS S3 전송 객체 생성
-        final TransferManager transferManager = new TransferManager(this.amazonS3Client);
-        //요청 객체 생성
-        final PutObjectRequest request = new PutObjectRequest(bucket, findName, file);
-        //업로드 시도
-        final Upload upload = transferManager.upload(request);
-
-        try {
-            upload.waitForCompletion();
-        } catch (AmazonClientException amazonClientException){
-            log.error(amazonClientException.getMessage());
-        } catch (InterruptedException e) {
-            log.error(e.getMessage());
+            amazonS3Client.deleteObject(bucketName, url);
+        } catch (SdkClientException e){
+            throw new IOException("S3 file delete ERROR!", e);
         }
     }
+
 }

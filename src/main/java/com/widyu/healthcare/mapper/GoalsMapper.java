@@ -1,6 +1,6 @@
 package com.widyu.healthcare.mapper;
 
-import com.widyu.healthcare.dto.goals.Goal;
+import com.widyu.healthcare.dto.goals.GoalDTO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -8,11 +8,11 @@ import java.util.List;
 @Mapper
 public interface GoalsMapper {
 
-    List<Goal> getGoalsById(long userIdx);
-    Goal getGoalByGoalId(long userIdx, long goalIdx);
-    long insertGoal(Goal goal);
-    long getGoalIdx(Goal goal);
-    void updateGoal(Goal goal);
+    List<GoalDTO> getGoalsById(long userIdx);
+    GoalDTO getGoalByGoalId(long userIdx, long goalIdx);
+    long insertGoal(GoalDTO goal);
+    long getGoalIdx(GoalDTO goal);
+    void updateGoal(GoalDTO goal);
     void deleteGoal(long userIdx, long goalIdx);
 
 }

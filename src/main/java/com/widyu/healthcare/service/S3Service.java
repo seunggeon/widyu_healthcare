@@ -8,7 +8,6 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.s3.transfer.Upload;
-import com.widyu.healthcare.dto.goals.Goal;
 import com.widyu.healthcare.dto.goals.GoalStatus;
 import com.widyu.healthcare.mapper.GoalsStatusMapper;
 import lombok.extern.log4j.Log4j2;

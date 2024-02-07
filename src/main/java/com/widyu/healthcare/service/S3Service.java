@@ -1,28 +1,22 @@
 package com.widyu.healthcare.service;
 
-import com.amazonaws.AmazonClientException;
 import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.transfer.TransferManager;
-import com.amazonaws.services.s3.transfer.Upload;
-import com.widyu.healthcare.dto.goals.GoalStatus;
+import com.widyu.healthcare.dto.reward.RewardDTO;
 import com.widyu.healthcare.mapper.GoalsStatusMapper;
+import com.widyu.healthcare.mapper.RewardMapper;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.time.LocalDateTime;
-import java.util.NoSuchElementException;
-import java.util.UUID;
 
 @Log4j2
 @Service
@@ -36,28 +30,38 @@ public class S3Service {
 
     private final AmazonS3 amazonS3Client;
     private final GoalsStatusMapper goalsStatusMapper;
+    private final RewardMapper rewardMapper;
 
 
     @Autowired
-    public S3Service(AmazonS3 amazonS3Client, GoalsStatusMapper goalsStatusMapper) {
+    public S3Service(AmazonS3 amazonS3Client, GoalsStatusMapper goalsStatusMapper, RewardMapper rewardMapper) {
         this.amazonS3Client = amazonS3Client;
         this.goalsStatusMapper = goalsStatusMapper;
+        this.rewardMapper = rewardMapper;
     }
 
 
     // 목표 인증 파일 업로드
-    public void insertFile(long goalStatusIdx, MultipartFile multipartFile) throws IOException {
+    public void insertGoalFile(long goalStatusIdx, MultipartFile multipartFile) throws IOException {
 
         String url = upload(multipartFile);
         goalsStatusMapper.updateGoalStatusUrl(url, goalStatusIdx);
     }
 
     // 목표 인증 파일 삭제
-    public void deleteFile(long goalStatusIdx) throws IOException {
+    public void deleteGoalFile(long goalStatusIdx) throws IOException {
 
         String url = goalsStatusMapper.getUrlByGoalStatusId(goalStatusIdx);
         delete(url.split("/")[3]);
         goalsStatusMapper.updateGoalStatusUrl(null, goalStatusIdx);
+    }
+
+    // 리워드 파일 업로드
+    public void insertRewardFile(RewardDTO rewardDTO, MultipartFile multipartFile) throws IOException {
+
+
+        String url = upload(multipartFile);
+        rewardMapper.insertReward(rewardDTO);
     }
 
     private String upload(MultipartFile multipartFile) throws IOException {

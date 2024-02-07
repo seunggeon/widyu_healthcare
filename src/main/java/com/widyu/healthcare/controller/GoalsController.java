@@ -49,7 +49,6 @@ public class GoalsController {
     }
 
     @PostMapping("/insert")
-    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<?> insertGoal(@RequestBody GoalDTO goal) {
 
         goalsService.insertGoal(goal);

@@ -5,26 +5,20 @@
 
 <mapper namespace="com.widyu.healthcare.mapper.GoalsStatusMapper">
 
-    <insert id="insertGoalStatus" parameterType="com.widyu.healthcare.dto.goals.GoalStatus" useGeneratedKeys="true" keyProperty="goalStatusIdx">
-        INSERT INTO goalsstatus (goalIdx, time, pillNum) VALUES (#{goalIdx}, #{time}, #{pillNum})
+    <insert id="insertGoalStatus" parameterType="com.widyu.healthcare.dto.goals.GoalStatus">
+        INSERT INTO goalsstatus (goalIdx, time) VALUES (#{goalIdx}, #{userIdx})
     </insert>
 
     <delete id="deleteGoalStatus" parameterType="java.lang.Long">
         DELETE
         FROM goalsstatus
-        WHERE goalIdx = #{goalIdx}
+        WHERE userIdx = #{userIdx} AND goalIdx = #{goalIdx}
     </delete>
 
     <update id="updateGoalStatusUrl" parameterType="com.widyu.healthcare.dto.goals.GoalStatus">
         UPDATE goalsstatus
-        SET ImgUrl = #{url}, time=#{time}
-        WHERE goalIdx = #{goalIdx} AND
-    </update>
-
-    <update id="updateGoalStatus" parameterType="com.widyu.healthcare.dto.goals.GoalStatus">
-        UPDATE goalsstatus
-        SET time=#{time}, pillNum=#{pillNum}
-        WHERE goalStatusIdx=#{goalStatusIdx}
+        SET ImgUrl = #{url}
+        WHERE goalStatusIdx = #{goalStatusIdx}
     </update>
 
     <select id="countGoalStatus" parameterType="java.lang.Long" resultType="int">
@@ -38,18 +32,8 @@
         WHERE goalIdx = #{params.goalIdx, jdbcType=BIGINT} AND time = #{params.time, jdbcType=TIMESTAMP}
     </select>
 
-    <select id="getGoalStatusIdx" parameterType="com.widyu.healthcare.dto.goals.GoalStatus">
-        SELECT goalStatusIdx
-        FROM goalsstatus
-        WHERE goalIdx=#{goalIdx} AND time=#{time} AND pillNum=#{pillNum}
-        ORDER BY createdDate DESC
-        LIMIT 1;
+    <select id="getUrlByGoalStatusId" parameterType="java.lang.Long" resultType="String">
+        SELECT ImgUrl FROM goalsstatus
+        WHERE goalStatusIdx = #{goalStatusIdx}
     </select>
-
-    <update id="updateStatusSuccess" parameterType="java.lang.Long">
-        UPDATE goalsstatus
-        SET status=#{1}
-        WHERE goalStatusIdx=#{goalStatusIdx}
-    </update>
-
 </mapper>

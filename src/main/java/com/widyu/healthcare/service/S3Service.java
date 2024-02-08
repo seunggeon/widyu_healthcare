@@ -52,16 +52,28 @@ public class S3Service {
     public void deleteGoalFile(long goalStatusIdx) throws IOException {
 
         String url = goalsStatusMapper.getUrlByGoalStatusId(goalStatusIdx);
-        delete(url.split("/")[3]);
+        delete(url);
         goalsStatusMapper.updateGoalStatusUrl(null, goalStatusIdx);
     }
 
     // 리워드 파일 업로드
     public void insertRewardFile(RewardDTO rewardDTO, MultipartFile multipartFile) throws IOException {
 
-
         String url = upload(multipartFile);
         rewardMapper.insertReward(rewardDTO);
+    }
+
+    // 리워드 파일 수정
+    public void updateReward(RewardDTO rewardDTO){
+        rewardMapper.updateReward(rewardDTO);
+    }
+
+    // 리워드 파일 삭제
+    public void deleteReward(long rewardIdx) throws IOException {
+        String url = rewardMapper.getUrlbyRewardId(rewardIdx);
+        delete(url);
+        rewardMapper.updateRewardUrl(null, rewardIdx);
+
     }
 
     private String upload(MultipartFile multipartFile) throws IOException {
@@ -81,11 +93,9 @@ public class S3Service {
     }
 
     //파일 삭제
-    public void delete(String url) throws IOException {
+    private void delete(String longUrl) throws IOException {
 
-        if(amazonS3Client.doesObjectExist(bucketName, url)){
-            throw new FileNotFoundException("S3 file not found ERROR!");
-        }
+        String url = longUrl.split("/")[3];
 
         try {
             amazonS3Client.deleteObject(bucketName, url);

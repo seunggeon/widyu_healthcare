@@ -6,6 +6,8 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface RewardMapper {
 
-    long insertReward(RewardDTO rewardDTO);
-
+    void insertReward(RewardDTO rewardDTO);
+    void updateReward(RewardDTO rewardDTO);
+    void updateRewardUrl(String url, long rewardIdx);
+    String getUrlbyRewardId(long rewardIdx);
 }

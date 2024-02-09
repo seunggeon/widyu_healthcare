@@ -92,7 +92,6 @@ public class S3Service {
         return url;
     }
 
-    //파일 삭제
     private void delete(String longUrl) throws IOException {
 
         String url = longUrl.split("/")[3];
@@ -103,5 +102,6 @@ public class S3Service {
             throw new IOException("S3 file delete ERROR!", e);
         }
     }
+
 
 }

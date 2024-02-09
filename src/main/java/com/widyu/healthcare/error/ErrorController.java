@@ -1,6 +1,7 @@
 package com.widyu.healthcare.error;
 
 import com.widyu.healthcare.error.exception.DuplicateIdException;
+import com.widyu.healthcare.error.exception.InsufficientPointsException;
 import com.widyu.healthcare.error.exception.NoDataException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -25,5 +26,11 @@ public class ErrorController {
   public ResponseEntity<Object> handleDuplicateIdException(DuplicateIdException e, HttpServletRequest request) {
     ErrorResponse response = new ErrorResponse(false, e.getMessage() ,103);
     return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler(InsufficientPointsException.class)
+  public ResponseEntity<Object> InsufficientPointsException(InsufficientPointsException e) {
+    ErrorResponse response = new ErrorResponse(false, e.getMessage() ,104);
+    return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
   }
 }

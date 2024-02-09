@@ -21,13 +21,16 @@ public class GoalsService {
     private final GoalsMapper goalsMapper;
     private final GoalsStatusMapper goalsStatusMapper;
     private final GuardiansService guardiansService;
+    private final RedisService redisService;
+    private static final String VERIFICATION_CODE_PREFIX = "point_code:";
 
     @Autowired
-    public GoalsService(GoalsMapper goalsMapper, GoalsStatusMapper goalsStatusMapper, GuardiansService guardiansService) {
+    public GoalsService(GoalsMapper goalsMapper, GoalsStatusMapper goalsStatusMapper, GuardiansService guardiansService, RedisService redisService) {
 
         this.goalsMapper = goalsMapper;
         this.goalsStatusMapper = goalsStatusMapper;
         this.guardiansService = guardiansService;
+        this.redisService = redisService;
     }
 
     // 보호자 메인 목표 화면
@@ -110,7 +113,16 @@ public class GoalsService {
     }
 
     // 목표 상태 수정 (성공)
-    public void updateStatusSuccess(long goalStatusIdx){
+    public void updateStatusSuccess(Long userIdx, long goalStatusIdx){
+        // 상태 성공으로 변경
         goalsStatusMapper.updateStatusSuccess(goalStatusIdx);
+        // 포인트 추가 (*1포인트 추가로 설정함)
+        goalsStatusMapper.updateTotalPoint(userIdx);
+        redisService.incrementPoint(buildRedisKey(userIdx.toString()));
+        //log.info("redis-point: {}", redisService.getPoint(buildRedisKey(userIdx.toString()));
+    }
+
+    private static String buildRedisKey(String userIdx) {
+        return VERIFICATION_CODE_PREFIX + userIdx;
     }
 }

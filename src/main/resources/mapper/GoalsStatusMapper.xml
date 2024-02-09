@@ -53,7 +53,13 @@
 
     <update id="updateStatusSuccess" parameterType="java.lang.Long">
         UPDATE goalsstatus
-        SET status=#{1}
+        SET status=1
         WHERE goalStatusIdx=#{goalStatusIdx}
+    </update>
+
+    <update id="updateTotalPoint" parameterType="java.lang.Long">
+        UPDATE users
+        SET totalPoint=totalPoint+1
+        WHERE userIdx=#{userIdx}
     </update>
 </mapper>

@@ -65,5 +65,24 @@ public class RedisService {
             stringOps.set(key, value);
         }
     }
+
+    public Long getPoint(String key) {
+        Object point = stringOps.get(key);
+        return point != null ? Long.parseLong(point.toString()) : 0L;
+    }
+
+    public void incrementPoint(String key) {
+        Long currentPoint = getPoint(key);
+        stringOps.set(key, Long.toString(currentPoint + 1));
+    }
+
+    public void setPoint(String key, Long point) {
+        stringOps.set(key, Long.toString(point));
+    }
+
+    public void decrementPoint(String key, Long point) {
+        stringOps.decrement(key, point);
+    }
+
 }
 

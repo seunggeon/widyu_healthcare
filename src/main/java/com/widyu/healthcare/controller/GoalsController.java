@@ -27,7 +27,7 @@ public class GoalsController {
     private GoalsService goalsService;
 
     /**
-     * 보호자 목표조 회
+     * 보호자 목표 조회
      * @param session
      * @return
      */

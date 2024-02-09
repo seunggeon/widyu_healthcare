@@ -18,5 +18,5 @@ public interface GoalsStatusMapper {
     String getUrlByGoalStatusId(long goalStatusIdx);
     long getGoalStatusIdx(GoalStatus goalStatus);
     void updateStatusSuccess(long goalStatusIdx);
-    void updateTotalPoint(long userIdx);
+    void updateTotalPoint(long userIdx, long value);
 }

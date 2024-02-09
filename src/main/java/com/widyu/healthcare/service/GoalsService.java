@@ -117,7 +117,7 @@ public class GoalsService {
         // 상태 성공으로 변경
         goalsStatusMapper.updateStatusSuccess(goalStatusIdx);
         // 포인트 추가 (*1포인트 추가로 설정함)
-        goalsStatusMapper.updateTotalPoint(userIdx);
+        goalsStatusMapper.updateTotalPoint(userIdx, 1L);
         redisService.incrementPoint(buildRedisKey(userIdx.toString()));
         //log.info("redis-point: {}", redisService.getPoint(buildRedisKey(userIdx.toString()));
     }

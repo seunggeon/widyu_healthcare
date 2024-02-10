@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.widyu.healthcare.mapper.RewardMapper">
+
+    <insert id="insertReward" parameterType="com.widyu.healthcare.dto.reward.RewardDTO">
+        INSERT INTO rewards (userIdx, url, description) VALUES (#{userIdx}, #{url}, #{description})
+    </insert>
+
+    <update id="updateReward" parameterType="com.widyu.healthcare.dto.reward.RewardDTO">
+        UPDATE rewards
+        SET url = #{url}, description = #{description}
+        WHERE rewardIdx = #{rewardIdx}
+    </update>
+
+    <update id="updateRewardUrl" parameterType="com.widyu.healthcare.dto.reward.RewardDTO">
+        UPDATE rewards
+        SET url = #{url}, description = #{description}
+        WHERE rewardIdx = #{rewardIdx}
+    </update>
+
+    <update id="updateRewardStatus" parameterType="com.widyu.healthcare.dto.reward.RewardDTO">
+        UPDATE rewards
+        SET status = #{status}
+        WHERE rewardIdx = #{rewardIdx}
+    </update>
+
+    <select id="getRewardByUserId" parameterType="java.lang.Long" resultType="String">
+        SELECT * FROM rewards
+        WHERE userIdx = #{userIdx}
+    </select>
+
+    <select id="getRewardByRewardId" parameterType="java.lang.Long" resultType="com.widyu.healthcare.dto.reward.RewardDTO">
+        SELECT * FROM rewards
+        WHERE rewardIdx = #{rewardIdx}
+    </select>
+
+    <select id="getPriceByRewardId" parameterType="java.lang.Long" resultType="java.lang.Long">
+        SELECT point FROM rewards
+        WHERE rewardIdx = #{rewardIdx}
+    </select>
+
+    <select id="getUrlByRewardId" parameterType="java.lang.Long" resultType="String">
+        SELECT url FROM rewards
+        WHERE rewardIdx = #{rewardIdx}
+    </select>
+
+</mapper>

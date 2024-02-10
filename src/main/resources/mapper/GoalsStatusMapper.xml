@@ -18,7 +18,13 @@
     <update id="updateGoalStatusUrl" parameterType="com.widyu.healthcare.dto.goals.GoalStatus">
         UPDATE goalsstatus
         SET ImgUrl = #{url}
-        WHERE goalIdx = #{goalIdx} AND time = #{time}
+        WHERE goalStatusIdx = #{goalStatusIdx}
+    </update>
+
+    <update id="updateGoalStatus" parameterType="com.widyu.healthcare.dto.goals.GoalStatus">
+        UPDATE goalsstatus
+        SET time=#{time}, pillNum=#{pillNum}
+        WHERE goalStatusIdx=#{goalStatusIdx}
     </update>
 
     <select id="countGoalStatus" parameterType="java.lang.Long" resultType="int">
@@ -28,8 +34,33 @@
     </select>
 
     <select id="getGoalStatusByGoalId" parameterType="map" resultType="com.widyu.healthcare.dto.goals.GoalStatus">
-        SELECT * FROM goalsstatis
+        SELECT * FROM goalsstatus
         WHERE goalIdx = #{params.goalIdx, jdbcType=BIGINT} AND time = #{params.time, jdbcType=TIMESTAMP}
     </select>
+
+    <select id="getUrlByGoalStatusId" parameterType="java.lang.Long" resultType="String">
+        SELECT ImgUrl FROM goalsstatus
+        WHERE goalStatusIdx = #{goalStatusIdx}
+    </select>
+
+    <select id="getGoalStatusIdx" parameterType="com.widyu.healthcare.dto.goals.GoalStatus">
+        SELECT goalStatusIdx
+        FROM goalsstatus
+        WHERE goalIdx=#{goalIdx} AND time=#{time} AND pillNum=#{pillNum}
+        ORDER BY createdDate DESC
+        LIMIT 1;
+    </select>
+
+    <update id="updateStatusSuccess" parameterType="java.lang.Long">
+        UPDATE goalsstatus
+        SET status=1
+        WHERE goalStatusIdx=#{goalStatusIdx}
+    </update>
+
+    <update id="updateTotalPoint" parameterType="java.lang.Long">
+        UPDATE users
+        SET totalPoint=totalPoint+#{value}
+        WHERE userIdx=#{userIdx}
+    </update>
 
 </mapper>

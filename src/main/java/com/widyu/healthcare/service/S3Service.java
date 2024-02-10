@@ -1,121 +1,107 @@
 package com.widyu.healthcare.service;
 
-import com.amazonaws.AmazonClientException;
+import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.transfer.TransferManager;
-import com.amazonaws.services.s3.transfer.Upload;
-import com.widyu.healthcare.dto.goals.Goal;
-import com.widyu.healthcare.dto.goals.GoalStatus;
+import com.widyu.healthcare.dto.reward.RewardDTO;
 import com.widyu.healthcare.mapper.GoalsStatusMapper;
+import com.widyu.healthcare.mapper.RewardMapper;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.UUID;
+import java.io.InputStream;
 
 @Log4j2
 @Service
 public class S3Service {
 
     @Value("${cloud.aws.s3.bucket}")
-    private String bucket;
+    private String bucketName;
 
     @Value("${cloud.aws.s3.bucket.url}")
     private String defaultUrl;
 
     private final AmazonS3 amazonS3Client;
     private final GoalsStatusMapper goalsStatusMapper;
+    private final RewardMapper rewardMapper;
 
 
     @Autowired
-    public S3Service(AmazonS3 amazonS3Client, GoalsStatusMapper goalsStatusMapper) {
+    public S3Service(AmazonS3 amazonS3Client, GoalsStatusMapper goalsStatusMapper, RewardMapper rewardMapper) {
         this.amazonS3Client = amazonS3Client;
         this.goalsStatusMapper = goalsStatusMapper;
+        this.rewardMapper = rewardMapper;
     }
 
 
     // 목표 인증 파일 업로드
-    public void insertFile(long goalIdx, LocalDateTime time, MultipartFile multipartFile) throws IOException {
+    public void insertGoalFile(long goalStatusIdx, MultipartFile multipartFile) throws IOException {
 
-        goalsStatusMapper.getGoalStatusByGoalId(goalIdx, time);
         String url = upload(multipartFile);
-        goalsStatusMapper.updateGoalStatusUrl(url, goalIdx, time);
+        goalsStatusMapper.updateGoalStatusUrl(url, goalStatusIdx);
     }
 
     // 목표 인증 파일 삭제
-    public void deleteFile(long goalIdx, LocalDateTime time){
+    public void deleteGoalFile(long goalStatusIdx) throws IOException {
 
-        GoalStatus goalStatus = goalsStatusMapper.getGoalStatusByGoalId(goalIdx, time);
-        delete(goalStatus.getImgUrl());
-        goalsStatusMapper.updateGoalStatusUrl(null, goalIdx, time);
+        String url = goalsStatusMapper.getUrlByGoalStatusId(goalStatusIdx);
+        delete(url);
+        goalsStatusMapper.updateGoalStatusUrl(null, goalStatusIdx);
     }
 
-    private String upload(MultipartFile uploadFile) throws IOException {
-        String orignalName = uploadFile.getOriginalFilename();
-        String url;
-        try{
-            //확장자를 찾기 위한 코드
-            final String ext = orignalName.substring(orignalName.lastIndexOf('.'));
-            //파일이름 암호화
-            final String saveName = getUuid() + ext;
-            //파일 객체 생성
-            File file = new File(System.getProperty("user.dir") + saveName);
-            //파일 변환
-            uploadFile.transferTo(file);
-            //S3 파일 업로드
-            uploadOnS3(saveName, file);
-            //주소 할당
-            url = defaultUrl + saveName;
-            //파일 삭제
-            file.delete();
-        } catch (StringIndexOutOfBoundsException e){
-            url = null;
+    // 리워드 파일 업로드
+    public void insertRewardFile(RewardDTO rewardDTO, MultipartFile multipartFile) throws IOException {
+
+        String url = upload(multipartFile);
+        rewardMapper.insertReward(rewardDTO);
+    }
+
+    // 리워드 파일 수정
+    public void updateReward(RewardDTO rewardDTO){
+        rewardMapper.updateReward(rewardDTO);
+    }
+
+    // 리워드 파일 삭제
+    public void deleteReward(long rewardIdx) throws IOException {
+        String url = rewardMapper.getUrlbyRewardId(rewardIdx);
+        delete(url);
+        rewardMapper.updateRewardUrl(null, rewardIdx);
+
+    }
+
+    private String upload(MultipartFile multipartFile) throws IOException {
+
+        String fileName = multipartFile.getOriginalFilename();
+        ObjectMetadata objectMetadata = new ObjectMetadata();
+        objectMetadata.setContentType(multipartFile.getContentType());
+        try (InputStream inputStream = multipartFile.getInputStream()) {
+            amazonS3Client.putObject(new PutObjectRequest(bucketName, fileName, inputStream, objectMetadata)
+                    .withCannedAcl(CannedAccessControlList.PublicRead));
+        } catch (IOException e) {
+            throw new IOException("S3 file upload ERROR!", e);
         }
+        String url =  amazonS3Client.getUrl(bucketName, fileName).toString();
+
         return url;
     }
 
-    //파일 삭제
-    public String delete(String url) {
+    private void delete(String longUrl) throws IOException {
 
-        String result = "success";
-
-        try {
-            boolean isObjectExist = amazonS3Client.doesObjectExist(bucket, url);
-            if (isObjectExist) {
-                amazonS3Client.deleteObject(bucket, url);
-            } else {
-                result = "file not found";
-            }
-        } catch (Exception e) {
-            log.debug("Delete File failed", e);
-        }
-        return result;
-    }
-
-    private static String getUuid(){
-        return UUID.randomUUID().toString().replaceAll("-", "");
-    }
-
-    private void uploadOnS3(final String findName, final File file){
-        //AWS S3 전송 객체 생성
-        final TransferManager transferManager = new TransferManager(this.amazonS3Client);
-        //요청 객체 생성
-        final PutObjectRequest request = new PutObjectRequest(bucket, findName, file);
-        //업로드 시도
-        final Upload upload = transferManager.upload(request);
+        String url = longUrl.split("/")[3];
 
         try {
-            upload.waitForCompletion();
-        } catch (AmazonClientException amazonClientException){
-            log.error(amazonClientException.getMessage());
-        } catch (InterruptedException e) {
-            log.error(e.getMessage());
+            amazonS3Client.deleteObject(bucketName, url);
+        } catch (SdkClientException e){
+            throw new IOException("S3 file delete ERROR!", e);
         }
     }
+
+
 }

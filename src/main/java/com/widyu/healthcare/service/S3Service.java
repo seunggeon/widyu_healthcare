@@ -51,7 +51,7 @@ public class S3Service {
     // 목표 인증 파일 삭제
     public void deleteGoalFile(long goalStatusIdx) throws IOException {
 
-        String url = goalsStatusMapper.getUrlByGoalStatusId(goalStatusIdx);
+        String url = goalsStatusMapper.getUrlByGoalStatusIdx(goalStatusIdx);
         delete(url);
         goalsStatusMapper.updateGoalStatusUrl(null, goalStatusIdx);
     }

@@ -5,11 +5,11 @@
 
 <mapper namespace="com.widyu.healthcare.mapper.GoalsMapper">
 
-    <select id="getGoalsById" parameterType="java.lang.Long" resultType="com.widyu.healthcare.dto.goals.GoalDTO">
-        SELECT * FROM goals WHERE userIdx = #{id}
+    <select id="getGoalsByIdx" parameterType="java.lang.Long" resultType="com.widyu.healthcare.dto.goals.GoalDTO">
+        SELECT goalIdx, userIdx, title, description, type, day, startDate, endDate FROM goals WHERE userIdx = #{userIdx}
     </select>
 
-    <select id="getGoalByGoalId" parameterType="java.lang.Long" resultType="com.widyu.healthcare.dto.goals.GoalDTO">
+    <select id="getGoalByGoalIdx" parameterType="java.lang.Long" resultType="com.widyu.healthcare.dto.goals.GoalDTO">
         SELECT * FROM goals WHERE userIdx = #{userIdx} AND goalIdx = #{goalIdx}
     </select>
 

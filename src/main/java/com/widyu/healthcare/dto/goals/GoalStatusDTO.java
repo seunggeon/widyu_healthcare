@@ -10,13 +10,13 @@ import java.time.LocalTime;
 @Getter
 @Setter
 @AllArgsConstructor
-public class GoalStatus {
+public class GoalStatusDTO {
 
     private Long goalStatusIdx;
     private Long goalIdx;
-    private LocalTime time;
-    private int status;
-    private int pillNum;
-    private String ImgUrl;
+    private Time time;
+    private Integer status;
+    private Long pillNum;
+    private String imgUrl;
     private Long point;
 }

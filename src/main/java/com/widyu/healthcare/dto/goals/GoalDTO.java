@@ -2,6 +2,7 @@ package com.widyu.healthcare.dto.goals;
 
 import lombok.*;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -15,9 +16,8 @@ public class GoalDTO {
     private String description;
     private Type type;
     private String day;
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
-    private List<GoalStatus> goalStatusList;
+    private Timestamp startDate;
+    private Timestamp endDate;
 }
 
 enum Type {

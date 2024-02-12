@@ -1,17 +1,24 @@
 package com.widyu.healthcare.service;
 
 import com.widyu.healthcare.dto.goals.GoalDTO;
+import com.widyu.healthcare.dto.goals.GoalSetDTO;
 import com.widyu.healthcare.dto.goals.ResponseUserDTO;
 import com.widyu.healthcare.dto.users.UsersDTO;
+import com.widyu.healthcare.jobs.StatusJob;
 import com.widyu.healthcare.mapper.GoalsStatusMapper;
-import com.widyu.healthcare.dto.goals.GoalStatus;
+import com.widyu.healthcare.dto.goals.GoalStatusDTO;
 import com.widyu.healthcare.mapper.GoalsMapper;
 import lombok.extern.log4j.Log4j2;
+import org.apache.ibatis.jdbc.Null;
+import org.quartz.*;
+import org.quartz.impl.matchers.GroupMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.*;
 
 
 @Log4j2
@@ -22,15 +29,17 @@ public class GoalsService {
     private final GoalsStatusMapper goalsStatusMapper;
     private final GuardiansService guardiansService;
     private final RedisService redisService;
+    private final Scheduler scheduler;
     private static final String VERIFICATION_CODE_PREFIX = "point_code:";
 
     @Autowired
-    public GoalsService(GoalsMapper goalsMapper, GoalsStatusMapper goalsStatusMapper, GuardiansService guardiansService, RedisService redisService) {
+    public GoalsService(GoalsMapper goalsMapper, GoalsStatusMapper goalsStatusMapper, GuardiansService guardiansService, RedisService redisService, Scheduler scheduler) {
 
         this.goalsMapper = goalsMapper;
         this.goalsStatusMapper = goalsStatusMapper;
         this.guardiansService = guardiansService;
         this.redisService = redisService;
+        this.scheduler = scheduler;
     }
 
     // 보호자 메인 목표 화면
@@ -49,7 +58,8 @@ public class GoalsService {
             seniorResponseUserDTO.setName(usersDTO.getName());
             seniorResponseUserDTO.setUserType(usersDTO.getType());
             // *userTable에서 가져와야할 정보 추후
-            seniorResponseUserDTO.setGoals(getGoalsById(usersDTO.getUserIdx()));
+
+            seniorResponseUserDTO.setGoals(getGoalsByIdx(usersDTO.getUserIdx()));
             responseUserDTOList.add(seniorResponseUserDTO);
         }
 
@@ -67,41 +77,56 @@ public class GoalsService {
 
         ResponseUserDTO responseUserDTO = new ResponseUserDTO();
         // *userTable에서 가져와야할 정보 추후
-        responseUserDTO.setGoals(getGoalsById(userIdx));
+        List<GoalSetDTO> goalSetDTOList= getGoalsByIdx(userIdx);
+        responseUserDTO.setGoals(getGoalsByIdx(userIdx));
         return responseUserDTO;
     }
 
     // 목표 전체 조회
-    public List<GoalDTO> getGoalsById(long id){
+    public List<GoalSetDTO> getGoalsByIdx(long userIdx){
 
-        return goalsMapper.getGoalsById(id);
+        List<GoalSetDTO> GoalSetList = new ArrayList<GoalSetDTO>();
+        List<GoalDTO> goals = goalsMapper.getGoalsByIdx(userIdx);
+
+        for (GoalDTO goal : goals) {
+
+            Long goalIdx = goal.getGoalIdx();
+            List<GoalStatusDTO> goalStatuses = goalsStatusMapper.getGoalStatusesByGoalIdx(goalIdx);
+            GoalSetDTO goalSetDTO = new GoalSetDTO(goal, goalStatuses);
+            GoalSetList.add(goalSetDTO);
+        }
+
+        return GoalSetList;
     }
 
     // 특정 단일 목표 조회
     public GoalDTO getGoalByGoalId(long userIdx, long goalIdx){
 
-        return goalsMapper.getGoalByGoalId(userIdx, goalIdx);
+        return goalsMapper.getGoalByGoalIdx(userIdx, goalIdx);
     }
 
     // 목표 생성
-    public GoalDTO insertGoal(GoalDTO goal){
-        goalsMapper.insertGoal(goal);
-        Long goalIdx = goalsMapper.getGoalIdx(goal);
+    public GoalSetDTO insertGoal(GoalSetDTO goalSet){
+        goalsMapper.insertGoal(goalSet.getGoalDTO());
+        Long goalIdx = goalsMapper.getGoalIdx(goalSet.getGoalDTO());
 
-        for (GoalStatus goalStatus : goal.getGoalStatusList()) {
+        for (GoalStatusDTO goalStatus : goalSet.getGoalStatusDTOList()) {
             goalStatus.setGoalIdx(goalIdx);
             goalsStatusMapper.insertGoalStatus(goalStatus);
             Long goalStatusIdx = goalsStatusMapper.getGoalStatusIdx(goalStatus);
             goalStatus.setGoalStatusIdx(goalStatusIdx);
+
+            //timer
+            scheduleTimerForGoalStatus(goalStatus);
         }
-        return goal;
+        return goalSet;
     }
 
     // 목표 수정
-    public void updateGoal(GoalDTO goal){
+    public void updateGoal(GoalSetDTO goalSetDTO){
 
-        goalsMapper.updateGoal(goal);
-        for (GoalStatus goalStatus : goal.getGoalStatusList()) {
+        goalsMapper.updateGoal(goalSetDTO.getGoalDTO());
+        for (GoalStatusDTO goalStatus : goalSetDTO.getGoalStatusDTOList()) {
             goalsStatusMapper.updateGoalStatus(goalStatus);
         }
     }
@@ -115,11 +140,33 @@ public class GoalsService {
     // 목표 상태 수정 (성공)
     public void updateStatusSuccess(Long userIdx, long goalStatusIdx){
         // 상태 성공으로 변경
-        goalsStatusMapper.updateStatusSuccess(goalStatusIdx);
+        goalsStatusMapper.updateStatus(goalStatusIdx, 1L);
         // 포인트 추가 (*1포인트 추가로 설정함)
         goalsStatusMapper.updateTotalPoint(userIdx, 1L);
         redisService.incrementPoint(buildRedisKey(userIdx.toString()));
         //log.info("redis-point: {}", redisService.getPoint(buildRedisKey(userIdx.toString()));
+    }
+
+    private void scheduleTimerForGoalStatus(GoalStatusDTO goalStatus) {
+        JobDetail jobDetail = JobBuilder.newJob(StatusJob.class)
+                .usingJobData("goalStatusIdx", goalStatus.getGoalStatusIdx()) // GoalStatusIdx를 JobData로 전달
+                .withIdentity("GoalStatusUpdateJob_" + goalStatus.getGoalStatusIdx())
+                .build();
+
+        JobDataMap jobDataMap = new JobDataMap();
+        jobDataMap.put("goalStatusIdx", goalStatus.getGoalStatusIdx());
+
+        Trigger trigger = TriggerBuilder.newTrigger()
+                .usingJobData(jobDataMap)
+                .withIdentity("GoalStatusUpdateTrigger_" + goalStatus.getGoalStatusIdx())
+                .startAt(Date.from(goalStatus.getTime().toLocalTime().atDate(LocalDate.now()).atZone(ZoneId.systemDefault()).toInstant())) // GoalStatus의 time에 따라 실행 시간 설정
+                .build();
+
+        try {
+            scheduler.scheduleJob(jobDetail, trigger);
+        } catch (SchedulerException e) {
+            e.printStackTrace();
+        }
     }
 
     private static String buildRedisKey(String userIdx) {

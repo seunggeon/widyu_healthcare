@@ -7,5 +7,5 @@ public class ResponseGoalDTO {
     String  title;
     String description;
     Type type;
-    List<GoalStatus> goalStatusList;
+    List<GoalStatusDTO> goalStatusList;
 }

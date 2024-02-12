@@ -12,7 +12,7 @@ public class ResponseUserDTO {
     String profileImageUrl;
     int percentage;
     LoginCheck.UserType userType;
-    List<GoalDTO> goals;
+    List<GoalSetDTO> goals;
 
     //부모님일 경우 가족 순번도 반환
 

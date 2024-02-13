@@ -21,6 +21,7 @@ public class GoalDTO {
 }
 
 enum Type {
-    PILL,
-    OUTDOOR
+    MEDICATION,
+    WALKING,
+    GENERAL
 }

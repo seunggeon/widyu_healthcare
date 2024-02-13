@@ -27,7 +27,7 @@ public class S3Controller {
     ) throws IOException {
 
         s3Service.insertGoalFile(goalStatusIdx, multipartFile);
-        SuccessResponse response = new SuccessResponse(true, "goalStatus file upload 완료", null);
+        SuccessResponse response = new SuccessResponse(true, "약 복용 사진 업로드 완료", null);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -38,7 +38,7 @@ public class S3Controller {
     @GetMapping("/goal/delete/{goalStatusIdx}")
     public ResponseEntity<?> deleteFile(@PathVariable long goalStatusIdx) throws IOException {
         s3Service.deleteGoalFile(goalStatusIdx);
-        SuccessResponse response = new SuccessResponse(true, "goalStatus file delete 완료", null);
+        SuccessResponse response = new SuccessResponse(true, "약 복용 사진 삭제 완료", null);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

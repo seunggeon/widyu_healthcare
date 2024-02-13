@@ -91,7 +91,7 @@ public class GoalsController {
 
     /**
      * 목표 수정
-     * @param goal
+     * @param
      * @return
      */
     @PatchMapping("/edit")

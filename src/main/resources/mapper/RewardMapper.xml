@@ -6,7 +6,7 @@
 <mapper namespace="com.widyu.healthcare.mapper.RewardMapper">
 
     <insert id="insertReward" parameterType="com.widyu.healthcare.dto.reward.RewardDTO">
-        INSERT INTO rewards (userIdx, url, description) VALUES (#{userIdx}, #{url}, #{description})
+        INSERT INTO rewards (userIdx, url, description, status, point) VALUES (#{userIdx}, #{url}, #{description}, #{status}, #{point})
     </insert>
 
     <update id="updateReward" parameterType="com.widyu.healthcare.dto.reward.RewardDTO">
@@ -15,9 +15,9 @@
         WHERE rewardIdx = #{rewardIdx}
     </update>
 
-    <update id="updateRewardUrl" parameterType="com.widyu.healthcare.dto.reward.RewardDTO">
+    <update id="updateRewardUrl" parameterType="map">
         UPDATE rewards
-        SET url = #{url}, description = #{description}
+        SET url = #{url}
         WHERE rewardIdx = #{rewardIdx}
     </update>
 
@@ -27,7 +27,7 @@
         WHERE rewardIdx = #{rewardIdx}
     </update>
 
-    <select id="getRewardByUserId" parameterType="java.lang.Long" resultType="String">
+    <select id="getRewardByUserIdx" parameterType="java.lang.Long" resultType="com.widyu.healthcare.dto.reward.RewardDTO">
         SELECT * FROM rewards
         WHERE userIdx = #{userIdx}
     </select>
@@ -37,14 +37,20 @@
         WHERE rewardIdx = #{rewardIdx}
     </select>
 
-    <select id="getPriceByRewardId" parameterType="java.lang.Long" resultType="java.lang.Long">
+    <select id="getPriceByRewardIdx" parameterType="java.lang.Long" resultType="java.lang.Long">
         SELECT point FROM rewards
         WHERE rewardIdx = #{rewardIdx}
     </select>
 
-    <select id="getUrlByRewardId" parameterType="java.lang.Long" resultType="String">
+    <select id="getUrlByRewardIdx" parameterType="java.lang.Long" resultType="String">
         SELECT url FROM rewards
         WHERE rewardIdx = #{rewardIdx}
     </select>
+
+    <delete id="deleteRewardByRewardIdx" parameterType="java.lang.Long">
+        DELETE
+        FROM rewards
+        WHERE rewardIdx = #{rewardIdx}
+    </delete>
 
 </mapper>

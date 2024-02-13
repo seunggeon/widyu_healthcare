@@ -1,5 +1,6 @@
 package com.widyu.healthcare.dto.goals;
 
+import com.google.firebase.database.annotations.NotNull;
 import lombok.*;
 
 import java.sql.Time;
@@ -14,6 +15,7 @@ public class GoalStatusDTO {
 
     private Long goalStatusIdx;
     private Long goalIdx;
+    @NonNull
     private Time time;
     private Integer status;
     private Long pillNum;

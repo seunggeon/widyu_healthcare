@@ -12,8 +12,9 @@ public interface RewardMapper {
     void updateReward(RewardDTO rewardDTO);
     void updateRewardUrl(String url, long rewardIdx);
     void updateRewardStatus(long rewardIdx, long status);
-    List<RewardDTO> getRewardByUserId(long userIdx);
+    List<RewardDTO> getRewardByUserIdx(long userIdx);
     RewardDTO getRewardByRewardId(long rewardIdx);
-    long getPriceByRewardId(long rewardIdx);
-    String getUrlbyRewardId(long rewardIdx);
+    long getPriceByRewardIdx(long rewardIdx);
+    String getUrlByRewardIdx(long rewardIdx);
+    void deleteRewardByRewardIdx(long rewardIdx);
 }

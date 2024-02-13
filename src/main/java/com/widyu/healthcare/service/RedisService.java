@@ -10,12 +10,12 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+
 @Service
 public class RedisService {
     private final RedisTemplate<String, Object> redisTemplate;
     private final ListOperations<String, Object> listOps;
     private final ValueOperations<String, Object> stringOps;
-
     public RedisService(RedisTemplate<String, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
         this.listOps = redisTemplate.opsForList();

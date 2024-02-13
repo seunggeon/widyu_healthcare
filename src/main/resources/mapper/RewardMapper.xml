@@ -21,7 +21,7 @@
         WHERE rewardIdx = #{rewardIdx}
     </update>
 
-    <update id="updateRewardStatus" parameterType="com.widyu.healthcare.dto.reward.RewardDTO">
+    <update id="updateRewardStatus" parameterType="map">
         UPDATE rewards
         SET status = #{status}
         WHERE rewardIdx = #{rewardIdx}

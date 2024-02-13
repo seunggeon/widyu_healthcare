@@ -82,7 +82,7 @@ public class GoalsController {
     @DeleteMapping("/delete/{goalIdx}")
     public ResponseEntity<?> deleteGoal(@PathVariable long goalIdx, HttpSession session){
 
-        Long userIdx = Long.valueOf(SessionUtil.getLoginGuardianId(session));
+        long userIdx = SessionUtil.getLoginGuardianId(session);
         goalsService.deleteGoal(userIdx, goalIdx);
         SuccessResponse response = new SuccessResponse(true, "목표 삭제 성공", null);
 
@@ -111,7 +111,7 @@ public class GoalsController {
     public ResponseEntity<?> editStatusSuccess(@PathVariable long goalStatusIdx, HttpSession session){
 
 
-        Long userIdx = Long.valueOf(SessionUtil.getLoginGuardianId(session));
+        long userIdx = SessionUtil.getLoginGuardianId(session);
         goalsService.updateStatusSuccess(userIdx, goalStatusIdx);
         SuccessResponse response = new SuccessResponse(true, "목표 상태 변경 성공", null);
 

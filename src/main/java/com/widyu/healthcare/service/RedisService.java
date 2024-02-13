@@ -73,7 +73,7 @@ public class RedisService {
 
     public void incrementPoint(String key) {
         Long currentPoint = getPoint(key);
-        stringOps.set(key, Long.toString(currentPoint + 1));
+        stringOps.increment(key, currentPoint + 1);
     }
 
     public void setPoint(String key, Long point) {

@@ -9,11 +9,8 @@ import com.widyu.healthcare.mapper.GoalsStatusMapper;
 import com.widyu.healthcare.dto.goals.GoalStatusDTO;
 import com.widyu.healthcare.mapper.GoalsMapper;
 import lombok.extern.log4j.Log4j2;
-import org.apache.ibatis.jdbc.Null;
 import org.quartz.*;
-import org.quartz.impl.matchers.GroupMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -29,16 +26,18 @@ public class GoalsService {
     private final GoalsStatusMapper goalsStatusMapper;
     private final GuardiansService guardiansService;
     private final RedisService redisService;
+    private final FcmService fcmService;
     private final Scheduler scheduler;
     private static final String VERIFICATION_CODE_PREFIX = "point_code:";
 
     @Autowired
-    public GoalsService(GoalsMapper goalsMapper, GoalsStatusMapper goalsStatusMapper, GuardiansService guardiansService, RedisService redisService, Scheduler scheduler) {
+    public GoalsService(GoalsMapper goalsMapper, GoalsStatusMapper goalsStatusMapper, GuardiansService guardiansService, RedisService redisService, FcmService fcmService, Scheduler scheduler) {
 
         this.goalsMapper = goalsMapper;
         this.goalsStatusMapper = goalsStatusMapper;
         this.guardiansService = guardiansService;
         this.redisService = redisService;
+        this.fcmService = fcmService;
         this.scheduler = scheduler;
     }
 
@@ -100,7 +99,7 @@ public class GoalsService {
     }
 
     // 특정 단일 목표 조회
-    public GoalDTO getGoalByGoalId(long userIdx, long goalIdx){
+    public GoalDTO getGoalByGoalIdx(long userIdx, long goalIdx){
 
         return goalsMapper.getGoalByGoalIdx(userIdx, goalIdx);
     }
@@ -112,6 +111,7 @@ public class GoalsService {
 
         for (GoalStatusDTO goalStatus : goalSet.getGoalStatusDTOList()) {
             goalStatus.setGoalIdx(goalIdx);
+            goalStatus.setStatus(0);
             goalsStatusMapper.insertGoalStatus(goalStatus);
             Long goalStatusIdx = goalsStatusMapper.getGoalStatusIdx(goalStatus);
             goalStatus.setGoalStatusIdx(goalStatusIdx);
@@ -144,7 +144,10 @@ public class GoalsService {
         // 포인트 추가 (*1포인트 추가로 설정함)
         goalsStatusMapper.updateTotalPoint(userIdx, 1L);
         redisService.incrementPoint(buildRedisKey(userIdx.toString()));
-        //log.info("redis-point: {}", redisService.getPoint(buildRedisKey(userIdx.toString()));
+        log.info("[RP] redis point: {}", redisService.getPoint(userIdx.toString()));
+
+        //
+        //fcmService.sendMessage();
     }
 
     private void scheduleTimerForGoalStatus(GoalStatusDTO goalStatus) {

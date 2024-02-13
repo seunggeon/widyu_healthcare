@@ -9,6 +9,7 @@ import com.widyu.healthcare.service.RewardService;
 import com.widyu.healthcare.service.S3Service;
 import com.widyu.healthcare.utils.SessionUtil;
 import jakarta.servlet.http.HttpSession;
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -58,12 +59,13 @@ public class RewardController {
      * 리워드 업로드
      */
     @PostMapping("/insert")
-    public ResponseEntity<?> insertReward(@RequestParam(value = "url", required = false) @NotNull final MultipartFile multipartFile,
-                                          @RequestParam(value = "dto", required = false) @NotNull final RewardDTO rewardDTO
+    public ResponseEntity<?> insertReward(@RequestParam(value = "url", required = false) @NonNull final MultipartFile multipartFile,
+                                          @RequestParam(value = "userIdx", required = false) @NonNull final String userIdx,
+                                          @RequestParam(value = "description", required = false) final String description
     ) throws IOException {
 
-        s3Service.insertRewardFile(rewardDTO, multipartFile);
-        SuccessResponse response = new SuccessResponse(true, "goalStatus file upload 완료", null);
+        RewardDTO rewardDTO = s3Service.insertRewardFile(Long.parseLong(userIdx), description, multipartFile);
+        SuccessResponse response = new SuccessResponse(true, "리워드 추가 완료", rewardDTO);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -82,9 +84,10 @@ public class RewardController {
     /**
      * 리워드 삭제
      */
-    @DeleteMapping("/delete")
-    public ResponseEntity<?> deleteReward(@RequestBody Long rewardIdx){
-        //s3Service.de
+    @DeleteMapping("/delete/{rewardIdx}")
+    public ResponseEntity<?> deleteReward(@PathVariable("rewardIdx") @NonNull long rewardIdx) throws IOException {
+
+        rewardService.deleteReward(rewardIdx);
         SuccessResponse response = new SuccessResponse(true, "reward 삭제 완료", null);
 
         return new ResponseEntity<>(response, HttpStatus.OK);

@@ -57,10 +57,14 @@ public class S3Service {
     }
 
     // 리워드 파일 업로드
-    public void insertRewardFile(RewardDTO rewardDTO, MultipartFile multipartFile) throws IOException {
+    public RewardDTO insertRewardFile(long userIdx, String description, MultipartFile multipartFile) throws IOException {
 
         String url = upload(multipartFile);
+        log.info("url: {}", url);
+        RewardDTO rewardDTO = new RewardDTO(userIdx, description, url);
         rewardMapper.insertReward(rewardDTO);
+
+        return rewardDTO;
     }
 
     // 리워드 파일 수정
@@ -69,11 +73,10 @@ public class S3Service {
     }
 
     // 리워드 파일 삭제
-    public void deleteReward(long rewardIdx) throws IOException {
-        String url = rewardMapper.getUrlbyRewardId(rewardIdx);
+    public void deleteRewardUrl(long rewardIdx) throws IOException {
+        String url = rewardMapper.getUrlByRewardIdx(rewardIdx);
         delete(url);
         rewardMapper.updateRewardUrl(null, rewardIdx);
-
     }
 
     private String upload(MultipartFile multipartFile) throws IOException {

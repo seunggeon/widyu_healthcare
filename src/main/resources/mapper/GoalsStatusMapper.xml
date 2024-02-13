@@ -12,7 +12,7 @@
     <delete id="deleteGoalStatus" parameterType="java.lang.Long">
         DELETE
         FROM goalsstatus
-        WHERE userIdx = #{userIdx} AND goalIdx = #{goalIdx}
+        WHERE goalIdx = #{goalIdx}
     </delete>
 
     <update id="updateGoalStatusUrl" parameterType="com.widyu.healthcare.dto.goals.GoalStatusDTO">

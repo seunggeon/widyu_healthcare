@@ -7,17 +7,29 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
-@AllArgsConstructor
 public class GoalDTO {
 
-    private Long goalIdx;
-    private Long userIdx;
+    private long goalIdx;
+    @NonNull
+    private long userIdx;
+    @NonNull
     private String title;
     private String description;
+    @NonNull
     private Type type;
     private String day;
     private Timestamp startDate;
     private Timestamp endDate;
+
+    public GoalDTO(@NonNull Long userIdx, @NonNull String title, String description, @NonNull Type type, String day, Timestamp startDate, Timestamp endDate) {
+        this.userIdx = userIdx;
+        this.title = title;
+        this.description = description;
+        this.type = type;
+        this.day = day;
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
 }
 
 enum Type {

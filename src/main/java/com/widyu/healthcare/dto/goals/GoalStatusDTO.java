@@ -8,17 +8,22 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Data
-@Getter
-@Setter
-@AllArgsConstructor
 public class GoalStatusDTO {
 
-    private Long goalStatusIdx;
-    private Long goalIdx;
+    private long goalStatusIdx;
+    private long goalIdx;
     @NonNull
     private Time time;
-    private Integer status;
+    private byte status;
     private Long pillNum;
     private String imgUrl;
-    private Long point;
+    private long point;
+
+    public GoalStatusDTO(@NonNull Time time, Long pillNum, long point) {
+        this.time = time;
+        this.status = status;
+        this.pillNum = pillNum;
+        this.imgUrl = imgUrl;
+        this.point = point;
+    }
 }

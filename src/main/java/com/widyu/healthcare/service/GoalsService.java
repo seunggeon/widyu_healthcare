@@ -111,7 +111,7 @@ public class GoalsService {
 
         for (GoalStatusDTO goalStatus : goalSet.getGoalStatusDTOList()) {
             goalStatus.setGoalIdx(goalIdx);
-            goalStatus.setStatus(0);
+            goalStatus.setStatus((byte) 0);
             goalsStatusMapper.insertGoalStatus(goalStatus);
             Long goalStatusIdx = goalsStatusMapper.getGoalStatusIdx(goalStatus);
             goalStatus.setGoalStatusIdx(goalStatusIdx);

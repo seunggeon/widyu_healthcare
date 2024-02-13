@@ -11,7 +11,7 @@ public class RewardDTO {
     @NonNull
     long userIdx;
     String description;
-    private Integer status;
+    private byte status;
     String url;
     long point;
 

@@ -11,7 +11,7 @@ public interface RewardMapper {
     void insertReward(RewardDTO rewardDTO);
     void updateReward(RewardDTO rewardDTO);
     void updateRewardUrl(String url, long rewardIdx);
-    void updateRewardStatus(long rewardIdx, long status);
+    void updateRewardStatus(long rewardIdx, Integer status);
     List<RewardDTO> getRewardByUserIdx(long userIdx);
     RewardDTO getRewardByRewardId(long rewardIdx);
     long getPriceByRewardIdx(long rewardIdx);

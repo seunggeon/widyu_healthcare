@@ -20,6 +20,8 @@ public class RewardService {
     private final S3Service s3Service;
     private final GoalsStatusMapper goalsStatusMapper;
 
+    private static final String POINT_CODE_PREFIX = "point_code:";
+
     public RewardService(RewardMapper rewardMapper, RedisService redisService, S3Service s3Service, GoalsStatusMapper goalsStatusMapper) {
         this.rewardMapper = rewardMapper;
         this.redisService = redisService;
@@ -36,15 +38,15 @@ public class RewardService {
     public RewardDTO getReward(Long userIdx, Long rewardIdx) throws InsufficientPointsException {
         long point = rewardMapper.getPriceByRewardIdx(rewardIdx);
 
-        log.info("[RP] redis point: {}/ img point: {}", redisService.getPoint(userIdx.toString()), point);
-        if (redisService.getPoint(userIdx.toString()) - point < 0)
+        if (redisService.getPoint(buildRedisKey(userIdx.toString())) - point < 0)
             throw new InsufficientPointsException("point 부족");
 
         redisService.decrementPoint(userIdx.toString(), point);
         goalsStatusMapper.updateTotalPoint(userIdx, point);
 
+        rewardMapper.updateRewardStatus(rewardIdx, 1);
         RewardDTO rewardDTO = rewardMapper.getRewardByRewardId(rewardIdx);
-        rewardMapper.updateRewardStatus(rewardIdx, 1L);
+
         return rewardDTO;
     }
 
@@ -54,4 +56,7 @@ public class RewardService {
         rewardMapper.deleteRewardByRewardIdx(rewardIdx);
     }
 
+    private static String buildRedisKey(String userIdx) {
+        return POINT_CODE_PREFIX + userIdx;
+    }
 }

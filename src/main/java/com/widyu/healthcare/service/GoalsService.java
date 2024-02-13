@@ -28,7 +28,7 @@ public class GoalsService {
     private final RedisService redisService;
     private final FcmService fcmService;
     private final Scheduler scheduler;
-    private static final String VERIFICATION_CODE_PREFIX = "point_code:";
+    private static final String POINT_CODE_PREFIX = "point_code:";
 
     @Autowired
     public GoalsService(GoalsMapper goalsMapper, GoalsStatusMapper goalsStatusMapper, GuardiansService guardiansService, RedisService redisService, FcmService fcmService, Scheduler scheduler) {
@@ -173,6 +173,6 @@ public class GoalsService {
     }
 
     private static String buildRedisKey(String userIdx) {
-        return VERIFICATION_CODE_PREFIX + userIdx;
+        return POINT_CODE_PREFIX + userIdx;
     }
 }

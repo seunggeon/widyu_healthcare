@@ -5,7 +5,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.widyu.healthcare.dto.goals.RewardDTO;
+import com.widyu.healthcare.dto.reward.RewardDTO;
 import com.widyu.healthcare.mapper.GoalsStatusMapper;
 import com.widyu.healthcare.mapper.RewardMapper;
 import lombok.extern.log4j.Log4j2;

@@ -3,9 +3,11 @@ package com.widyu.healthcare.dto.goals;
 import lombok.*;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
-public class GoalDto {
+public class GoalDTO {
 
     private long goalIdx;
     @NonNull
@@ -19,7 +21,7 @@ public class GoalDto {
     private Timestamp startDate;
     private Timestamp endDate;
 
-    public GoalDto(@NonNull Long userIdx, @NonNull String title, String description, @NonNull Type type, String day, Timestamp startDate, Timestamp endDate) {
+    public GoalDTO(@NonNull Long userIdx, @NonNull String title, String description, @NonNull Type type, String day, Timestamp startDate, Timestamp endDate) {
         this.userIdx = userIdx;
         this.title = title;
         this.description = description;

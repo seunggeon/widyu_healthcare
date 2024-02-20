@@ -4,6 +4,7 @@ import com.widyu.healthcare.aop.LoginCheck;
 import com.widyu.healthcare.aop.LoginCheck.UserType;
 import com.widyu.healthcare.dto.SuccessResponse;
 import com.widyu.healthcare.dto.goals.GoalDTO;
+import com.widyu.healthcare.dto.goals.GoalSetDTO;
 import com.widyu.healthcare.dto.goals.ResponseUserDTO;
 import com.widyu.healthcare.service.GoalsService;
 import com.widyu.healthcare.utils.SessionUtil;
@@ -60,14 +61,14 @@ public class GoalsController {
 
     /**
      * 목표 생성
-     * @param goal
+     * @param
      * @return
      */
     @PostMapping("/insert")
-    public ResponseEntity<?> insertGoal(@RequestBody GoalDTO goal) {
+    public ResponseEntity<?> insertGoal(@RequestBody GoalSetDTO goalSetDTO) {
 
-        goalsService.insertGoal(goal);
-        SuccessResponse response = new SuccessResponse(true, "목표 추가 성공", null);
+        GoalSetDTO result = goalsService.insertGoal(goalSetDTO);
+        SuccessResponse response = new SuccessResponse(true, "목표 추가 성공", result);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -81,7 +82,7 @@ public class GoalsController {
     @DeleteMapping("/delete/{goalIdx}")
     public ResponseEntity<?> deleteGoal(@PathVariable long goalIdx, HttpSession session){
 
-        Long userIdx = Long.valueOf(SessionUtil.getLoginGuardianId(session));
+        long userIdx = SessionUtil.getLoginGuardianId(session);
         goalsService.deleteGoal(userIdx, goalIdx);
         SuccessResponse response = new SuccessResponse(true, "목표 삭제 성공", null);
 
@@ -90,12 +91,12 @@ public class GoalsController {
 
     /**
      * 목표 수정
-     * @param goal
+     * @param
      * @return
      */
     @PatchMapping("/edit")
-    public ResponseEntity<?> editGoal(@RequestBody GoalDTO goal){
-        goalsService.updateGoal(goal);
+    public ResponseEntity<?> editGoal(@RequestBody GoalSetDTO goalSetDTO){
+        goalsService.updateGoal(goalSetDTO);
         SuccessResponse response = new SuccessResponse(true, "목표 수정 성공", null);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -110,7 +111,7 @@ public class GoalsController {
     public ResponseEntity<?> editStatusSuccess(@PathVariable long goalStatusIdx, HttpSession session){
 
 
-        Long userIdx = Long.valueOf(SessionUtil.getLoginGuardianId(session));
+        long userIdx = SessionUtil.getLoginGuardianId(session);
         goalsService.updateStatusSuccess(userIdx, goalStatusIdx);
         SuccessResponse response = new SuccessResponse(true, "목표 상태 변경 성공", null);
 

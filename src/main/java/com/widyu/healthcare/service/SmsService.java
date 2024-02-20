@@ -29,14 +29,14 @@ public class SmsService {
         try{
             Message message = new Message();
             // 발신번호 및 수신번호는 반드시 01012345678 형태로 입력되어야 합니다.
-            message.setFrom("07041416666");
+            message.setFrom("01023279226");
             message.setTo(phoneNumber);
-            message.setText("[widyu] 본인 인증: 인증번호는" + "["+code+"]" + "입니다.");
+            message.setText("본인 인증: 인증번호는" + "["+code+"]" + "입니다.");
 
             response = this.messageService.sendOne(new SingleMessageSendingRequest(message));
         } catch (Exception e){
-            log.error("누리고 서버 문자 전송 실패\n",e);
-            throw new DuplicateIdException("누리고 서버 문자 전송 실패\n");
+            log.error("coolsms 서버 문자 전송 실패\n",e);
+            throw new DuplicateIdException("coolsms 서버 문자 전송 실패\n");
         }
 
         this.saveCertificationCode(phoneNumber, code);
@@ -61,7 +61,7 @@ public class SmsService {
     }
     public void saveCertificationCode(String phoneNumber, String code) {
         String key = buildRedisKey(phoneNumber);
-        this.redisService.setValue(key, code, 5L);
+        this.redisService.setListValue(key, code);
     }
     public List<String> getCertificationCode(String phoneNumber) {
         String key = buildRedisKey(phoneNumber);

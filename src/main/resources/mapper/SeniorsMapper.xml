@@ -4,16 +4,47 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.widyu.healthcare.mapper.SeniorsMapper">
+    <resultMap id="SeniorDetailResponseDtoMap" type="com.widyu.healthcare.dto.response.SeniorDetailResponseDto">
+        <result property="userIdx" column="userIdx"/>
+        <result property="name" column="name"/>
+        <result property="profileImageUrl" column="profileImageUrl"/>
+        <result property="type" column="type"/>
+        <result property="phoneNumber" column="phoneNumber"/>
+        <result property="address" column="address"/>
+        <result property="birth" column="birth"/>
+        <result property="isDisease" column="isDisease"/>
+        <collection property="diseases" column="{userIdx = userIdx}" javaType="java.util.ArrayList" ofType="com.widyu.healthcare.dto.DiseaseDto" select="findDiseasesByIdx"/>
+    </resultMap>
 
-    <insert id="insert" parameterType="com.widyu.healthcare.dto.users.UsersDTO">
-        INSERT INTO users(name, phone, birth, age, address, type, inviteCode, isDisease)
-        VALUES( #{name}, #{phone}, #{birth}, #{age}, #{address}, #{type}, #{inviteCode}, #{isDisease})
+    <insert id="insertDetail" parameterType="com.widyu.healthcare.dto.request.SeniorRequestDto">
+        INSERT INTO usersdetail(phoneNumber, birth, age, address, inviteCode, isDisease)
+        VALUES(#{phoneNumber}, #{birth}, #{age}, #{address}, #{inviteCode}, #{isDisease})
         <selectKey resultType="long" keyProperty="userIdx" keyColumn="userIdx" order="AFTER">
             SELECT LAST_INSERT_ID()
         </selectKey>
     </insert>
 
-    <insert id="insertRelationWithSenior" >
+    <update id="update">
+        UPDATE users
+        SET name = #{name}, type = #{type}
+        WHERE userIdx = #{userIdx}
+    </update>
+
+    <insert id="insertDiseases">
+        INSERT INTO diseases(userIdx, name, drugName, explanation)
+        VALUES
+        <foreach collection="diseases" item="disease" separator=",">
+            (#{userIdx}, #{disease.name}, #{disease.drugName}, #{disease.explanation})
+        </foreach>
+    </insert>
+
+    <update id="updateFCM">
+        UPDATE usersdetail
+        SET fcmToken = #{fcmToken}
+        WHERE userIdx = #{seniorIdx}
+    </update>
+
+    <insert id="insertRelationWithSenior">
         INSERT INTO relations(seniorIdx, guardianIdx)
         VALUES( #{seniorIdx}, #{guardianIdx} )
     </insert>
@@ -24,11 +55,82 @@
         WHERE guardianIdx = #{guardianIdx}
     </update>
 
-    <select id="findByInviteCode" resultType="com.widyu.healthcare.dto.users.UsersDTO">
-        SELECT *
-        FROM users
-        WHERE inviteCode = #{inviteCode}
-          AND status != 'DELETE'
+    <select id="findByInviteCode" resultType="com.widyu.healthcare.dto.response.UsersResponseDto">
+        SELECT u.userIdx, u.status
+        FROM usersdetail as ud
+        JOIN users as u ON ud.userIdx = u.userIdx
+        WHERE ud.inviteCode = #{inviteCode}
     </select>
+
+    <select id="findByIdx" resultMap="SeniorDetailResponseDtoMap">
+        SELECT ud.userIdx, u.name as name, u.profileImageUrl, u.type, ud.inviteCode, ud.phoneNumber, ud.address, ud.birth, ud.isDisease
+        FROM usersdetail ud
+        LEFT JOIN users u ON ud.userIdx = u.userIdx
+        WHERE ud.userIdx = #{userIdx}
+        AND u.status != 'DELETE'
+        GROUP BY ud.userIdx;
+    </select>
+
+    <select id="findDiseasesByIdx" resultType="com.widyu.healthcare.dto.DiseaseDto">
+        SELECT diseaseIdx, name, drugName, explanation
+        FROM diseases
+        WHERE userIdx = #{userIdx}
+    </select>
+
+    <select id="findGuardiansByIdx" resultType="com.widyu.healthcare.dto.response.GuardianDetailResponseDto">
+        SELECT u.name, u.profileImageUrl, u.type, ud.id, ud.phoneNumber, ud.address, ud.birth
+        FROM usersdetail as ud
+        JOIN users as u ON ud.userIdx = u.userIdx
+        WHERE ud.userIdx IN (
+            SELECT guardianIdx
+            FROM relations
+            WHERE seniorIdx = #{userIdx}
+        )
+        LIMIT 10;
+    </select>
+
+    <select id="findGuardianByGuardianId" resultType="com.widyu.healthcare.dto.response.GuardianDetailResponseDto">
+        SELECT u.userIdx, u.name, u.profileImageUrl, u.type, ud.id
+        FROM usersdetail as ud
+        JOIN users as u ON ud.userIdx = u.userIdx
+        WHERE ud.id = #{id}
+        AND u.type = 'GUARDIAN'
+        LIMIT 10;
+    </select>
+
+    <update id="updateProfile">
+        UPDATE users AS u
+        JOIN usersdetail AS ud ON u.userIdx = ud.userIdx
+        JOIN diseases AS d ON d.userIdx = ud.userIdx
+        <set>
+            <if test="name != null">
+                u.name = #{name},
+            </if>
+            <if test="profileImageUrl != null">
+                u.profileImageUrl = #{profileImageUrl},
+            </if>
+            <if test="birth != null">
+                ud.birth = #{birth},
+            </if>
+            <if test="phoneNumber != null">
+                ud.phoneNumber = #{phoneNumber},
+            </if>
+            <if test="address != null">
+                ud.address = #{address},
+            </if>
+            <if test="isDisease != null">
+                ud.isDisease = #{isDisease},
+            </if>
+        </set>
+        WHERE u.userIdx = #{userIdx}
+        AND u.status != 'DELETE'
+    </update>
+
+    <update id="updateDisease" parameterType="com.widyu.healthcare.dto.DiseaseDto">
+            UPDATE diseases
+            SET name = #{disease.name}, drugName = #{disease.drugName}, explanation = #{disease.explanation}
+            WHERE diseaseIdx = #{disease.diseaseIdx}
+            AND userIdx = #{userIdx};
+    </update>
 
 </mapper>

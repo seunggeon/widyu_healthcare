@@ -2,7 +2,6 @@ package com.widyu.healthcare.service;
 
 import com.widyu.healthcare.dto.reward.RewardDTO;
 import com.widyu.healthcare.error.exception.InsufficientPointsException;
-import com.widyu.healthcare.error.exception.NoDataException;
 import com.widyu.healthcare.mapper.GoalsStatusMapper;
 import com.widyu.healthcare.mapper.RewardMapper;
 import lombok.extern.log4j.Log4j2;

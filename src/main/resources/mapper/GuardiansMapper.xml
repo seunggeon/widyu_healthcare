@@ -4,33 +4,110 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.widyu.healthcare.mapper.GuardiansMapper">
+    <resultMap id="SeniorDetailResponseDtoMap" type="com.widyu.healthcare.dto.response.SeniorDetailResponseDto">
+        <result property="userIdx" column="userIdx"/>
+        <result property="name" column="name"/>
+        <result property="profileImageUrl" column="profileImageUrl"/>
+        <result property="type" column="type"/>
+        <result property="phoneNumber" column="phoneNumber"/>
+        <result property="address" column="address"/>
+        <result property="birth" column="birth"/>
+        <result property="isDisease" column="isDisease"/>
+        <collection property="diseases" column="{userIdx = userIdx}" javaType="java.util.ArrayList" ofType="com.widyu.healthcare.dto.DiseaseDto" select="findDiseasesByIdx"/>
+    </resultMap>
 
     <select id="checkId" resultType="int">
         select count(id)
-        from users
+        from usersdetail
         WHERE id = #{id}
     </select>
 
-    <insert id="insert" parameterType="com.widyu.healthcare.dto.users.UsersDTO">
-        INSERT INTO users(id, password)
+    <insert id="insert">
+        INSERT INTO usersdetail(id, password)
         VALUES(#{id}, #{password})
     </insert>
 
-    <select id="findByIdAndPassword" resultType="com.widyu.healthcare.dto.users.UsersDTO">
-        SELECT *
-        FROM users
-        WHERE id = #{id}
-          AND password = #{password}
-          AND status != 'DELETE'
+    <select id="findByIdAndPassword" resultType="com.widyu.healthcare.dto.response.UsersResponseDto">
+        SELECT u.status as status, u.userIdx as userIdx
+        FROM usersdetail as ud
+        LEFT JOIN users as u ON ud.userIdx = u.userIdx
+        WHERE ud.id = #{id}
+          AND ud.password = #{password}
+          AND u.status != 'DELETE'
     </select>
 
-    <select id="findSeniorsById" resultType="com.widyu.healthcare.dto.users.UsersDTO">
-        SELECT seniorIdx, description
-        FROM relations
-        WHERE guardianIdx = #{userIdx}
-        AND status != 'DELETE'
-        LIMIT 10
+    <update id="updateFCM">
+        UPDATE usersdetail
+        SET fcmToken = #{fcmToken}
+        WHERE userIdx = #{guardianIdx}
+    </update>
+
+    <select id="findByIdx" resultType="com.widyu.healthcare.dto.response.GuardianDetailResponseDto">
+        SELECT u.name, u.profileImageUrl, u.type, ud.id, ud.phoneNumber, ud.address, ud.birth
+        FROM usersdetail as ud
+        JOIN users as u ON ud.userIdx = u.userIdx
+        WHERE ud.userIdx = #{userIdx}
+          AND u.status != 'DELETE'
     </select>
+
+    <select id="findSeniorsByIdx">
+        SELECT ud.userIdx, u.name as name, u.profileImageUrl, u.type, ud.inviteCode, ud.phoneNumber, ud.address, ud.birth, ud.isDisease
+        FROM usersdetail ud
+        LEFT JOIN users u ON ud.userIdx = u.userIdx
+        WHERE ud.userIdx IN (
+            SELECT seniorIdx
+            FROM relations
+            WHERE guardianIdx = #{userIdx}
+        )
+        AND u.status != 'DELETE'
+        GROUP BY ud.userIdx;
+    </select>
+
+    <select id="findDiseasesByIdx" resultType="com.widyu.healthcare.dto.DiseaseDto">
+        SELECT diseaseIdx, name, drugName, explanation
+        FROM diseases
+        WHERE userIdx = #{userIdx}
+    </select>
+
+    <select id="findSeniorsIdxByIdx">
+        SELECT seniorIdx
+        FROM relations
+        WHERE guardianIdx = #{guardianIdx}
+    </select>
+
+    <!--  indexing 적용하기 -->
+    <select id="findIdByNameAndNumber" resultType="com.widyu.healthcare.dto.response.GuardianDetailResponseDto">
+        SELECT u.name, u.profileImageUrl, ud.id, ud.phoneNumber
+        FROM usersdetail as ud
+        JOIN users as u ON ud.userIdx = u.userIdx
+        WHERE u.name = #{name}
+          AND ud.phoneNumber = #{phoneNumber}
+          AND u.status != 'DELETE'
+    </select>
+
+    <update id="updatePasswordByGuardianInfos">
+        UPDATE usersdetail as ud
+        SET ud.password = #{password}
+        WHERE ud.id = #{id}
+          AND ud.phoneNumber = #{phoneNumber}
+          AND u.status != 'DELETE'
+    </update>
+
+    <update id="updateProfile">
+        UPDATE users as u
+        JOIN usersdetail as ud ON u.userIdx = ud.userIdx
+        <set>
+            <if test="name != null">
+                u.name = #{name},
+            </if>
+            <if test="phoneNumber != null">
+                ud.phoneNumber = #{phoneNumber},
+            </if>
+        </set>
+        WHERE u.userIdx = #{userIdx}
+        AND u.status != 'DELETE'
+        AND u.type != 'GUARDIAN'
+    </update>
 
 
 </mapper>

@@ -1,10 +1,8 @@
 package com.widyu.healthcare.controller;
 
-import com.google.firebase.database.annotations.NotNull;
 import com.widyu.healthcare.dto.SuccessResponse;
-import com.widyu.healthcare.dto.reward.RewardDTO;
+import com.widyu.healthcare.dto.goals.RewardDTO;
 import com.widyu.healthcare.error.exception.InsufficientPointsException;
-import com.widyu.healthcare.error.exception.NoDataException;
 import com.widyu.healthcare.service.RewardService;
 import com.widyu.healthcare.service.S3Service;
 import com.widyu.healthcare.utils.SessionUtil;

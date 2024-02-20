@@ -1,6 +1,6 @@
 package com.widyu.healthcare.mapper;
 
-import com.widyu.healthcare.dto.reward.RewardDTO;
+import com.widyu.healthcare.dto.goals.RewardDTO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;

@@ -22,4 +22,5 @@ public class RewardDTO {
         this.status = 0;
         this.point = 1;
     }
+
 }

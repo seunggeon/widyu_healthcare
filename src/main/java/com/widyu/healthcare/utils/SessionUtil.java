@@ -1,8 +1,6 @@
 package com.widyu.healthcare.utils;
 
 import jakarta.servlet.http.HttpSession;
-import com.widyu.healthcare.dto.users.UsersDTO;
-import lombok.NonNull;
 
 public class SessionUtil {
 
@@ -21,6 +19,7 @@ public class SessionUtil {
         session.removeAttribute(LOGIN_GUADIANCE_ID);
     }
     public static long getLoginSeniorId(HttpSession session) {
+        System.out.println("userIdx" + session.getAttribute(LOGIN_SENIOR_ID));
         return (long) session.getAttribute(LOGIN_SENIOR_ID);
     }
     public static void setLoginSeniorId(HttpSession session, long userIdx) {

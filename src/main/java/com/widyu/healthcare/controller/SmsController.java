@@ -4,7 +4,6 @@ import com.widyu.healthcare.dto.SuccessResponse;
 import com.widyu.healthcare.service.SmsService;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,14 +12,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Random;
-
 @Log4j2
 @RestController
 @RequestMapping("/api/v1/sms")
 public class SmsController {
     @Autowired
     private SmsService smsService;
+    /**
+     * 문자 인증 번호 전송
+     */
     @PostMapping("/send")
     public ResponseEntity<?> sendSMS(@RequestBody SendSmsRequest sendSmsRequest) {
         String phoneNumber = sendSmsRequest.getPhoneNumber();
@@ -30,6 +30,9 @@ public class SmsController {
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    /**
+     * 문자 인증 번호 유효성 확인
+     */
     @PostMapping("/verify/{phoneNumber}")
     public  ResponseEntity<?> verify(@PathVariable String phoneNumber, @RequestBody VerifyRequest verifyRequest){
         String certificationCode = verifyRequest.getCertificationCode();
@@ -38,13 +41,14 @@ public class SmsController {
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    @Setter
+
     @Getter
     private static class SendSmsRequest {
         @NonNull
+        private String name;
+        @NonNull
         private String phoneNumber;
     }
-    @Setter
     @Getter
     private static class VerifyRequest {
         @NonNull

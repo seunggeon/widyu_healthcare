@@ -22,7 +22,7 @@
         FROM goals
         WHERE userIdx = #{userIdx} AND title=#{title} AND description=#{description}
         ORDER BY createdDate DESC
-        LIMIT 1;
+            LIMIT 1;
     </select>
 
     <delete id="deleteGoal">

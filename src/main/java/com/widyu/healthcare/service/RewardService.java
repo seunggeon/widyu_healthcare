@@ -1,6 +1,6 @@
 package com.widyu.healthcare.service;
 
-import com.widyu.healthcare.dto.reward.RewardDTO;
+import com.widyu.healthcare.dto.goals.RewardDTO;
 import com.widyu.healthcare.error.exception.InsufficientPointsException;
 import com.widyu.healthcare.mapper.GoalsStatusMapper;
 import com.widyu.healthcare.mapper.RewardMapper;

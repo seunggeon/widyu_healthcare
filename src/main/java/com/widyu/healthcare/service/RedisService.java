@@ -10,12 +10,12 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+
 @Service
 public class RedisService {
     private final RedisTemplate<String, Object> redisTemplate;
     private final ListOperations<String, Object> listOps;
     private final ValueOperations<String, Object> stringOps;
-
     public RedisService(RedisTemplate<String, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
         this.listOps = redisTemplate.opsForList();
@@ -73,7 +73,7 @@ public class RedisService {
 
     public void incrementPoint(String key) {
         Long currentPoint = getPoint(key);
-        stringOps.set(key, Long.toString(currentPoint + 1));
+        stringOps.increment(key, currentPoint + 1);
     }
 
     public void setPoint(String key, Long point) {

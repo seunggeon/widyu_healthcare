@@ -59,7 +59,6 @@ public class S3Service {
     public RewardDTO insertRewardFile(long userIdx, String description, MultipartFile multipartFile) throws IOException {
 
         String url = upload(multipartFile);
-        log.info("url: {}", url);
         RewardDTO rewardDTO = new RewardDTO(userIdx, description, url);
         rewardMapper.insertReward(rewardDTO);
 

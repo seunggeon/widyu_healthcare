@@ -83,6 +83,13 @@ public class GuardiansService {
         return familyInfo;
     }
 
+    public List<SeniorDetailResponseDto>  getSeniorsOrNull(long userIdx){
+        GuardianDetailResponseDto myInfo = guardiansMapper.findByIdx(userIdx);
+        List<SeniorDetailResponseDto> seniorDetailList = guardiansMapper.findSeniorsByIdx(userIdx);
+
+        return seniorDetailList;
+    }
+
     public void updateProfile(long userIdx, String name, String phoneNumber){
         int updateCount = guardiansMapper.updateProfile(userIdx, name, phoneNumber);
         if(updateCount == 0){

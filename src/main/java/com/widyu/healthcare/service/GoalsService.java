@@ -3,7 +3,7 @@ package com.widyu.healthcare.service;
 import com.widyu.healthcare.dto.goals.GoalDTO;
 import com.widyu.healthcare.dto.goals.GoalSetDTO;
 import com.widyu.healthcare.dto.goals.ResponseUserDTO;
-import com.widyu.healthcare.dto.users.UsersDTO;
+import com.widyu.healthcare.dto.response.SeniorDetailResponseDto;
 import com.widyu.healthcare.jobs.StatusJob;
 import com.widyu.healthcare.mapper.GoalsStatusMapper;
 import com.widyu.healthcare.dto.goals.GoalStatusDTO;
@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
+
+import static com.widyu.healthcare.aop.LoginCheck.UserType.SENIOR;
 
 
 @Log4j2
@@ -50,17 +52,18 @@ public class GoalsService {
         responseUserDTOList.add(getResponseUserDtoByUserIdx(userIdx));
 
         // senior Info
-        List<UsersDTO> seniorsList = guardiansService.getSeniorsOrNull(userIdx);
-        for (UsersDTO usersDTO : seniorsList) {
+        List<SeniorDetailResponseDto> seniorsList = guardiansService.getSeniorsOrNull(userIdx);
+        for (SeniorDetailResponseDto seniorDetailResponseDto : seniorsList) {
             ResponseUserDTO seniorResponseUserDTO = new ResponseUserDTO();
 
-            seniorResponseUserDTO.setName(usersDTO.getName());
-            seniorResponseUserDTO.setUserType(usersDTO.getType());
+            seniorResponseUserDTO.setName(seniorDetailResponseDto.getName());
+            seniorResponseUserDTO.setUserType(SENIOR);
             // *userTable에서 가져와야할 정보 추후
 
-            seniorResponseUserDTO.setGoals(getGoalsByIdx(usersDTO.getUserIdx()));
+            seniorResponseUserDTO.setGoals(getGoalsByIdx(seniorDetailResponseDto.getUserIdx()));
             responseUserDTOList.add(seniorResponseUserDTO);
         }
+
 
         return responseUserDTOList;
     }
@@ -141,8 +144,8 @@ public class GoalsService {
     public void updateStatusSuccess(Long userIdx, long goalStatusIdx){
         // 상태 성공으로 변경
         goalsStatusMapper.updateStatus(goalStatusIdx, 1L);
-        // 포인트 추가 (*1포인트 추가로 설정함)
-        goalsStatusMapper.updateTotalPoint(userIdx, 1L);
+        // 포인트 추가 (*10 포인트 추가로 설정함)
+        goalsStatusMapper.updateTotalPoint(userIdx, 10L);
         redisService.incrementPoint(buildRedisKey(userIdx.toString()));
         log.info("[RP] redis point: {}", redisService.getPoint(userIdx.toString()));
 

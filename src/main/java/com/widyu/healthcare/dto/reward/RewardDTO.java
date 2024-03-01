@@ -20,7 +20,7 @@ public class RewardDTO {
         this.url = url;
         this.description = description;
         this.status = 0;
-        this.point = 1;
+        this.point = 30;
     }
 
 }

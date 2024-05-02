@@ -1,7 +1,7 @@
 package com.widyu.healthcare.controller;
 
 import com.google.firebase.database.annotations.NotNull;
-import com.widyu.healthcare.dto.SuccessResponse;
+import com.widyu.healthcare.dto.response.SuccessResponse;
 import com.widyu.healthcare.service.S3Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

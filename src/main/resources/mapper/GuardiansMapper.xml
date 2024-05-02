@@ -13,7 +13,7 @@
         <result property="address" column="address"/>
         <result property="birth" column="birth"/>
         <result property="isDisease" column="isDisease"/>
-        <collection property="diseases" column="{userIdx = userIdx}" javaType="java.util.ArrayList" ofType="com.widyu.healthcare.dto.DiseaseDto" select="findDiseasesByIdx"/>
+        <collection property="diseases" column="{userIdx = userIdx}" javaType="java.util.ArrayList" ofType="com.widyu.healthcare.dto.domain.DiseaseDto" select="findDiseasesByIdx"/>
     </resultMap>
 
     <select id="checkId" resultType="int">
@@ -63,7 +63,7 @@
         GROUP BY ud.userIdx;
     </select>
 
-    <select id="findDiseasesByIdx" resultType="com.widyu.healthcare.dto.DiseaseDto">
+    <select id="findDiseasesByIdx" resultType="com.widyu.healthcare.dto.domain.DiseaseDto">
         SELECT diseaseIdx, name, drugName, explanation
         FROM diseases
         WHERE userIdx = #{userIdx}

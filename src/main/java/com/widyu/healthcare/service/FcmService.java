@@ -5,7 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.common.net.HttpHeaders;
-import com.widyu.healthcare.dto.FcmDTO;
+import com.widyu.healthcare.dto.domain.FcmDto;
 import lombok.RequiredArgsConstructor;
 import okhttp3.*;
 import org.springframework.core.io.ClassPathResource;
@@ -45,10 +45,10 @@ public class FcmService {
 
     private String makeMessage(String targetToken, String title, String body) throws JsonParseException, JsonProcessingException {
 
-        FcmDTO fcmMessage = FcmDTO.builder()
-                .message(FcmDTO.Message.builder()
+        FcmDto fcmMessage = FcmDto.builder()
+                .message(FcmDto.Message.builder()
                         .token(targetToken)
-                        .notification(FcmDTO.Notification.builder()
+                        .notification(FcmDto.Notification.builder()
                                 .title(title)
                                 .body(body)
                                 .image(null)

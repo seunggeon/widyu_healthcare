@@ -1,11 +1,10 @@
-package com.widyu.healthcare.dto.reward;
+package com.widyu.healthcare.dto.domain;
 
 import lombok.Data;
 import lombok.NonNull;
-import org.springframework.web.multipart.MultipartFile;
 
 @Data
-public class RewardDTO {
+public class RewardDto {
 
     long rewardIdx;
     @NonNull
@@ -15,7 +14,7 @@ public class RewardDTO {
     String url;
     long point;
 
-    public RewardDTO(long userIdx, String description, String url) {
+    public RewardDto(long userIdx, String description, String url) {
         this.userIdx = userIdx;
         this.url = url;
         this.description = description;

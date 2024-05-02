@@ -2,8 +2,8 @@ package com.widyu.healthcare.controller;
 
 
 import com.google.firebase.database.annotations.NotNull;
-import com.widyu.healthcare.dto.FcmDTO;
-import com.widyu.healthcare.dto.SuccessResponse;
+import com.widyu.healthcare.dto.domain.FcmDto;
+import com.widyu.healthcare.dto.response.SuccessResponse;
 import com.widyu.healthcare.service.FcmService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -25,9 +25,9 @@ public class FcmController {
     private final FcmService fcmService;
 
     @PostMapping("/send")
-    public ResponseEntity<?> pushMessage(@RequestBody @NotNull FcmDTO fcmDTO) throws IOException {
+    public ResponseEntity<?> pushMessage(@RequestBody @NotNull FcmDto fcmDTO) throws IOException {
 
-        if (FcmDTO.hasNullDataBeforeFcmSend(fcmDTO)){
+        if (FcmDto.hasNullDataBeforeFcmSend(fcmDTO)){
             log.error("send Fcm Error! {}", fcmDTO);
             throw  new NullPointerException("Fcm 전송 시 필수 데이터를 모두 입력해야 합니다.");
         }

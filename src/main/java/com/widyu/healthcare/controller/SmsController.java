@@ -1,6 +1,6 @@
 package com.widyu.healthcare.controller;
 
-import com.widyu.healthcare.dto.SuccessResponse;
+import com.widyu.healthcare.dto.response.SuccessResponse;
 import com.widyu.healthcare.service.SmsService;
 import lombok.Getter;
 import lombok.NonNull;

@@ -1,4 +1,4 @@
-package com.widyu.healthcare.dto;
+package com.widyu.healthcare.dto.domain;
 
 import lombok.Data;
 @Data

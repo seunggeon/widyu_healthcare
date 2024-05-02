@@ -1,6 +1,6 @@
 package com.widyu.healthcare.jobs;
 
-import com.widyu.healthcare.dto.goals.GoalStatusDTO;
+import com.widyu.healthcare.dto.domain.GoalStatusDto;
 import com.widyu.healthcare.mapper.GoalsStatusMapper;
 import com.widyu.healthcare.service.GoalsService;
 import lombok.extern.log4j.Log4j2;
@@ -35,7 +35,7 @@ public class StatusJob implements Job {
 
 
         if (goalStatusIdx != null) {
-            GoalStatusDTO goalStatus = goalsStatusMapper.getGoalStatusByGoalStatusIdx(goalStatusIdx);
+            GoalStatusDto goalStatus = goalsStatusMapper.getGoalStatusByGoalStatusIdx(goalStatusIdx);
             if (goalStatus.getStatus() == 0){
                 goalsStatusMapper.updateStatus(goalStatusIdx, -1L);
             }

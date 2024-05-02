@@ -13,7 +13,7 @@
         <result property="address" column="address"/>
         <result property="birth" column="birth"/>
         <result property="isDisease" column="isDisease"/>
-        <collection property="diseases" column="{userIdx = userIdx}" javaType="java.util.ArrayList" ofType="com.widyu.healthcare.dto.DiseaseDto" select="findDiseasesByIdx"/>
+        <collection property="diseases" column="{userIdx = userIdx}" javaType="java.util.ArrayList" ofType="com.widyu.healthcare.dto.domain.DiseaseDto" select="findDiseasesByIdx"/>
     </resultMap>
 
     <insert id="insertDetail" parameterType="com.widyu.healthcare.dto.request.SeniorRequestDto">
@@ -71,7 +71,7 @@
         GROUP BY ud.userIdx;
     </select>
 
-    <select id="findDiseasesByIdx" resultType="com.widyu.healthcare.dto.DiseaseDto">
+    <select id="findDiseasesByIdx" resultType="com.widyu.healthcare.dto.domain.DiseaseDto">
         SELECT diseaseIdx, name, drugName, explanation
         FROM diseases
         WHERE userIdx = #{userIdx}
@@ -126,7 +126,7 @@
         AND u.status != 'DELETE'
     </update>
 
-    <update id="updateDisease" parameterType="com.widyu.healthcare.dto.DiseaseDto">
+    <update id="updateDisease" parameterType="com.widyu.healthcare.dto.domain.DiseaseDto">
             UPDATE diseases
             SET name = #{disease.name}, drugName = #{disease.drugName}, explanation = #{disease.explanation}
             WHERE diseaseIdx = #{disease.diseaseIdx}

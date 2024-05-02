@@ -1,10 +1,10 @@
-package com.widyu.healthcare.dto;
+package com.widyu.healthcare.dto.domain;
 
 import lombok.Getter;
 import lombok.NonNull;
 
 @Getter
-public class SmsDTO {
+public class SmsDto {
 
     @NonNull
     private String phoneNumber;

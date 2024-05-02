@@ -1,11 +1,10 @@
 package com.widyu.healthcare.dto.response;
 
-import com.widyu.healthcare.dto.DiseaseDto;
+import com.widyu.healthcare.dto.domain.DiseaseDto;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;

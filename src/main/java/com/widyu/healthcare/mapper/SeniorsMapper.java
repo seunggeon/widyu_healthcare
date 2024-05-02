@@ -1,11 +1,10 @@
 package com.widyu.healthcare.mapper;
 
-import com.widyu.healthcare.dto.DiseaseDto;
+import com.widyu.healthcare.dto.domain.DiseaseDto;
 import com.widyu.healthcare.dto.UserType;
 import com.widyu.healthcare.dto.request.SeniorRequestDto;
 import com.widyu.healthcare.dto.response.GuardianDetailResponseDto;
 import com.widyu.healthcare.dto.response.SeniorDetailResponseDto;
-import com.widyu.healthcare.dto.response.SeniorGoalResponseDto;
 import com.widyu.healthcare.dto.response.UsersResponseDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;

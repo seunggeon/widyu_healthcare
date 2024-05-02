@@ -1,20 +1,21 @@
 package com.widyu.healthcare.mapper;
 
-import com.widyu.healthcare.dto.goals.GoalDTO;
-import com.widyu.healthcare.dto.goals.GoalSetDTO;
+import com.widyu.healthcare.dto.domain.GoalDto;
+import com.widyu.healthcare.dto.response.GuardianGoalResponseDto;
+import com.widyu.healthcare.dto.response.SeniorGoalResponseDto;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
-import java.util.Map;
 
 @Mapper
 public interface GoalsMapper {
-
-    List<GoalDTO> getGoalsByIdx(long userIdx);
-    GoalDTO getGoalByGoalIdx(long userIdx, long goalIdx);
-    long insertGoal(GoalDTO goal);
-    long getGoalIdx(GoalDTO goal);
-    void updateGoal(GoalDTO goal);
+    SeniorGoalResponseDto findBySeniorIdx(long userIdx);
+    GuardianGoalResponseDto findByGuardianIdx(long userIdx);
+    List<GoalDto> getGoalsByIdx(long userIdx);
+    GoalDto getGoalByGoalIdx(long userIdx, long goalIdx);
+    long insertGoal(GoalDto goal);
+    long getGoalIdx(GoalDto goal);
+    void updateGoal(GoalDto goal);
     void deleteGoal(long userIdx, long goalIdx);
 
 }

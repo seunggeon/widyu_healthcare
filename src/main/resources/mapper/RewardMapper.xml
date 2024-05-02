@@ -5,11 +5,11 @@
 
 <mapper namespace="com.widyu.healthcare.mapper.RewardMapper">
 
-    <insert id="insertReward" parameterType="com.widyu.healthcare.dto.reward.RewardDTO">
+    <insert id="insertReward" parameterType="com.widyu.healthcare.dto.domain.RewardDto">
         INSERT INTO rewards (userIdx, url, description, status, point) VALUES (#{userIdx}, #{url}, #{description}, #{status}, #{point})
     </insert>
 
-    <update id="updateReward" parameterType="com.widyu.healthcare.dto.reward.RewardDTO">
+    <update id="updateReward" parameterType="com.widyu.healthcare.dto.domain.RewardDto">
         UPDATE rewards
         SET url = #{url}, description = #{description}
         WHERE rewardIdx = #{rewardIdx}
@@ -27,12 +27,12 @@
         WHERE rewardIdx = #{rewardIdx}
     </update>
 
-    <select id="getRewardByUserIdx" parameterType="java.lang.Long" resultType="com.widyu.healthcare.dto.reward.RewardDTO">
+    <select id="getRewardByUserIdx" parameterType="java.lang.Long" resultType="com.widyu.healthcare.dto.domain.RewardDto">
         SELECT * FROM rewards
         WHERE userIdx = #{userIdx}
     </select>
 
-    <select id="getRewardByRewardId" parameterType="java.lang.Long" resultType="com.widyu.healthcare.dto.reward.RewardDTO">
+    <select id="getRewardByRewardId" parameterType="java.lang.Long" resultType="com.widyu.healthcare.dto.domain.RewardDto">
         SELECT * FROM rewards
         WHERE rewardIdx = #{rewardIdx}
     </select>

@@ -1,4 +1,4 @@
-package com.widyu.healthcare.dto;
+package com.widyu.healthcare.dto.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,7 +8,7 @@ import lombok.NonNull;
 @Builder
 @AllArgsConstructor
 @Getter
-public class FcmDTO {
+public class FcmDto {
     private boolean validateOnly;
     private Message message;
 
@@ -32,7 +32,7 @@ public class FcmDTO {
         private String image;
     }
 
-    public static boolean hasNullDataBeforeFcmSend(FcmDTO fcmDTO){
+    public static boolean hasNullDataBeforeFcmSend(FcmDto fcmDTO){
         return fcmDTO.getMessage() == null || fcmDTO.getMessage().getToken() == null ||
                 fcmDTO.getMessage().getNotification() == null || fcmDTO.getMessage().getNotification().getTitle() == null;
     }

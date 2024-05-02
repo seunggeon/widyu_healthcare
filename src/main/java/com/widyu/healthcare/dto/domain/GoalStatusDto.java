@@ -1,14 +1,11 @@
-package com.widyu.healthcare.dto.goals;
+package com.widyu.healthcare.dto.domain;
 
-import com.google.firebase.database.annotations.NotNull;
 import lombok.*;
 
 import java.sql.Time;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 @Data
-public class GoalStatusDTO {
+public class GoalStatusDto {
 
     private long goalStatusIdx;
     private long goalIdx;
@@ -19,7 +16,7 @@ public class GoalStatusDTO {
     private String imgUrl;
     private long point;
 
-    public GoalStatusDTO(@NonNull Time time, Long pillNum, long point) {
+    public GoalStatusDto(@NonNull Time time, Long pillNum, long point) {
         this.time = time;
         this.status = status;
         this.pillNum = pillNum;

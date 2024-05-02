@@ -5,7 +5,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.widyu.healthcare.dto.reward.RewardDTO;
+import com.widyu.healthcare.dto.domain.RewardDto;
 import com.widyu.healthcare.mapper.GoalsStatusMapper;
 import com.widyu.healthcare.mapper.RewardMapper;
 import lombok.extern.log4j.Log4j2;
@@ -56,17 +56,17 @@ public class S3Service {
     }
 
     // 리워드 파일 업로드
-    public RewardDTO insertRewardFile(long userIdx, String description, MultipartFile multipartFile) throws IOException {
+    public RewardDto insertRewardFile(long userIdx, String description, MultipartFile multipartFile) throws IOException {
 
         String url = upload(multipartFile);
-        RewardDTO rewardDTO = new RewardDTO(userIdx, description, url);
+        RewardDto rewardDTO = new RewardDto(userIdx, description, url);
         rewardMapper.insertReward(rewardDTO);
 
         return rewardDTO;
     }
 
     // 리워드 파일 수정
-    public void updateReward(RewardDTO rewardDTO){
+    public void updateReward(RewardDto rewardDTO){
         rewardMapper.updateReward(rewardDTO);
     }
 

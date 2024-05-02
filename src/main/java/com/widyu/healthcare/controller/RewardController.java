@@ -1,7 +1,7 @@
 package com.widyu.healthcare.controller;
 
-import com.widyu.healthcare.dto.SuccessResponse;
-import com.widyu.healthcare.dto.reward.RewardDTO;
+import com.widyu.healthcare.dto.response.SuccessResponse;
+import com.widyu.healthcare.dto.domain.RewardDto;
 import com.widyu.healthcare.error.exception.InsufficientPointsException;
 import com.widyu.healthcare.service.RewardService;
 import com.widyu.healthcare.service.S3Service;
@@ -34,7 +34,7 @@ public class RewardController {
     public ResponseEntity<?> getAllReward(HttpSession session){
 
         long userIdx = SessionUtil.getLoginGuardianId(session);
-        List<RewardDTO> rewardAllInfo = rewardService.getAllReward(userIdx);
+        List<RewardDto> rewardAllInfo = rewardService.getAllReward(userIdx);
         SuccessResponse response = new SuccessResponse(true, "reward 조회 완료", rewardAllInfo);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -46,7 +46,7 @@ public class RewardController {
     @GetMapping("/buy/{rewardIdx}")
     public ResponseEntity<?> getReward(@PathVariable Long rewardIdx, HttpSession session) throws InsufficientPointsException {
         long userIdx = SessionUtil.getLoginGuardianId(session);
-        RewardDTO rewardInfo = rewardService.getReward(userIdx, rewardIdx);
+        RewardDto rewardInfo = rewardService.getReward(userIdx, rewardIdx);
         SuccessResponse response = new SuccessResponse(true, "reward 구매 완료", rewardInfo);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -62,7 +62,7 @@ public class RewardController {
                                           @RequestParam(value = "description", required = false) final String description
     ) throws IOException {
 
-        RewardDTO rewardDTO = s3Service.insertRewardFile(Long.parseLong(userIdx), description, multipartFile);
+        RewardDto rewardDTO = s3Service.insertRewardFile(Long.parseLong(userIdx), description, multipartFile);
         SuccessResponse response = new SuccessResponse(true, "리워드 추가 완료", rewardDTO);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -72,7 +72,7 @@ public class RewardController {
      * 리워드 수정
      */
     @PatchMapping("/update")
-    public ResponseEntity<?> updateReward(@RequestBody RewardDTO rewardDTO){
+    public ResponseEntity<?> updateReward(@RequestBody RewardDto rewardDTO){
         s3Service.updateReward(rewardDTO);
         SuccessResponse response = new SuccessResponse(true, "reward 수정 완료", null);
 

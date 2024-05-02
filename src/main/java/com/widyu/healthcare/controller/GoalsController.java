@@ -2,10 +2,12 @@ package com.widyu.healthcare.controller;
 
 import com.widyu.healthcare.aop.LoginCheck;
 import com.widyu.healthcare.aop.LoginCheck.UserType;
-import com.widyu.healthcare.dto.SuccessResponse;
-import com.widyu.healthcare.dto.goals.GoalDTO;
-import com.widyu.healthcare.dto.goals.GoalSetDTO;
-import com.widyu.healthcare.dto.goals.ResponseUserDTO;
+import com.widyu.healthcare.dto.domain.GoalDto;
+import com.widyu.healthcare.dto.request.GoalSetRequestDto;
+import com.widyu.healthcare.dto.response.MainGoalResponseDto;
+import com.widyu.healthcare.dto.response.SeniorGoalResponseDto;
+import com.widyu.healthcare.dto.response.SuccessResponse;
+import com.widyu.healthcare.dto.request.GoalSetRequestDto;
 import com.widyu.healthcare.service.GoalsService;
 import com.widyu.healthcare.utils.SessionUtil;
 import jakarta.servlet.http.HttpSession;
@@ -33,12 +35,12 @@ public class GoalsController {
      * @return
      */
     @GetMapping("/guardian/main")
-    @LoginCheck(type = UserType.GUARDIAN)
+//    @LoginCheck(type = UserType.GUARDIAN)
     public ResponseEntity<?> getGuardianMainPage(HttpSession session){
 
         long userIdx = SessionUtil.getLoginGuardianId(session);
-        List<ResponseUserDTO> responseUserDTOList = goalsService.getGurdianMainPage(userIdx);
-        SuccessResponse response = new SuccessResponse(true, "보호자 목표 메인페이지", responseUserDTOList);
+        MainGoalResponseDto myGoalsAndMySeniorGoals = goalsService.getGuardianMainPage(userIdx);
+        SuccessResponse response = new SuccessResponse(true, "보호자 목표 메인 페이지", myGoalsAndMySeniorGoals);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -49,12 +51,12 @@ public class GoalsController {
      * @return
      */
     @GetMapping("/senior/main")
-    @LoginCheck(type = UserType.SENIOR)
+//    @LoginCheck(type = UserType.SENIOR)
     public ResponseEntity<?> getSeniorMainPage(HttpSession session){
 
         long userIdx = SessionUtil.getLoginSeniorId(session);
-        ResponseUserDTO responseUserDTO = goalsService.getSeniorMainPage(userIdx);
-        SuccessResponse response = new SuccessResponse(true, "시니어 목표 메인페이지", responseUserDTO);
+        SeniorGoalResponseDto seniorGoals = goalsService.getSeniorMainPage(userIdx);
+        SuccessResponse response = new SuccessResponse(true, "시니어 목표 메인 페이지", seniorGoals);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -65,9 +67,9 @@ public class GoalsController {
      * @return
      */
     @PostMapping("/insert")
-    public ResponseEntity<?> insertGoal(@RequestBody GoalSetDTO goalSetDTO) {
+    public ResponseEntity<?> insertGoal(@RequestBody GoalSetRequestDto goalSetDto) {
 
-        GoalSetDTO result = goalsService.insertGoal(goalSetDTO);
+        GoalSetRequestDto result = goalsService.insertGoal(goalSetDto);
         SuccessResponse response = new SuccessResponse(true, "목표 추가 성공", result);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -95,8 +97,8 @@ public class GoalsController {
      * @return
      */
     @PatchMapping("/edit")
-    public ResponseEntity<?> editGoal(@RequestBody GoalSetDTO goalSetDTO){
-        goalsService.updateGoal(goalSetDTO);
+    public ResponseEntity<?> editGoal(@RequestBody GoalSetRequestDto goalDto){
+        goalsService.updateGoal(goalDto);
         SuccessResponse response = new SuccessResponse(true, "목표 수정 성공", null);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -109,7 +111,6 @@ public class GoalsController {
      */
     @PatchMapping("/success/{goalStatusIdx}")
     public ResponseEntity<?> editStatusSuccess(@PathVariable long goalStatusIdx, HttpSession session){
-
 
         long userIdx = SessionUtil.getLoginGuardianId(session);
         goalsService.updateStatusSuccess(userIdx, goalStatusIdx);

@@ -1,6 +1,6 @@
 package com.widyu.healthcare.service;
 
-import com.widyu.healthcare.dto.reward.RewardDTO;
+import com.widyu.healthcare.dto.domain.RewardDto;
 import com.widyu.healthcare.error.exception.InsufficientPointsException;
 import com.widyu.healthcare.mapper.GoalsStatusMapper;
 import com.widyu.healthcare.mapper.RewardMapper;
@@ -30,12 +30,12 @@ public class RewardService {
     }
 
     // 리워드 전체 조회
-    public List<RewardDTO> getAllReward(Long userIdx){
+    public List<RewardDto> getAllReward(Long userIdx){
         return rewardMapper.getRewardByUserIdx(userIdx);
     }
 
     // 리워드 조회 (=구매)
-    public RewardDTO getReward(Long userIdx, Long rewardIdx) throws InsufficientPointsException {
+    public RewardDto getReward(Long userIdx, Long rewardIdx) throws InsufficientPointsException {
         long point = rewardMapper.getPriceByRewardIdx(rewardIdx);
 
         if (redisService.getPoint(buildRedisKey(userIdx.toString())) - point < 0)
@@ -45,7 +45,7 @@ public class RewardService {
         goalsStatusMapper.updateTotalPoint(userIdx, point);
 
         rewardMapper.updateRewardStatus(rewardIdx, 1);
-        RewardDTO rewardDTO = rewardMapper.getRewardByRewardId(rewardIdx);
+        RewardDto rewardDTO = rewardMapper.getRewardByRewardId(rewardIdx);
 
         return rewardDTO;
     }

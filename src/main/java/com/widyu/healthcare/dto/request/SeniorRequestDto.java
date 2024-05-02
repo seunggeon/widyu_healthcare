@@ -1,15 +1,12 @@
 package com.widyu.healthcare.dto.request;
 
-import com.widyu.healthcare.aop.LoginCheck;
-import com.widyu.healthcare.dto.DiseaseDto;
+import com.widyu.healthcare.dto.domain.DiseaseDto;
 import com.widyu.healthcare.dto.UserType;
 import jakarta.annotation.Nullable;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.Setter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

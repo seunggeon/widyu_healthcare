@@ -1,13 +1,12 @@
-package com.widyu.healthcare.dto.goals;
+package com.widyu.healthcare.dto.domain;
 
+import com.widyu.healthcare.dto.GoalType;
+import com.widyu.healthcare.dto.domain.GoalStatusDto;
 import lombok.*;
-
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
-public class GoalDTO {
+public class GoalDto {
 
     private long goalIdx;
     @NonNull
@@ -15,11 +14,12 @@ public class GoalDTO {
     @NonNull
     private String title;
     private String description;
-    @NonNull
-    private Type type;
+    private GoalType type;
     private String day;
 
-    public GoalDTO(@NonNull Long userIdx, @NonNull String title, String description, @NonNull Type type, String day) {
+    private List<GoalStatusDto> goalStatusDtoList;
+
+    public GoalDto(@NonNull Long userIdx, @NonNull String title, String description, GoalType type, String day) {
         this.userIdx = userIdx;
         this.title = title;
         this.description = description;
@@ -28,8 +28,3 @@ public class GoalDTO {
     }
 }
 
-enum Type {
-    MEDICATION,
-    WALKING,
-    GENERAL
-}

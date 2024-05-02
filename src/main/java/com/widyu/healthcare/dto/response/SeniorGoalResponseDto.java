@@ -3,12 +3,11 @@ package com.widyu.healthcare.dto.response;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.widyu.healthcare.dto.GoalCalculatable;
-import com.widyu.healthcare.dto.goals.GoalDto;
+import com.widyu.healthcare.dto.domain.GoalDto;
 import com.widyu.healthcare.utils.GoalUtil;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-
 import java.util.List;
 /**
  * 시니어 메인 화면
@@ -24,7 +23,7 @@ public class SeniorGoalResponseDto extends UsersResponseDto implements GoalCalcu
     private double totalGoal;
     @JsonProperty("percentage")
     private double percentageOfGoal;
-    private List<GoalDto> goals;
+    private List<GoalSetResponseDto> goalsAndStatus;
     // senior property 추가. oldIndex, point
     @JsonProperty("oldIndex")
     private double sequence;

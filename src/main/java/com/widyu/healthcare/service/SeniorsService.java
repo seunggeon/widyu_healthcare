@@ -3,7 +3,6 @@ package com.widyu.healthcare.service;
 import java.util.List;
 import java.util.UUID;
 
-import com.widyu.healthcare.dto.DiseaseDto;
 import com.widyu.healthcare.dto.request.SeniorProfileRequestDto;
 import com.widyu.healthcare.dto.request.SeniorRequestDto;
 import com.widyu.healthcare.dto.response.*;

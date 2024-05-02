@@ -5,7 +5,7 @@
 
 <mapper namespace="com.widyu.healthcare.mapper.GoalsStatusMapper">
 
-    <insert id="insertGoalStatus" parameterType="com.widyu.healthcare.dto.goals.GoalStatusDTO">
+    <insert id="insertGoalStatus" parameterType="com.widyu.healthcare.dto.domain.GoalStatusDto">
         INSERT INTO goalsstatus (goalIdx, time, status) VALUES (#{goalIdx}, #{time}, 0)
     </insert>
 
@@ -15,13 +15,13 @@
         WHERE goalIdx = #{goalIdx}
     </delete>
 
-    <update id="updateGoalStatusUrl" parameterType="com.widyu.healthcare.dto.goals.GoalStatusDTO">
+    <update id="updateGoalStatusUrl" parameterType="com.widyu.healthcare.dto.domain.GoalStatusDto">
         UPDATE goalsstatus
         SET ImgUrl = #{url}
         WHERE goalStatusIdx = #{goalStatusIdx}
     </update>
 
-    <update id="updateGoalStatus" parameterType="com.widyu.healthcare.dto.goals.GoalStatusDTO">
+    <update id="updateGoalStatus" parameterType="com.widyu.healthcare.dto.domain.GoalStatusDto">
         UPDATE goalsstatus
         SET time=#{time}, pillNum=#{pillNum}
         WHERE goalStatusIdx=#{goalStatusIdx}
@@ -33,12 +33,12 @@
         WHERE userIdx = #{userIdx} AND goalIdx = #{goalIdx}
     </select>
 
-    <select id="getGoalStatusByGoalStatusIdx" parameterType="java.lang.Long" resultType="com.widyu.healthcare.dto.goals.GoalStatusDTO">
+    <select id="getGoalStatusByGoalStatusIdx" parameterType="java.lang.Long" resultType="com.widyu.healthcare.dto.domain.GoalStatusDto">
         SELECT * FROM goalsstatus
         WHERE goalStatusIdx = #{goalStatusIdx}
     </select>
 
-    <select id="getGoalStatusesByGoalIdx" parameterType="java.lang.Long" resultType="com.widyu.healthcare.dto.goals.GoalStatusDTO">
+    <select id="getGoalStatusesByGoalIdx" parameterType="java.lang.Long" resultType="com.widyu.healthcare.dto.domain.GoalStatusDto">
         SELECT goalStatusIdx, goalIdx, time, status, pillNum, imgUrl, point FROM goalsstatus
         WHERE goalIdx = #{goalIdx}
     </select>
@@ -48,7 +48,7 @@
         WHERE goalStatusIdx = #{goalStatusIdx}
     </select>
 
-    <select id="getGoalStatusIdx" parameterType="com.widyu.healthcare.dto.goals.GoalStatusDTO" resultType="java.lang.Long">
+    <select id="getGoalStatusIdx" parameterType="com.widyu.healthcare.dto.domain.GoalStatusDto" resultType="java.lang.Long">
         SELECT goalStatusIdx
         FROM goalsstatus
         WHERE goalIdx=#{goalIdx} AND time=#{time}

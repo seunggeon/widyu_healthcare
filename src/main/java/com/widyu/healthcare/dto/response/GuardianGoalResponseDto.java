@@ -7,7 +7,7 @@ import com.widyu.healthcare.utils.GoalUtil;
 import lombok.Getter;
 import java.util.List;
 
-import com.widyu.healthcare.dto.goals.GoalDto;
+import com.widyu.healthcare.dto.domain.GoalDto;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 

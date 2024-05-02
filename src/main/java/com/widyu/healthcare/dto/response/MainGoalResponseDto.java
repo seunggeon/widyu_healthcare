@@ -5,10 +5,10 @@ import java.util.List;
 
 public class MainGoalResponseDto {
     GuardianGoalResponseDto guardianGoalResponseDto;
-    List<SeniorGoalResponseDto> seniorGoalResponseDtos;
+    List<SeniorGoalResponseDto> seniorGoalResponseDtoList;
     @Builder
-    public MainGoalResponseDto(GuardianGoalResponseDto guardianGoalResponseDtos, List<SeniorGoalResponseDto> seniorGoalResponseDtos) {
-        this.guardianGoalResponseDto = guardianGoalResponseDtos;
-        this.seniorGoalResponseDtos = seniorGoalResponseDtos;
+    public MainGoalResponseDto(GuardianGoalResponseDto guardianGoalResponseDto, List<SeniorGoalResponseDto> seniorGoalResponseDtoList) {
+        this.guardianGoalResponseDto = guardianGoalResponseDto;
+        this.seniorGoalResponseDtoList = seniorGoalResponseDtoList;
     }
 }

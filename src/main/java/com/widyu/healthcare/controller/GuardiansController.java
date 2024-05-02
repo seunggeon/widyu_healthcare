@@ -2,7 +2,7 @@ package com.widyu.healthcare.controller;
 
 import com.widyu.healthcare.aop.LoginCheck;
 import com.widyu.healthcare.aop.LoginCheck.UserType;
-import com.widyu.healthcare.dto.SuccessResponse;
+import com.widyu.healthcare.dto.response.SuccessResponse;
 import com.widyu.healthcare.dto.UserStatus;
 import com.widyu.healthcare.dto.request.*;
 import com.widyu.healthcare.dto.response.*;

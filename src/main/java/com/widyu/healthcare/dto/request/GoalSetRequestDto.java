@@ -10,6 +10,7 @@ import java.util.List;
 
 @Getter
 public class GoalSetRequestDto {
+
     @NonNull
     private GoalDto goalDto;
     @NonNull

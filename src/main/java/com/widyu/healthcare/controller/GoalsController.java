@@ -70,6 +70,7 @@ public class GoalsController {
     public ResponseEntity<?> insertGoal(@RequestBody GoalSetRequestDto goalSetDto) {
         log.info("[log] controller_goal: {}", goalSetDto.toString());
 
+        log.info("[log] controller_goal: {}", goalSetDto.toString());
         GoalSetRequestDto result = goalsService.insertGoal(goalSetDto);
         SuccessResponse response = new SuccessResponse(true, "목표 추가 성공", result);
 

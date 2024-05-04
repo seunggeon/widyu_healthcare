@@ -98,7 +98,7 @@
 
     <update id = "updateGoal" parameterType="com.widyu.healthcare.dto.domain.GoalDto">
         UPDATE Goals
-        SET title=#{title}, description=#{description}, type=#{type}, day=#{day}, startDate=#{startDate}, endDate=#{endDate}
+        SET title=#{title}, description=#{description}, type=#{type}, day=#{day}
         WHERE userIdx = #{userIdx} AND goalIdx = #{goalIdx}
     </update>
 </mapper>

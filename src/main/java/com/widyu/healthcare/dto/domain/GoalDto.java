@@ -17,7 +17,6 @@ public class GoalDto {
     private GoalType type;
     private String day;
 
-    private List<GoalStatusDto> goalStatusDtoList;
 
     public GoalDto(@NonNull Long userIdx, @NonNull String title, String description, GoalType type, String day) {
         this.userIdx = userIdx;

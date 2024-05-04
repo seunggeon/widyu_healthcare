@@ -140,6 +140,7 @@ public class GoalsService {
     // 목표 생성
     public GoalSetRequestDto insertGoal(GoalSetRequestDto goalSet){
         goalsMapper.insertGoal(goalSet.getGoalDto());
+
         Long goalIdx = goalsMapper.getGoalIdx(goalSet.getGoalDto());
 
         for (GoalStatusDto goalStatus : goalSet.getGoalStatusDtoList()) {

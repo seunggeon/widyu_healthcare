@@ -10,6 +10,9 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.List;
 
+import static com.widyu.healthcare.config.AppConfig.GOAL_POINT;
+import static com.widyu.healthcare.config.AppConfig.REWARD_POINT;
+
 @Log4j2
 @Service
 public class RewardService {
@@ -29,20 +32,26 @@ public class RewardService {
         this.goalsStatusMapper = goalsStatusMapper;
     }
 
-    // 리워드 전체 조회
+    // 열린 리워드 전체 조회
     public List<RewardDto> getAllReward(Long userIdx){
-        return rewardMapper.getRewardByUserIdx(userIdx);
+        List<RewardDto> rewardDtoList = rewardMapper.getOpenedRewardByUserIdx(userIdx);
+        rewardDtoList.addAll(rewardMapper.getClosedRewardByUserIdx(userIdx));
+        return rewardDtoList;
     }
 
-    // 리워드 조회 (=구매)
+    // 리워드 open (=구매)
     public RewardDto getReward(Long userIdx, Long rewardIdx) throws InsufficientPointsException {
-        long point = rewardMapper.getPriceByRewardIdx(rewardIdx);
 
-        if (redisService.getPoint(buildRedisKey(userIdx.toString())) - point < 0)
+        if (redisService.getPoint(buildRedisKey(userIdx.toString())) - REWARD_POINT < 0)
             throw new InsufficientPointsException("point 부족");
 
-        redisService.decrementPoint(userIdx.toString(), point);
-        goalsStatusMapper.updateTotalPoint(userIdx, point);
+        redisService.decrementPoint(userIdx.toString(), REWARD_POINT);
+        int updateCount = goalsStatusMapper.updateTotalPoint(userIdx, REWARD_POINT);
+        if (updateCount != 1){
+            log.error("update Total point ERROR! userIdx: {} total point is not updated", userIdx);
+            redisService.decrementPoint(buildRedisKey(userIdx.toString()), REWARD_POINT);
+            throw new RuntimeException("get reward ERROR! 리워드 구매 메서드를 확인해주세요\n" + "Params : userIdx:" + userIdx);
+        }
 
         rewardMapper.updateRewardStatus(rewardIdx, 1);
         RewardDto rewardDTO = rewardMapper.getRewardByRewardId(rewardIdx);

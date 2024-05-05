@@ -23,6 +23,7 @@ import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.widyu.healthcare.config.AppConfig.GOAL_POINT;
 import static com.widyu.healthcare.config.AppConfig.REWARD_POINT;
 
 
@@ -130,11 +131,11 @@ public class GoalsService {
             throw new RuntimeException("delete Goal ERROR! 목표 삭제 메서드를 확인해주세요\n" + "Params : userIdx:" + userIdx);
         }
 
-        redisService.incrementPoint(buildRedisKey(userIdx.toString()), REWARD_POINT);
-        int updateCount = goalsStatusMapper.updateTotalPoint(userIdx, REWARD_POINT); //updateTotalPoint 쿼리가 왜 goalStatusMapper에...
+        redisService.incrementPoint(buildRedisKey(userIdx.toString()), GOAL_POINT);
+        int updateCount = goalsStatusMapper.updateTotalPoint(userIdx, GOAL_POINT); //updateTotalPoint 쿼리가 왜 goalStatusMapper에...
         if (updateCount != 1){
             log.error("update Total point ERROR! userIdx: {} total point is not updated", userIdx);
-            redisService.decrementPoint(buildRedisKey(userIdx.toString()), REWARD_POINT);
+            redisService.decrementPoint(buildRedisKey(userIdx.toString()), GOAL_POINT);
             throw new RuntimeException("update status success ERROR! 목표 상태 수정(성공) 메서드를 확인해주세요\n" + "Params : userIdx:" + userIdx);
         }
 

@@ -81,7 +81,7 @@ public class GoalsService {
         if (insertGoalCount != 1){
             log.error("insert Goal ERROR! info from Goal table is null {}", goalDto);
             throw new RuntimeException(
-                    "insert Goal ERROR! 회원가입 메서드를 확인해주세요\n" + "Params : " + goalDto);
+                    "insert Goal ERROR! 목표 생성 메서드를 확인해주세요\n" + "Params : " + goalDto);
         }
 
         goalDto.getGoalStatusDtoList().forEach(goalStatus -> {
@@ -94,12 +94,16 @@ public class GoalsService {
     }
 
     // 목표 수정
-    public void updateGoal(GoalSetRequestDto goalSetDto){
+    public void updateGoal(GoalDto goalDto){
 
-        goalsMapper.updateGoal(goalSetDto.getGoalDto());
-        for (GoalStatusDto goalStatus : goalSetDto.getGoalStatusDtoList()) {
-            goalsStatusMapper.updateGoalStatus(goalStatus);
+        int updateGoalCount = goalsMapper.updateGoal(goalDto);
+        if (updateGoalCount != 1){
+            log.error("update Goal ERROR! info from Goal table is null {}", goalDto);
+            throw new RuntimeException(
+                    "update Goal ERROR! 목표 수정 메서드를 확인해주세요\n" + "Params : " + goalDto);
         }
+
+        goalDto.getGoalStatusDtoList().forEach(goalStatus -> {goalsStatusMapper.updateGoalStatus(goalStatus);});
     }
 
     // 목표 삭제

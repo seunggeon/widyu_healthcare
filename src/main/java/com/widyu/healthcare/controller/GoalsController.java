@@ -97,7 +97,7 @@ public class GoalsController {
      * @return
      */
     @PatchMapping("/edit")
-    public ResponseEntity<?> editGoal(@RequestBody GoalSetRequestDto goalDto){
+    public ResponseEntity<?> editGoal(@RequestBody GoalDto goalDto){
         goalsService.updateGoal(goalDto);
         SuccessResponse response = new SuccessResponse(true, "목표 수정 성공", null);
 

@@ -15,7 +15,7 @@ public interface GoalsMapper {
     GoalDto getGoalByGoalIdx(long userIdx, long goalIdx);
     int insertGoal(GoalDto goal);
     long getGoalIdx(GoalDto goal);
-    void updateGoal(GoalDto goal);
+    int updateGoal(GoalDto goal);
     void deleteGoal(long userIdx, long goalIdx);
 
 }

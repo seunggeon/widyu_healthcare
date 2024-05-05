@@ -26,8 +26,8 @@
 
     <update id="updateGoalStatus" parameterType="com.widyu.healthcare.dto.domain.GoalStatusDto">
         UPDATE goalsstatus
-        SET time=#{time}, pillNum=#{pillNum}
-        WHERE goalStatusIdx=#{goalStatusIdx}
+        SET time = #{time}, pillNum = #{pillNum}, point = #{point}
+        WHERE goalIdx = #{goalIdx} AND goalStatusIdx = #{goalStatusIdx}
     </update>
 
     <select id="countGoalStatus" parameterType="java.lang.Long" resultType="int">

@@ -108,8 +108,14 @@ public class GoalsService {
 
     // 목표 삭제
     public void deleteGoal(long userIdx, long goalIdx){
+
         goalsStatusMapper.deleteGoalStatus(goalIdx);
-        goalsMapper.deleteGoal(userIdx, goalIdx);
+        int deleteCount = goalsMapper.deleteGoal(userIdx, goalIdx);
+        if (deleteCount != 1){
+            log.error("delete Goal ERROR! goalIdx: {} has not been deleted", goalIdx);
+            throw new RuntimeException(
+                    "delete Goal ERROR! 목표 삭제 메서드를 확인해주세요\n" + "Params : userIdx:" + userIdx + ", goalIdx: " + goalIdx);
+        }
     }
 
     // 목표 상태 수정 (성공)

@@ -28,16 +28,26 @@ public class GuardiansService {
         guardianReq.builder()
                 .id(guardianReq.getId())
                 .password(SHA256Util.encryptSHA256(guardianReq.getPassword()))
+                .phoneNumber(guardianReq.getPhoneNumber())
                 .build();
-        long insertCount = guardiansMapper.insert(guardianReq);
+        long insertCount = guardiansMapper.insertDetail(guardianReq);
         if (insertCount != 1) {
             log.error("insert Guardiance ERROR! {}", guardianReq);
             throw new RuntimeException(
                     "insert Guardiance ERROR! 회원가입 메서드를 확인해주세요\n" + "Params : " + guardianReq);
         }
+        int insertNameCount = guardiansMapper.update(guardianReq.getUserIdx(), guardianReq.getName());
+        if (insertNameCount != 1) {
+            log.error("update Guardiance info ERROR! info from user table is null {}", guardianReq);
+            throw new RuntimeException(
+                    "update Guardiance info ERROR! 회원가입 메서드를 확인해주세요\n" + "Params : " + guardianReq);
+        }
         GuardianDetailResponseDto userInfo = GuardianDetailResponseDto
                 .builder()
                 .userIdx(guardianReq.getUserIdx())
+                .name(guardianReq.getName())
+                .id(guardianReq.getId())
+                .phoneNumber(guardianReq.getPassword())
                 .build();
         return userInfo;
     }

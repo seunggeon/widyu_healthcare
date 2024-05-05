@@ -28,13 +28,19 @@
         WHERE id = #{id}
     </select>
 
-    <insert id="insert">
-        INSERT INTO usersdetail(id, password)
-        VALUES(#{id}, #{password})
+    <insert id="insertDetail">
+        INSERT INTO usersdetail(id, password, phoneNumber)
+        VALUES(#{id}, #{password}, #{phoneNumber})
         <selectKey resultType="long" keyProperty="userIdx" keyColumn="userIdx" order="AFTER">
             SELECT LAST_INSERT_ID()
         </selectKey>
     </insert>
+
+    <update id="update">
+        UPDATE users
+        SET name = #{name}
+        WHERE userIdx = #{userIdx}
+    </update>
 
     <select id="findByIdAndPassword" resultType="com.widyu.healthcare.dto.response.UsersResponseDto">
         SELECT u.status as status, u.userIdx as userIdx

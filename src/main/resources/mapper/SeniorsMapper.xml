@@ -34,7 +34,7 @@
         INSERT INTO diseases(userIdx, name, drugName, explanation)
         VALUES
         <foreach collection="diseases" item="disease" separator=",">
-            (#{userIdx}, #{disease.name}, #{disease.drugName}, #{disease.explanation})
+            (#{userIdx}, #{disease.diseaseName}, #{disease.drugName}, #{disease.explanation})
         </foreach>
     </insert>
 

@@ -1,5 +1,6 @@
 package com.widyu.healthcare.mapper;
 
+import com.widyu.healthcare.dto.UserType;
 import com.widyu.healthcare.dto.request.GuardianRequestDto;
 import com.widyu.healthcare.dto.response.GuardianDetailResponseDto;
 import com.widyu.healthcare.dto.response.SeniorDetailResponseDto;
@@ -13,7 +14,8 @@ import java.util.List;
 public interface GuardiansMapper {
 
     public int checkId(String id);
-    public long insert(GuardianRequestDto encryptedUser);
+    public long insertDetail(GuardianRequestDto encryptedUser);
+    public int update(@Param("userIdx") long guardianIdx, @Param("name") String name);
     public int updateFCM(long guardianIdx, String fcmToken);
     public UsersResponseDto findByIdAndPassword(@Param("id") String id, @Param("password") String password);
     public GuardianDetailResponseDto findByIdx(@Param("userIdx") long userIdx);

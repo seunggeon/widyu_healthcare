@@ -8,12 +8,18 @@
         <result property="userIdx" column="userIdx"/>
         <result property="name" column="name"/>
         <result property="profileImageUrl" column="profileImageUrl"/>
-        <result property="type" column="type"/>
+        <result property="userType" column="userType"/>
         <result property="phoneNumber" column="phoneNumber"/>
         <result property="address" column="address"/>
         <result property="birth" column="birth"/>
         <result property="isDisease" column="isDisease"/>
-        <collection property="diseases" column="{userIdx = userIdx}" javaType="java.util.ArrayList" ofType="com.widyu.healthcare.dto.domain.DiseaseDto" select="findDiseasesByIdx"/>
+        <collection property="diseases" column="{userIdx = userIdx}" javaType="java.util.ArrayList" ofType="com.widyu.healthcare.dto.domain.DiseaseDto" select="findDiseasesByIdx">
+            <result property="diseaseName" column="diseaseName"/>
+            <result property="drugName" column="drugName"/>
+            <result property="explanation" column="explanation"/>
+            <result property="favoriteHospital" column="favoriteHospital"/>
+            <result property="dosageTime" column="dosageTime"/>
+        </collection>
     </resultMap>
 
     <select id="checkId" resultType="int">
@@ -25,6 +31,9 @@
     <insert id="insert">
         INSERT INTO usersdetail(id, password)
         VALUES(#{id}, #{password})
+        <selectKey resultType="long" keyProperty="userIdx" keyColumn="userIdx" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
     </insert>
 
     <select id="findByIdAndPassword" resultType="com.widyu.healthcare.dto.response.UsersResponseDto">
@@ -43,15 +52,15 @@
     </update>
 
     <select id="findByIdx" resultType="com.widyu.healthcare.dto.response.GuardianDetailResponseDto">
-        SELECT u.name, u.profileImageUrl, u.type, ud.id, ud.phoneNumber, ud.address, ud.birth
+        SELECT u.name, u.profileImageUrl, u.type AS userType, ud.id, ud.phoneNumber, ud.address, ud.birth
         FROM usersdetail as ud
         JOIN users as u ON ud.userIdx = u.userIdx
         WHERE ud.userIdx = #{userIdx}
           AND u.status != 'DELETE'
     </select>
 
-    <select id="findSeniorsByIdx">
-        SELECT ud.userIdx, u.name as name, u.profileImageUrl, u.type, ud.inviteCode, ud.phoneNumber, ud.address, ud.birth, ud.isDisease
+    <select id="findSeniorsByIdx" resultMap="SeniorDetailResponseDtoMap">
+        SELECT ud.userIdx, u.name as name, u.profileImageUrl, u.type AS userType, ud.inviteCode, ud.phoneNumber, ud.address, ud.birth, ud.isDisease
         FROM usersdetail ud
         LEFT JOIN users u ON ud.userIdx = u.userIdx
         WHERE ud.userIdx IN (
@@ -63,8 +72,8 @@
         GROUP BY ud.userIdx;
     </select>
 
-    <select id="findDiseasesByIdx" resultType="com.widyu.healthcare.dto.domain.DiseaseDto">
-        SELECT diseaseIdx, name, drugName, explanation
+    <select id="findDiseasesByIdx" resultType="java.util.HashMap">
+        SELECT name AS diseaseName, drugName, explanation, favoriteHospital, dosageTime
         FROM diseases
         WHERE userIdx = #{userIdx}
     </select>
@@ -75,7 +84,7 @@
         WHERE guardianIdx = #{guardianIdx}
     </select>
 
-    <!--  indexing 적용하기 -->
+    <!--  TODO : indexing 적용하기 -->
     <select id="findIdByNameAndNumber" resultType="com.widyu.healthcare.dto.response.GuardianDetailResponseDto">
         SELECT u.name, u.profileImageUrl, ud.id, ud.phoneNumber
         FROM usersdetail as ud
@@ -87,7 +96,7 @@
 
     <update id="updatePasswordByGuardianInfos">
         UPDATE usersdetail as ud
-        SET ud.password = #{password}
+        SET ud.password = #{newPassword}
         WHERE ud.id = #{id}
           AND ud.phoneNumber = #{phoneNumber}
           AND u.status != 'DELETE'
@@ -100,13 +109,21 @@
             <if test="name != null">
                 u.name = #{name},
             </if>
+            <if test="profileImageUrl != null">
+                u.profileImageUrl = #{profileImageUrl},
+            </if>
             <if test="phoneNumber != null">
                 ud.phoneNumber = #{phoneNumber},
+            </if>
+            <if test="address != null">
+                ud.address = #{address},
+            </if>
+            <if test="birth != null">
+                ud.birth = #{birth},
             </if>
         </set>
         WHERE u.userIdx = #{userIdx}
         AND u.status != 'DELETE'
-        AND u.type != 'GUARDIAN'
     </update>
 
 

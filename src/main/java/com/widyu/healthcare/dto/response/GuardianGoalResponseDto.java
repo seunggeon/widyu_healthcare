@@ -21,7 +21,7 @@ public class GuardianGoalResponseDto extends UsersResponseDto implements GoalCal
     private double totalGoal;
     @JsonProperty("percentage")
     private double percentageOfGoal;
-    private List<GoalDto> goals;
+    private List<GoalDto> goalsAndStatus;
     @Override
     public void percentageFromGoals() {
         this.percentageOfGoal = GoalUtil.calculatePercentageOfGoal(this.achieveGoal, this.totalGoal);

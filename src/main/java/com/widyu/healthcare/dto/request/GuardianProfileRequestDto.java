@@ -21,8 +21,11 @@ public class GuardianProfileRequestDto {
     @Nullable
     private String birth;
     @Builder
-    public GuardianProfileRequestDto(String name, String phoneNumber) {
+    public GuardianProfileRequestDto(String name, String profileImageUrl, String phoneNumber, String address, String birth) {
         this.name = name;
+        this.profileImageUrl = profileImageUrl;
         this.phoneNumber = phoneNumber;
+        this.address = address;
+        this.birth = birth;
     }
 }

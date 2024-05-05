@@ -13,6 +13,8 @@ import lombok.NonNull;
 @Getter
 public class GuardianRequestDto {
     @NonNull
+    private long userIdx;
+    @NonNull
     private String name;
     @NonNull
     private String phoneNumber;
@@ -21,7 +23,8 @@ public class GuardianRequestDto {
     @NonNull
     private String password;
     @Builder
-    public GuardianRequestDto(String name, String phoneNumber, String id, String password) {
+    public GuardianRequestDto(long userIdx, String name, String phoneNumber, String id, String password) {
+        this.userIdx = userIdx;
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.id = id;

@@ -11,78 +11,63 @@
         <result property="type" column="type"/>
         <result property="achieveGoal" column="achieveGoal"/>
         <result property="totalGoal" column="totalGoal"/>
-        <collection property="goals" column="{userIdx = userIdx}" javaType="java.util.ArrayList" ofType="com.widyu.healthcare.dto.response.GoalSetResponseDto" select="findGoalByIdx" >
-            <id property="goalIdx" column="goalIdx"/>
-            <result property="userIdx" column="userIdx"/>
-            <result property="title" column="title"/>
-            <result property="description" column="description"/>
-            <result property="type" column="type"/>
-            <result property="day" column="day"/>
-            <result property="startDate" column="startDate"/>
-            <result property="endDate" column="endDate"/>
-            <collection property="goalStatusList" column="{userIdx = userIdx}" javaType="java.util.ArrayList" ofType="com.widyu.healthcare.dto.domain.GoalStatus" select="findGoalStatusByIdx">
-                <id property="goalStatusIdx" column="goalStatusIdx"/>
-                <result property="time" column="time"/>
-                <result property="status" column="status"/>
-                <result property="pillNum" column="pillNum"/>
-                <result property="imgUrl" column="imgUrl"/>
-                <result property="point" column="point"/>
-            </collection>
-        </collection>
+        <collection property="goalsAndStatus" javaType="java.util.ArrayList" resultMap="goalsMap"></collection>
     </resultMap>
 
     <resultMap id="SeniorGoalResponseDtoMap" type="com.widyu.healthcare.dto.response.SeniorGoalResponseDto">
-        <result property="userIdx" column="userIdx"/>
+<!--        <result property="userIdx" column="userIdx"/>-->
         <result property="name" column="name"/>
         <result property="profileImageUrl" column="profileImageUrl"/>
-        <result property="type" column="type"/>
+        <result property="userType" column="userType"/>
         <result property="achieveGoal" column="achieveGoal"/>
         <result property="totalGoal" column="totalGoal"/>
-        <collection property="goals" column="{userIdx = userIdx}" javaType="java.util.ArrayList" ofType="com.widyu.healthcare.dto.response.GoalSetResponseDto" select="findGoalByIdx" >
-            <result property="goalIdx" column="goalIdx"/>
-            <result property="userIdx" column="userIdx"/>
-            <result property="title" column="title"/>
-            <result property="description" column="description"/>
-            <result property="type" column="type"/>
-            <result property="day" column="day"/>
-            <result property="startDate" column="startDate"/>
-            <result property="endDate" column="endDate"/>
-            <collection property="goalStatusList" column="{userIdx = userIdx}" javaType="java.util.ArrayList" ofType="com.widyu.healthcare.dto.domain.GoalStatusDto" select="findGoalStatusByIdx">
-                <result property="goalStatusIdx" column="goalStatusIdx"/>
-                <result property="time" column="time"/>
-                <result property="status" column="status"/>
-                <result property="pillNum" column="pillNum"/>
-                <result property="imgUrl" column="imgUrl"/>
-                <result property="point" column="point"/>
-            </collection>
-        </collection>
+        <result property="totalPoint" column="totalPoint"/>
+        <result property="sequence" column="userIdx"/>
+        <collection property="goalsAndStatus" javaType="java.util.ArrayList" resultMap="goalsMap"></collection>
+    </resultMap>
+
+    <resultMap id="goalsMap" type="java.util.HashMap">
+        <result property="goalIdx" column="goalIdx"/>
+        <result property="title" column="title"/>
+        <result property="description" column="description"/>
+        <result property="type" column="goalType"/>
+        <result property="day" column="day"/>
+        <result property="startDate" column="startDate"/>
+        <result property="endDate" column="endDate"/>
+        <collection property="goalStatusDtoList" javaType="java.util.ArrayList" resultMap="goalStatusMap"></collection>
+    </resultMap>
+
+    <resultMap id="goalStatusMap" type="java.util.HashMap">
+        <result property="goalIdx" column="goalIdx"/>
+        <result property="time" column="time"/>
+        <result property="status" column="status"/>
+        <result property="pillNum" column="pillNum"/>
+        <result property="imgUrl" column="imgUrl"/>
+        <result property="point" column="point"/>
     </resultMap>
 
     <select id="findByGuardianIdx" resultMap="GuardianGoalResponseDtoMap">
-        SELECT  u.userIdx, u.name, u.profileImageUrl, u.type, ud.totalGoal, ud.achieveGoal
+        SELECT  u.userIdx, u.name, u.profileImageUrl, u.type AS userType,
+                ud.totalGoal, ud.achieveGoal,
+                g.goalIdx, g.title, g.description, g.type AS goalType, g.day, g.startDate, g.endDate,
+                gs.time, gs.status, gs.pillNum, gs.imgUrl, gs.point
         FROM users u
                  LEFT JOIN usersdetail ud ON u.userIdx = ud.userIdx
+                 LEFT JOIN goals g ON u.userIdx = g.userIdx
+                 LEFT JOIN goalsstatus gs ON g.goalIdx = gs.goalIdx
         WHERE u.userIdx = #{userIdx}
     </select>
 
     <select id="findBySeniorIdx" resultMap="SeniorGoalResponseDtoMap">
-        SELECT  u.userIdx, u.name, u.profileImageUrl, u.type, ud.totalGoal, ud.achieveGoal
+        SELECT  u.userIdx, u.name, u.profileImageUrl, u.type AS userType,
+                ud.totalGoal, ud.achieveGoal, ud.totalPoint,
+                g.goalIdx, g.title, g.description, g.type AS goalType, g.day, g.startDate, g.endDate,
+                gs.time, gs.status, gs.pillNum, gs.imgUrl, gs.point
         FROM users u
                  LEFT JOIN usersdetail ud ON u.userIdx = ud.userIdx
-        WHERE u.userIdx = #{userIdx}
-    </select>
-
-    <select id="findGoalByIdx" resultType="com.widyu.healthcare.dto.domain.GoalDto">
-        SELECT *
-        FROM goals
-        WHERE userIdx = #{userIdx}
-    </select>
-
-    <select id="findGoalStatusByIdx" resultType="com.widyu.healthcare.dto.domain.GoalStatusDto">
-        SELECT gs.goalStatusIdx, gs.time, gs.status, gs.pillNum, gs.imgUrl, gs.point
-        FROM goals g
+                 LEFT JOIN goals g ON u.userIdx = g.userIdx
                  LEFT JOIN goalsstatus gs ON g.goalIdx = gs.goalIdx
-        WHERE g.userIdx = #{userIdx}
+        WHERE u.userIdx = #{userIdx}
     </select>
 
     <select id="getGoalsById" parameterType="java.lang.Long" resultType="com.widyu.healthcare.dto.domain.GoalDto">
@@ -93,8 +78,8 @@
         SELECT * FROM goals WHERE userIdx = #{userIdx} AND goalIdx = #{goalIdx}
     </select>
 
-    <insert id = "insertGoal" parameterType="com.widyu.healthcare.dto.domain.GoalDto" useGeneratedKeys="true" keyProperty="goalIdx">
-        INSERT INTO goals (userIdx, title, description, type, day, startDate, endDate) VALUES (#{userIdx}, #{title}, #{description}, #{type}, #{day}, #{startDate}, #{endDate})
+    <insert id = "insertGoal" parameterType="com.widyu.healthcare.dto.domain.GoalDto">
+        INSERT INTO goals (userIdx, title, description, type, day) VALUES (#{userIdx}, #{title}, #{description}, #{type}, #{day})
     </insert>
 
     <select id="getGoalIdx" parameterType="com.widyu.healthcare.dto.domain.GoalDto" resultType="java.lang.Long">

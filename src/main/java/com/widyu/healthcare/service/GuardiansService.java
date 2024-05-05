@@ -1,5 +1,6 @@
 package com.widyu.healthcare.service;
 
+import com.widyu.healthcare.dto.request.GuardianProfileRequestDto;
 import com.widyu.healthcare.dto.request.GuardianRequestDto;
 import com.widyu.healthcare.dto.response.*;
 import com.widyu.healthcare.error.exception.DuplicateIdException;
@@ -19,20 +20,26 @@ public class GuardiansService {
     @Autowired
     private GuardiansMapper guardiansMapper;
 
-    public void insert(GuardianRequestDto userInfo) {
-        boolean duplIdResult = isDuplicatedId(userInfo.getId());
+    public GuardianDetailResponseDto insert(GuardianRequestDto guardianReq) {
+        boolean duplIdResult = isDuplicatedId(guardianReq.getId());
         if (duplIdResult) {
             throw new DuplicateIdException("중복된 아이디입니다.");
         }
-        int insertCount = guardiansMapper.insert(userInfo.builder()
-                .id(userInfo.getId())
-                .password(SHA256Util.encryptSHA256(userInfo.getPassword()))
-                .build());
+        guardianReq.builder()
+                .id(guardianReq.getId())
+                .password(SHA256Util.encryptSHA256(guardianReq.getPassword()))
+                .build();
+        long insertCount = guardiansMapper.insert(guardianReq);
         if (insertCount != 1) {
-            log.error("insert Guardiance ERROR! {}", userInfo);
+            log.error("insert Guardiance ERROR! {}", guardianReq);
             throw new RuntimeException(
-                    "insert Guardiance ERROR! 회원가입 메서드를 확인해주세요\n" + "Params : " + userInfo);
+                    "insert Guardiance ERROR! 회원가입 메서드를 확인해주세요\n" + "Params : " + guardianReq);
         }
+        GuardianDetailResponseDto userInfo = GuardianDetailResponseDto
+                .builder()
+                .userIdx(guardianReq.getUserIdx())
+                .build();
+        return userInfo;
     }
     public UsersResponseDto loginByIdAndPassword(String id, String password) {
         String cryptoPassword = SHA256Util.encryptSHA256(password);
@@ -60,8 +67,8 @@ public class GuardiansService {
         return userInfo;
     }
 
-    public GuardianDetailResponseDto findPassword(String id, String name, String phoneNumber){
-        GuardianDetailResponseDto userInfo = guardiansMapper.updatePasswordByGuardianInfos(id, name, phoneNumber);
+    public GuardianDetailResponseDto findPassword(String id, String newPassword, String name, String phoneNumber){
+        GuardianDetailResponseDto userInfo = guardiansMapper.updatePasswordByGuardianInfos(id, SHA256Util.encryptSHA256(newPassword), name, phoneNumber);
         if(userInfo == null){
             throw new DuplicateIdException("비밀번호 찾기 Guardian ERROR! 회원정보가 없습니다.\n");
         }
@@ -90,11 +97,11 @@ public class GuardiansService {
         return seniorDetailList;
     }
 
-    public void updateProfile(long userIdx, String name, String phoneNumber){
-        int updateCount = guardiansMapper.updateProfile(userIdx, name, phoneNumber);
+    public void updateProfile(long userIdx, GuardianProfileRequestDto profileReq){
+        int updateCount = guardiansMapper.updateProfile(userIdx, profileReq.getName(), profileReq.getProfileImageUrl(), profileReq.getPhoneNumber(), profileReq.getAddress(), profileReq.getBirth());
         if(updateCount == 0){
             log.error("update Guardian profile ERROR! update fail, count is {}", updateCount);
-            throw new DuplicateIdException("update Guardian profile ERROR! \n" + "update userIdx : " + userIdx + "name : " + name + "phoneNumber : " + phoneNumber);
+            throw new DuplicateIdException("update Guardian profile ERROR! \n" + "update : " + profileReq);
         }
     }
 }

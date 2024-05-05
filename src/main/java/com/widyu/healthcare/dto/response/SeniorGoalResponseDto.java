@@ -23,12 +23,12 @@ public class SeniorGoalResponseDto extends UsersResponseDto implements GoalCalcu
     private double totalGoal;
     @JsonProperty("percentage")
     private double percentageOfGoal;
-    private List<GoalSetResponseDto> goalsAndStatus;
     // senior property 추가. oldIndex, point
     @JsonProperty("oldIndex")
-    private double sequence;
+    private long sequence;
     @JsonProperty("point")
     private int totalPoint;
+    private List<GoalDto> goalsAndStatus;
     @Override
     public void percentageFromGoals() {
         this.percentageOfGoal = GoalUtil.calculatePercentageOfGoal(this.achieveGoal, this.totalGoal);

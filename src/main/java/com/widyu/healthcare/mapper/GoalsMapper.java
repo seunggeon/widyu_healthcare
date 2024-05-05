@@ -13,7 +13,7 @@ public interface GoalsMapper {
     GuardianGoalResponseDto findByGuardianIdx(long userIdx);
     List<GoalDto> getGoalsByIdx(long userIdx);
     GoalDto getGoalByGoalIdx(long userIdx, long goalIdx);
-    long insertGoal(GoalDto goal);
+    void insertGoal(GoalDto goal);
     long getGoalIdx(GoalDto goal);
     void updateGoal(GoalDto goal);
     void deleteGoal(long userIdx, long goalIdx);

@@ -81,7 +81,7 @@ public class RedisService {
     }
 
     public void decrementPoint(String key, Long point) {
-        stringOps.decrement(key, point);
+//        stringOps.decrement(key, point);
     }
 
 }

@@ -26,9 +26,9 @@ public class GuardiansController {
     @Autowired
     private SeniorsService seniorsService;
     @PostMapping("register")
-    public ResponseEntity<?> register(@RequestBody @Valid GuardianRequestDto userInfo) {
-        guardiansService.insert(userInfo);
-        SuccessResponse response = new SuccessResponse(true, "보호자 회원가입 성공", null);
+    public ResponseEntity<?> register(@RequestBody @Valid GuardianRequestDto guardianReq) {
+        GuardianDetailResponseDto userInfo = guardiansService.insert(guardianReq);
+        SuccessResponse response = new SuccessResponse(true, "보호자 회원가입 성공", userInfo);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
@@ -65,7 +65,7 @@ public class GuardiansController {
 
     @PostMapping("find/password")
     public ResponseEntity<?> findPassword(@RequestBody @Valid GuardianFindPasswordRequestDto findPasswordRequest) {
-        GuardianDetailResponseDto guardianInfo = guardiansService.findPassword(findPasswordRequest.getId(), findPasswordRequest.getName(), findPasswordRequest.getPhoneNumber());
+        GuardianDetailResponseDto guardianInfo = guardiansService.findPassword(findPasswordRequest.getId(), findPasswordRequest.getNewPassword(), findPasswordRequest.getName(), findPasswordRequest.getPhoneNumber());
         SuccessResponse response = new SuccessResponse(true, "보호자 비밀번호 찾기 성공", guardianInfo);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -97,9 +97,9 @@ public class GuardiansController {
      */
     @PatchMapping ("profile")
     @LoginCheck(type = UserType.GUARDIAN)
-    public ResponseEntity<?> updateProfile(@RequestBody SeniorProfileRequestDto profileRequest, HttpSession session) {
-        guardiansService.updateProfile(SessionUtil.getLoginGuardianId(session), profileRequest.getName(), profileRequest.getPhoneNumber());
-        SuccessResponse response = new SuccessResponse(true, "보호자의 프로필 일부 수정 성공", null);
+    public ResponseEntity<?> updateProfile(@RequestBody GuardianProfileRequestDto profileRequest, HttpSession session) {
+        guardiansService.updateProfile(SessionUtil.getLoginGuardianId(session), profileRequest);
+        SuccessResponse response = new SuccessResponse(true, "보호자의 프로필 수정 성공", null);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

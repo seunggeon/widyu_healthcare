@@ -14,4 +14,6 @@ public class GuardianFindPasswordRequestDto {
     private String phoneNumber;
     @NonNull
     private String id;
+    @NonNull
+    private String newPassword;
 }

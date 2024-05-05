@@ -17,10 +17,13 @@ import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.widyu.healthcare.config.AppConfig.REWARD_POINT;
 
 
 @Log4j2
@@ -28,6 +31,7 @@ import java.util.stream.Collectors;
 public class GoalsService {
 
     private final GoalsMapper goalsMapper;
+    private final SeniorsMapper seniorsMapper;
     private final GuardiansMapper guardiansMapper;
     private final GoalsStatusMapper goalsStatusMapper;
     private final RedisService redisService;
@@ -36,9 +40,10 @@ public class GoalsService {
     private static final String POINT_CODE_PREFIX = "point_code:";
 
     @Autowired
-    public GoalsService(GoalsMapper goalsMapper, GuardiansMapper guardiansMapper, SeniorsMapper seniorsMapper, GoalsStatusMapper goalsStatusMapper, GuardiansService guardiansService, SeniorsService seniorsService, RedisService redisService, FcmService fcmService, Scheduler scheduler) {
+    public GoalsService(GoalsMapper goalsMapper, SeniorsMapper seniorsMapper, GuardiansMapper guardiansMapper, GoalsStatusMapper goalsStatusMapper, GuardiansService guardiansService, SeniorsService seniorsService, RedisService redisService, FcmService fcmService, Scheduler scheduler) {
 
         this.goalsMapper = goalsMapper;
+        this.seniorsMapper = seniorsMapper;
         this.guardiansMapper = guardiansMapper;
         this.goalsStatusMapper = goalsStatusMapper;
         this.redisService = redisService;
@@ -80,8 +85,7 @@ public class GoalsService {
         int insertGoalCount = goalsMapper.insertGoal(goalDto);
         if (insertGoalCount != 1){
             log.error("insert Goal ERROR! info from Goal table is null {}", goalDto);
-            throw new RuntimeException(
-                    "insert Goal ERROR! 목표 생성 메서드를 확인해주세요\n" + "Params : " + goalDto);
+            throw new RuntimeException("insert Goal ERROR! 목표 생성 메서드를 확인해주세요\n" + "Params : " + goalDto);
         }
 
         goalDto.getGoalStatusDtoList().forEach(goalStatus -> {
@@ -98,9 +102,8 @@ public class GoalsService {
 
         int updateGoalCount = goalsMapper.updateGoal(goalDto);
         if (updateGoalCount != 1){
-            log.error("update Goal ERROR! info from Goal table is null {}", goalDto);
-            throw new RuntimeException(
-                    "update Goal ERROR! 목표 수정 메서드를 확인해주세요\n" + "Params : " + goalDto);
+            log.error("update Goal ERROR! info from Goal table is not updated {}", goalDto);
+            throw new RuntimeException("update Goal ERROR! 목표 수정 메서드를 확인해주세요\n" + "Params : " + goalDto);
         }
 
         goalDto.getGoalStatusDtoList().forEach(goalStatus -> {goalsStatusMapper.updateGoalStatus(goalStatus);});
@@ -110,25 +113,32 @@ public class GoalsService {
     public void deleteGoal(long userIdx, long goalIdx){
 
         goalsStatusMapper.deleteGoalStatus(goalIdx);
+
         int deleteCount = goalsMapper.deleteGoal(userIdx, goalIdx);
         if (deleteCount != 1){
             log.error("delete Goal ERROR! goalIdx: {} has not been deleted", goalIdx);
-            throw new RuntimeException(
-                    "delete Goal ERROR! 목표 삭제 메서드를 확인해주세요\n" + "Params : userIdx:" + userIdx + ", goalIdx: " + goalIdx);
+            throw new RuntimeException("delete Goal ERROR! 목표 삭제 메서드를 확인해주세요\n" + "Params : userIdx:" + userIdx + ", goalIdx: " + goalIdx);
         }
     }
 
     // 목표 상태 수정 (성공)
-    public void updateStatusSuccess(Long userIdx, long goalStatusIdx){
-        // 상태 성공으로 변경
-        goalsStatusMapper.updateStatus(goalStatusIdx, 1L);
-        // 포인트 추가 (*10 포인트 추가로 설정함)
-        goalsStatusMapper.updateTotalPoint(userIdx, 10L);
-        redisService.incrementPoint(buildRedisKey(userIdx.toString()));
-        log.info("[RP] redis point: {}", redisService.getPoint(userIdx.toString()));
+    public void updateStatusSuccess(Long userIdx, long goalStatusIdx) throws IOException {
 
-        //
-        //fcmService.sendMessage();
+        int updateStatusCount = goalsStatusMapper.updateStatus(goalStatusIdx, (byte)1);
+        if (updateStatusCount != 1){
+            log.error("update Goal Status ERROR! goalStatusIdx: {} status is not updated", goalStatusIdx);
+            throw new RuntimeException("delete Goal ERROR! 목표 삭제 메서드를 확인해주세요\n" + "Params : userIdx:" + userIdx);
+        }
+
+        redisService.incrementPoint(buildRedisKey(userIdx.toString()), REWARD_POINT);
+        int updateCount = goalsStatusMapper.updateTotalPoint(userIdx, REWARD_POINT); //updateTotalPoint 쿼리가 왜 goalStatusMapper에...
+        if (updateCount != 1){
+            log.error("update Total point ERROR! userIdx: {} total point is not updated", userIdx);
+            redisService.decrementPoint(buildRedisKey(userIdx.toString()), REWARD_POINT);
+            throw new RuntimeException("update status success ERROR! 목표 상태 수정(성공) 메서드를 확인해주세요\n" + "Params : userIdx:" + userIdx);
+        }
+
+        fcmService.sendMessage(seniorsMapper.findFCM(userIdx), "목표 달성", "축하드립니다");
     }
 
     private void scheduleTimerForGoalStatus(GoalStatusDto goalStatus) {

@@ -19,6 +19,7 @@ public interface SeniorsMapper {
     public int insertDiseases(@Param("userIdx") long userIdx, @Param("diseases") List<DiseaseDto> diseases);
     public int insertRelationWithSenior(@Param("guardianIdx") long guardianIdx, @Param("seniorIdx") long seniorIdx);
     public int updateFCM(@Param("seniorIdx") long seniorIdx, @Param("fcmToken") String fcmToken);
+    public String findFCM(@Param("userIdx") long userIdx);
     public UsersResponseDto findByInviteCode(@Param("inviteCode") String inviteCode);
     public SeniorDetailResponseDto findByIdx(@Param("userIdx") long userIdx);
     public List<GuardianDetailResponseDto> findGuardiansByIdx(@Param("userIdx") long userIdx);

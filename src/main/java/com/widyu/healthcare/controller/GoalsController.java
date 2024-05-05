@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 
@@ -110,7 +111,7 @@ public class GoalsController {
      * @return
      */
     @PatchMapping("/success/{goalStatusIdx}")
-    public ResponseEntity<?> editStatusSuccess(@PathVariable long goalStatusIdx, HttpSession session){
+    public ResponseEntity<?> editStatusSuccess(@PathVariable long goalStatusIdx, HttpSession session) throws IOException {
 
         long userIdx = SessionUtil.getLoginGuardianId(session);
         goalsService.updateStatusSuccess(userIdx, goalStatusIdx);

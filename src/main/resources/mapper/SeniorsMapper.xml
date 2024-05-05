@@ -44,6 +44,12 @@
         WHERE userIdx = #{seniorIdx}
     </update>
 
+    <select id="findFCM">
+        SELECT fcmToken
+        FROM usersdetail
+        WHERE userIdx = #{userIdx}
+    </select>
+
     <insert id="insertRelationWithSenior">
         INSERT INTO relations(seniorIdx, guardianIdx)
         VALUES( #{seniorIdx}, #{guardianIdx} )

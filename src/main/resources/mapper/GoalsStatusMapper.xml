@@ -66,8 +66,8 @@
     </update>
 
     <update id="updateTotalPoint" parameterType="java.lang.Long">
-        UPDATE users
-        SET totalPoint=totalPoint+#{value}
+        UPDATE usersdetail
+        SET totalPoint=totalPoint + #{value}
         WHERE userIdx=#{userIdx}
     </update>
 

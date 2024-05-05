@@ -1,5 +1,6 @@
 package com.widyu.healthcare.service;
 
+import com.widyu.healthcare.dto.domain.GoalDto;
 import com.widyu.healthcare.dto.request.GoalSetRequestDto;
 import com.widyu.healthcare.dto.response.GuardianGoalResponseDto;
 import com.widyu.healthcare.dto.response.SeniorGoalResponseDto;
@@ -73,87 +74,23 @@ public class GoalsService {
         return myGoal;
     }
 
-    // 보호자 메인 목표 화면
-//    public List<ResponseUserDTO> getGuardianMainPage(long userIdx){
-//
-//        List<ResponseUserDTO> responseUserDTOList = new ArrayList<>();
-//
-//        // gurdian Info
-//        responseUserDTOList.add(getResponseUserDtoByUserIdx(userIdx));
-//
-//        // senior Info
-//        List<SeniorDetailResponseDto> seniorsList = guardiansService.getSeniorsOrNull(userIdx);
-//        for (SeniorDetailResponseDto seniorDetailResponseDto : seniorsList) {
-//            ResponseUserDTO seniorResponseUserDTO = new ResponseUserDTO();
-//
-//            seniorResponseUserDTO.setName(seniorDetailResponseDto.getName());
-//            seniorResponseUserDTO.setUserType(SENIOR);
-//            // *userTable에서 가져와야할 정보 추후
-//
-//            seniorResponseUserDTO.setGoals(getGoalsByIdx(seniorDetailResponseDto.getUserIdx()));
-//            responseUserDTOList.add(seniorResponseUserDTO);
-//        }
-//
-//
-//        return responseUserDTOList;
-//    }
-
-//    // 시니어 메인 목표 화면
-//    public ResponseUserDTO getSeniorMainPage(long userIdx){
-//        return getResponseUserDtoByUserIdx(userIdx);
-//    }
-
-
-    //
-//    private ResponseUserDTO getResponseUserDtoByUserIdx(long userIdx){
-//
-//        ResponseUserDTO responseUserDTO = new ResponseUserDTO();
-//        // *userTable에서 가져와야할 정보 추후
-//        List<GoalSetDTO> goalSetDTOList= getGoalsByIdx(userIdx);
-//        responseUserDTO.setGoals(getGoalsByIdx(userIdx));
-//        return responseUserDTO;
-//    }
-
-//    // 목표 전체 조회
-//    public List<GoalSetDTO> getGoalsByIdx(long userIdx){
-//
-//        List<GoalSetDTO> GoalSetList = new ArrayList<GoalSetDTO>();
-//        List<GoalDTO> goals = goalsMapper.getGoalsByIdx(userIdx);
-//
-//        for (GoalDTO goal : goals) {
-//
-//            Long goalIdx = goal.getGoalIdx();
-//            List<GoalStatusDTO> goalStatuses = goalsStatusMapper.getGoalStatusesByGoalIdx(goalIdx);
-//            GoalSetDTO goalSetDTO = new GoalSetDTO(goal, goalStatuses);
-//            GoalSetList.add(goalSetDTO);
-//        }
-//
-//        return GoalSetList;
-//    }
-
-    // 특정 단일 목표 조회
-//    public GoalDTO getGoalByGoalIdx(long userIdx, long goalIdx){
-//
-//        return goalsMapper.getGoalByGoalIdx(userIdx, goalIdx);
-//    }
-
     // 목표 생성
-    public GoalSetRequestDto insertGoal(GoalSetRequestDto goalSet){
-        goalsMapper.insertGoal(goalSet.getGoalDto());
+    public GoalDto insertGoal(GoalDto goalDto){
 
-        Long goalIdx = goalsMapper.getGoalIdx(goalSet.getGoalDto());
-
-        for (GoalStatusDto goalStatus : goalSet.getGoalStatusDtoList()) {
-            goalStatus.setGoalIdx(goalIdx);
-            goalStatus.setStatus((byte) 0);
-            goalsStatusMapper.insertGoalStatus(goalStatus);
-            Long goalStatusIdx = goalsStatusMapper.getGoalStatusIdx(goalStatus);
-            goalStatus.setGoalStatusIdx(goalStatusIdx);
-
-            //timer
-            scheduleTimerForGoalStatus(goalStatus);
+        int insertGoalCount = goalsMapper.insertGoal(goalDto);
+        if (insertGoalCount != 1){
+            log.error("insert Goal ERROR! info from Goal table is null {}", goalDto);
+            throw new RuntimeException(
+                    "insert Goal ERROR! 회원가입 메서드를 확인해주세요\n" + "Params : " + goalDto);
         }
-        return goalSet;
+
+        goalDto.getGoalStatusDtoList().forEach(goalStatus -> {
+            goalStatus.setGoalIdx(goalDto.getGoalIdx());
+            goalsStatusMapper.insertGoalStatus(goalStatus);
+            scheduleTimerForGoalStatus(goalStatus); // scheduler
+        });
+
+        return goalDto;
     }
 
     // 목표 수정

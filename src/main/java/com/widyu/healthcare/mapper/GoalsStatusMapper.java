@@ -2,6 +2,7 @@ package com.widyu.healthcare.mapper;
 
 import com.widyu.healthcare.dto.domain.GoalStatusDto;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 

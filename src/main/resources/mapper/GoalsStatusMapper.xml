@@ -6,7 +6,10 @@
 <mapper namespace="com.widyu.healthcare.mapper.GoalsStatusMapper">
 
     <insert id="insertGoalStatus" parameterType="com.widyu.healthcare.dto.domain.GoalStatusDto">
-        INSERT INTO goalsstatus (goalIdx, time, status) VALUES (#{goalIdx}, #{time}, 0)
+        INSERT INTO goalsstatus (goalIdx, time, status, pillNum, imgUrl, point) VALUES (#{goalIdx}, #{time}, #{status}, #{pillNum}, #{imgUrl}, #{point})
+        <selectKey keyProperty="goalStatusIdx" order="AFTER" resultType="java.lang.Long">
+            SELECT LAST_INSERT_ID() AS goalStatusIdx
+        </selectKey>
     </insert>
 
     <delete id="deleteGoalStatus" parameterType="java.lang.Long">

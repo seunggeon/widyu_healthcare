@@ -27,14 +27,19 @@
         WHERE rewardIdx = #{rewardIdx}
     </update>
 
-    <select id="getRewardByUserIdx" parameterType="java.lang.Long" resultType="com.widyu.healthcare.dto.domain.RewardDto">
+    <select id="getOpenedRewardByUserIdx" parameterType="java.lang.Long">
         SELECT * FROM rewards
-        WHERE userIdx = #{userIdx}
+        WHERE userIdx = #{userIdx} AND status = 1
+    </select>
+
+    <select id="getClosedRewardByUserIdx" parameterType="java.lang.Long">
+        SELECT rewardIdx, description, type, status, point FROM rewards
+        WHERE userIdx = #{userIdx} AND status = 0
     </select>
 
     <select id="getRewardByRewardId" parameterType="java.lang.Long" resultType="com.widyu.healthcare.dto.domain.RewardDto">
         SELECT * FROM rewards
-        WHERE rewardIdx = #{rewardIdx}
+        WHERE rewardIdx = #{rewardIdx} AND status = 1
     </select>
 
     <select id="getPriceByRewardIdx" parameterType="java.lang.Long" resultType="java.lang.Long">

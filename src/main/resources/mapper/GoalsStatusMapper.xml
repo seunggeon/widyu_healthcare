@@ -6,7 +6,10 @@
 <mapper namespace="com.widyu.healthcare.mapper.GoalsStatusMapper">
 
     <insert id="insertGoalStatus" parameterType="com.widyu.healthcare.dto.domain.GoalStatusDto">
-        INSERT INTO goalsstatus (goalIdx, time, status) VALUES (#{goalIdx}, #{time}, 0)
+        INSERT INTO goalsstatus (goalIdx, time, status, pillNum, imgUrl, point) VALUES (#{goalIdx}, #{time}, #{status}, #{pillNum}, #{imgUrl}, #{point})
+        <selectKey keyProperty="goalStatusIdx" order="AFTER" resultType="java.lang.Long">
+            SELECT LAST_INSERT_ID() AS goalStatusIdx
+        </selectKey>
     </insert>
 
     <delete id="deleteGoalStatus" parameterType="java.lang.Long">
@@ -23,8 +26,8 @@
 
     <update id="updateGoalStatus" parameterType="com.widyu.healthcare.dto.domain.GoalStatusDto">
         UPDATE goalsstatus
-        SET time=#{time}, pillNum=#{pillNum}
-        WHERE goalStatusIdx=#{goalStatusIdx}
+        SET time = #{time}, pillNum = #{pillNum}, point = #{point}
+        WHERE goalIdx = #{goalIdx} AND goalStatusIdx = #{goalStatusIdx}
     </update>
 
     <select id="countGoalStatus" parameterType="java.lang.Long" resultType="int">
@@ -63,8 +66,8 @@
     </update>
 
     <update id="updateTotalPoint" parameterType="java.lang.Long">
-        UPDATE users
-        SET totalPoint=totalPoint+#{value}
+        UPDATE usersdetail
+        SET totalPoint=totalPoint + #{value}
         WHERE userIdx=#{userIdx}
     </update>
 

@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 
@@ -67,10 +68,9 @@ public class GoalsController {
      * @return
      */
     @PostMapping("/insert")
-    public ResponseEntity<?> insertGoal(@RequestBody GoalSetRequestDto goalSetDto) {
-        log.info("[log] controller_goal: {}", goalSetDto.toString());
+    public ResponseEntity<?> insertGoal(@RequestBody GoalDto goalDto) {
 
-        GoalSetRequestDto result = goalsService.insertGoal(goalSetDto);
+        GoalDto result = goalsService.insertGoal(goalDto);
         SuccessResponse response = new SuccessResponse(true, "목표 추가 성공", result);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -98,7 +98,7 @@ public class GoalsController {
      * @return
      */
     @PatchMapping("/edit")
-    public ResponseEntity<?> editGoal(@RequestBody GoalSetRequestDto goalDto){
+    public ResponseEntity<?> editGoal(@RequestBody GoalDto goalDto){
         goalsService.updateGoal(goalDto);
         SuccessResponse response = new SuccessResponse(true, "목표 수정 성공", null);
 
@@ -111,7 +111,7 @@ public class GoalsController {
      * @return
      */
     @PatchMapping("/success/{goalStatusIdx}")
-    public ResponseEntity<?> editStatusSuccess(@PathVariable long goalStatusIdx, HttpSession session){
+    public ResponseEntity<?> editStatusSuccess(@PathVariable long goalStatusIdx, HttpSession session) throws IOException {
 
         long userIdx = SessionUtil.getLoginGuardianId(session);
         goalsService.updateStatusSuccess(userIdx, goalStatusIdx);

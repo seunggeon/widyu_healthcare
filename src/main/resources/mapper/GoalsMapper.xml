@@ -78,8 +78,11 @@
         SELECT * FROM goals WHERE userIdx = #{userIdx} AND goalIdx = #{goalIdx}
     </select>
 
-    <insert id = "insertGoal" parameterType="com.widyu.healthcare.dto.domain.GoalDto">
+    <insert id = "insertGoal" parameterType="com.widyu.healthcare.dto.domain.GoalDto" >
         INSERT INTO goals (userIdx, title, description, type, day) VALUES (#{userIdx}, #{title}, #{description}, #{type}, #{day})
+        <selectKey keyProperty="goalIdx" order="AFTER" resultType="java.lang.Long">
+            SELECT LAST_INSERT_ID() AS goalIdx
+        </selectKey>
     </insert>
 
     <select id="getGoalIdx" parameterType="com.widyu.healthcare.dto.domain.GoalDto" resultType="java.lang.Long">
@@ -98,7 +101,7 @@
 
     <update id = "updateGoal" parameterType="com.widyu.healthcare.dto.domain.GoalDto">
         UPDATE Goals
-        SET title=#{title}, description=#{description}, type=#{type}, day=#{day}, startDate=#{startDate}, endDate=#{endDate}
-        WHERE userIdx = #{userIdx} AND goalIdx = #{goalIdx}
+        SET title=#{title}, description=#{description}, type=#{type}, day=#{day}
+        WHERE goalIdx = #{goalIdx}
     </update>
 </mapper>

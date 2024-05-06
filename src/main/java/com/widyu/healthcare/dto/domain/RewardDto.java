@@ -1,5 +1,6 @@
 package com.widyu.healthcare.dto.domain;
 
+import com.widyu.healthcare.dto.RewardType;
 import lombok.Data;
 import lombok.NonNull;
 
@@ -10,8 +11,9 @@ public class RewardDto {
     @NonNull
     long userIdx;
     String description;
-    private byte status;
+    RewardType type;
     String url;
+    private byte status; //closed:0, Open:1
     long point;
 
     public RewardDto(long userIdx, String description, String url) {

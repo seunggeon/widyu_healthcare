@@ -47,7 +47,7 @@ public class GuardiansService {
                 .userIdx(guardianReq.getUserIdx())
                 .name(guardianReq.getName())
                 .id(guardianReq.getId())
-                .phoneNumber(guardianReq.getPassword())
+                .phoneNumber(guardianReq.getPhoneNumber())
                 .build();
         return userInfo;
     }

@@ -25,29 +25,30 @@ public class GuardiansService {
         if (duplIdResult) {
             throw new DuplicateIdException("중복된 아이디입니다.");
         }
-        guardianReq.builder()
+        GuardianRequestDto guardianInfo = guardianReq.builder()
                 .id(guardianReq.getId())
                 .password(SHA256Util.encryptSHA256(guardianReq.getPassword()))
+                .name(guardianReq.getName())
                 .phoneNumber(guardianReq.getPhoneNumber())
                 .build();
-        long insertCount = guardiansMapper.insertDetail(guardianReq);
+        long insertCount = guardiansMapper.insertDetail(guardianInfo);
         if (insertCount != 1) {
-            log.error("insert Guardiance ERROR! {}", guardianReq);
+            log.error("insert Guardiance ERROR! {}", guardianInfo);
             throw new RuntimeException(
-                    "insert Guardiance ERROR! 회원가입 메서드를 확인해주세요\n" + "Params : " + guardianReq);
+                    "insert Guardiance ERROR! 회원가입 메서드를 확인해주세요\n" + "Params : " + guardianInfo);
         }
-        int insertNameCount = guardiansMapper.update(guardianReq.getUserIdx(), guardianReq.getName());
+        int insertNameCount = guardiansMapper.update(guardianInfo.getUserIdx(), guardianInfo.getName());
         if (insertNameCount != 1) {
-            log.error("update Guardiance info ERROR! info from user table is null {}", guardianReq);
+            log.error("update Guardiance info ERROR! info from user table is null {}", guardianInfo);
             throw new RuntimeException(
-                    "update Guardiance info ERROR! 회원가입 메서드를 확인해주세요\n" + "Params : " + guardianReq);
+                    "update Guardiance info ERROR! 회원가입 메서드를 확인해주세요\n" + "Params : " + guardianInfo);
         }
         GuardianDetailResponseDto userInfo = GuardianDetailResponseDto
                 .builder()
-                .userIdx(guardianReq.getUserIdx())
-                .name(guardianReq.getName())
-                .id(guardianReq.getId())
-                .phoneNumber(guardianReq.getPhoneNumber())
+                .userIdx(guardianInfo.getUserIdx())
+                .name(guardianInfo.getName())
+                .id(guardianInfo.getId())
+                .phoneNumber(guardianInfo.getPhoneNumber())
                 .build();
         return userInfo;
     }

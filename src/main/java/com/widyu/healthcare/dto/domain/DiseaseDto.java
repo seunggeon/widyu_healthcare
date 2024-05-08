@@ -5,8 +5,7 @@ import lombok.Data;
 @Data
 public class DiseaseDto {
     private long diseaseIdx;
-    @JsonProperty("name")
-    private String diseaseName;
+    private String name;
     private String drugName;
     private String explanation;
     private String favoriteHospital;

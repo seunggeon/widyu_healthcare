@@ -53,7 +53,7 @@ public class SeniorsService {
         {
             int insertDiseasesCount = seniorsMapper.insertDiseases(seniorInfo.getUserIdx(), seniorInfo.getDiseases());
             // 두 개의 행을 성공적으로 추가
-            if(insertDiseasesCount != 2) {
+            if(insertDiseasesCount == 0) {
                 log.error("insert Disease during register ERROR! guadianIdx : ", guardianIdx);
                 throw new RuntimeException(
                         "insert Disease during register ERROR! 회원가입 메서드를 확인해주세요\n" + "guadianIdx : " + guardianIdx + "seniorIdx : " + seniorInfo.getUserIdx());

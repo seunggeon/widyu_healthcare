@@ -13,7 +13,9 @@
         <result property="address" column="address"/>
         <result property="birth" column="birth"/>
         <result property="isDisease" column="isDisease"/>
-        <collection property="diseases" column="{userIdx = userIdx}" javaType="java.util.ArrayList" ofType="com.widyu.healthcare.dto.domain.DiseaseDto" select="findDiseasesByIdx"/>
+        <collection property="diseases" column="{userIdx = userIdx}" javaType="java.util.ArrayList" ofType="com.widyu.healthcare.dto.domain.DiseaseDto" select="findDiseasesByIdx">
+            <result property="name" column="diseaseName"/>
+        </collection>
     </resultMap>
 
     <insert id="insertDetail" parameterType="com.widyu.healthcare.dto.request.SeniorRequestDto">
@@ -30,11 +32,11 @@
         WHERE userIdx = #{userIdx}
     </update>
 
-    <insert id="insertDiseases">
+    <insert id="insertDiseases" parameterType="java.util.List">
         INSERT INTO diseases(userIdx, name, drugName, explanation)
         VALUES
         <foreach collection="diseases" item="disease" separator=",">
-            (#{userIdx}, #{disease.diseaseName}, #{disease.drugName}, #{disease.explanation})
+           (#{userIdx}, #{disease.name}, #{disease.drugName}, #{disease.explanation})
         </foreach>
     </insert>
 
@@ -78,13 +80,13 @@
     </select>
 
     <select id="findDiseasesByIdx" resultType="com.widyu.healthcare.dto.domain.DiseaseDto">
-        SELECT diseaseIdx, name, drugName, explanation
+        SELECT diseaseIdx, name AS diseaseName, drugName, explanation
         FROM diseases
         WHERE userIdx = #{userIdx}
     </select>
 
     <select id="findGuardiansByIdx" resultType="com.widyu.healthcare.dto.response.GuardianDetailResponseDto">
-        SELECT u.name, u.profileImageUrl, u.type, ud.id, ud.phoneNumber, ud.address, ud.birth
+        SELECT u.userIdx, u.name, u.profileImageUrl, u.type, ud.id, ud.phoneNumber, ud.address, ud.birth
         FROM usersdetail as ud
         JOIN users as u ON ud.userIdx = u.userIdx
         WHERE ud.userIdx IN (

@@ -3,8 +3,8 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.widyu.healthcare.mapper.GoalsMapper">
-    <resultMap id="GuardianGoalResponseDtoMap" type="com.widyu.healthcare.dto.response.GuardianGoalResponseDto">
+<mapper namespace="com.widyu.healthcare.core.db.mapper.v1.GoalsMapper">
+    <resultMap id="GuardianGoalResponseDtoMap" type="com.widyu.healthcare.core.api.controller.v1.response.goal.GuardianGoalResponse">
         <id property="userIdx" column="userIdx"/>
         <result property="name" column="name"/>
         <result property="profileImageUrl" column="profileImageUrl"/>
@@ -14,7 +14,7 @@
         <collection property="goalsAndStatus" javaType="java.util.ArrayList" resultMap="goalsMap"></collection>
     </resultMap>
 
-    <resultMap id="SeniorGoalResponseDtoMap" type="com.widyu.healthcare.dto.response.SeniorGoalResponseDto">
+    <resultMap id="SeniorGoalResponseDtoMap" type="com.widyu.healthcare.core.api.controller.v1.response.goal.SeniorGoalResponse">
 <!--        <result property="userIdx" column="userIdx"/>-->
         <result property="name" column="name"/>
         <result property="profileImageUrl" column="profileImageUrl"/>
@@ -70,22 +70,22 @@
         WHERE u.userIdx = #{userIdx}
     </select>
 
-    <select id="getGoalsById" parameterType="java.lang.Long" resultType="com.widyu.healthcare.dto.domain.GoalDto">
+    <select id="getGoalsById" parameterType="java.lang.Long" resultType="com.widyu.healthcare.core.domain.domain.v1.Goal">
         SELECT * FROM goals WHERE userIdx = #{id}
     </select>
 
-    <select id="getGoalByGoalId" parameterType="java.lang.Long" resultType="com.widyu.healthcare.dto.domain.GoalDto">
+    <select id="getGoalByGoalId" parameterType="java.lang.Long" resultType="com.widyu.healthcare.core.domain.domain.v1.Goal">
         SELECT * FROM goals WHERE userIdx = #{userIdx} AND goalIdx = #{goalIdx}
     </select>
 
-    <insert id = "insertGoal" parameterType="com.widyu.healthcare.dto.domain.GoalDto" >
+    <insert id = "insertGoal" parameterType="com.widyu.healthcare.core.domain.domain.v1.Goal" >
         INSERT INTO goals (userIdx, title, description, type, day) VALUES (#{userIdx}, #{title}, #{description}, #{type}, #{day})
         <selectKey keyProperty="goalIdx" order="AFTER" resultType="java.lang.Long">
             SELECT LAST_INSERT_ID() AS goalIdx
         </selectKey>
     </insert>
 
-    <select id="getGoalIdx" parameterType="com.widyu.healthcare.dto.domain.GoalDto" resultType="java.lang.Long">
+    <select id="getGoalIdx" parameterType="com.widyu.healthcare.core.domain.domain.v1.Goal" resultType="java.lang.Long">
         SELECT goalIdx
         FROM goals
         WHERE userIdx = #{userIdx} AND title=#{title} AND description=#{description}
@@ -99,7 +99,7 @@
         WHERE userIdx = #{userIdx} AND goalIdx = #{goalIdx}
     </delete>
 
-    <update id = "updateGoal" parameterType="com.widyu.healthcare.dto.domain.GoalDto">
+    <update id = "updateGoal" parameterType="com.widyu.healthcare.core.domain.domain.v1.Goal">
         UPDATE Goals
         SET title=#{title}, description=#{description}, type=#{type}, day=#{day}
         WHERE goalIdx = #{goalIdx}

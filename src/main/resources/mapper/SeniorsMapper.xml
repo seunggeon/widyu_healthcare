@@ -3,8 +3,8 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.widyu.healthcare.mapper.SeniorsMapper">
-    <resultMap id="SeniorDetailResponseDtoMap" type="com.widyu.healthcare.dto.response.SeniorDetailResponseDto">
+<mapper namespace="com.widyu.healthcare.core.db.mapper.v1.SeniorsMapper">
+    <resultMap id="SeniorDetailResponseDtoMap" type="com.widyu.healthcare.core.api.controller.v1.response.senior.SeniorInfoResponse">
         <result property="userIdx" column="userIdx"/>
         <result property="name" column="name"/>
         <result property="profileImageUrl" column="profileImageUrl"/>
@@ -13,12 +13,12 @@
         <result property="address" column="address"/>
         <result property="birth" column="birth"/>
         <result property="isDisease" column="isDisease"/>
-        <collection property="diseases" column="{userIdx = userIdx}" javaType="java.util.ArrayList" ofType="com.widyu.healthcare.dto.domain.DiseaseDto" select="findDiseasesByIdx">
+        <collection property="diseases" column="{userIdx = userIdx}" javaType="java.util.ArrayList" ofType="com.widyu.healthcare.core.domain.domain.v1.Disease" select="findDiseasesByIdx">
             <result property="name" column="diseaseName"/>
         </collection>
     </resultMap>
 
-    <insert id="insertDetail" parameterType="com.widyu.healthcare.dto.request.SeniorRequestDto">
+    <insert id="insertDetail" parameterType="com.widyu.healthcare.core.api.controller.v1.request.senior.RegisterSeniorRequest">
         INSERT INTO usersdetail(phoneNumber, birth, age, address, inviteCode, isDisease)
         VALUES(#{phoneNumber}, #{birth}, #{age}, #{address}, #{inviteCode}, #{isDisease})
         <selectKey resultType="long" keyProperty="userIdx" keyColumn="userIdx" order="AFTER">
@@ -63,7 +63,7 @@
         WHERE guardianIdx = #{guardianIdx}
     </update>
 
-    <select id="findByInviteCode" resultType="com.widyu.healthcare.dto.response.UsersResponseDto">
+    <select id="findByInviteCode" resultType="com.widyu.healthcare.core.api.controller.v1.response.CommonUserResponse">
         SELECT u.userIdx, u.status
         FROM usersdetail as ud
         JOIN users as u ON ud.userIdx = u.userIdx
@@ -79,13 +79,13 @@
         GROUP BY ud.userIdx;
     </select>
 
-    <select id="findDiseasesByIdx" resultType="com.widyu.healthcare.dto.domain.DiseaseDto">
+    <select id="findDiseasesByIdx" resultType="com.widyu.healthcare.core.domain.domain.v1.Disease">
         SELECT diseaseIdx, name AS diseaseName, drugName, explanation
         FROM diseases
         WHERE userIdx = #{userIdx}
     </select>
 
-    <select id="findGuardiansByIdx" resultType="com.widyu.healthcare.dto.response.GuardianDetailResponseDto">
+    <select id="findGuardiansByIdx" resultType="com.widyu.healthcare.core.api.controller.v1.response.guardian.GuardianInfoResponse">
         SELECT u.userIdx, u.name, u.profileImageUrl, u.type, ud.id, ud.phoneNumber, ud.address, ud.birth
         FROM usersdetail as ud
         JOIN users as u ON ud.userIdx = u.userIdx
@@ -97,7 +97,7 @@
         LIMIT 10;
     </select>
 
-    <select id="findGuardianByGuardianId" resultType="com.widyu.healthcare.dto.response.GuardianDetailResponseDto">
+    <select id="findGuardianByGuardianId" resultType="com.widyu.healthcare.core.api.controller.v1.response.guardian.GuardianInfoResponse">
         SELECT u.userIdx, u.name, u.profileImageUrl, u.type, ud.id
         FROM usersdetail as ud
         JOIN users as u ON ud.userIdx = u.userIdx
@@ -134,7 +134,7 @@
         AND u.status != 'DELETE'
     </update>
 
-    <update id="updateDisease" parameterType="com.widyu.healthcare.dto.domain.DiseaseDto">
+    <update id="updateDisease" parameterType="com.widyu.healthcare.core.domain.domain.v1.Disease">
             UPDATE diseases
             SET name = #{disease.name}, drugName = #{disease.drugName}, explanation = #{disease.explanation}
             WHERE diseaseIdx = #{disease.diseaseIdx}

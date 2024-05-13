@@ -3,13 +3,13 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.widyu.healthcare.mapper.RewardMapper">
+<mapper namespace="com.widyu.healthcare.core.db.mapper.v1.RewardsMapper">
 
-    <insert id="insertReward" parameterType="com.widyu.healthcare.dto.domain.RewardDto">
+    <insert id="insertReward" parameterType="com.widyu.healthcare.core.domain.domain.v1.Reward">
         INSERT INTO rewards (userIdx, url, description, status, point) VALUES (#{userIdx}, #{url}, #{description}, #{status}, #{point})
     </insert>
 
-    <update id="updateReward" parameterType="com.widyu.healthcare.dto.domain.RewardDto">
+    <update id="updateReward" parameterType="com.widyu.healthcare.core.domain.domain.v1.Reward">
         UPDATE rewards
         SET url = #{url}, description = #{description}
         WHERE rewardIdx = #{rewardIdx}
@@ -37,7 +37,7 @@
         WHERE userIdx = #{userIdx} AND status = 0
     </select>
 
-    <select id="getRewardByRewardId" parameterType="java.lang.Long" resultType="com.widyu.healthcare.dto.domain.RewardDto">
+    <select id="getRewardByRewardId" parameterType="java.lang.Long" resultType="com.widyu.healthcare.core.domain.domain.v1.Reward">
         SELECT * FROM rewards
         WHERE rewardIdx = #{rewardIdx} AND status = 1
     </select>

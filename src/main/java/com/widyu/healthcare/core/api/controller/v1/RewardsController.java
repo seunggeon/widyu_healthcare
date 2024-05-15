@@ -2,11 +2,13 @@ package com.widyu.healthcare.core.api.controller.v1;
 
 import com.widyu.healthcare.core.api.controller.v1.response.SuccessResponse;
 import com.widyu.healthcare.core.domain.domain.v1.Reward;
+import com.widyu.healthcare.core.domain.domain.v1.RewardType;
 import com.widyu.healthcare.support.error.exception.InsufficientPointsException;
 import com.widyu.healthcare.core.domain.service.v1.RewardsService;
 import com.widyu.healthcare.core.domain.service.v1.S3Service;
 import com.widyu.healthcare.support.utils.SessionUtil;
 import jakarta.servlet.http.HttpSession;
+import jakarta.websocket.Session;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -17,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @Log4j2
 @RestController
@@ -28,11 +31,24 @@ public class RewardsController {
     /**
      * 리워드 전체 목록 조회
      */
-    @GetMapping("/all")
-    public ResponseEntity<?> getAllReward(HttpSession session){
+    @GetMapping("/gurdian/all")
+    public ResponseEntity<?> getAllGurdianReward(HttpSession session){
 
         long userIdx = SessionUtil.getLoginGuardianIdx(session);
-        List<Reward> rewardAllInfo = rewardsService.getAllReward(userIdx);
+        List<Reward> rewardAllInfo = rewardsService.getAllGurdianReward(userIdx);
+        SuccessResponse response = new SuccessResponse(true, "reward 조회 완료", rewardAllInfo);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    /**
+     * 리워드 전체 목록 조회
+     */
+    @GetMapping("/senior/all")
+    public ResponseEntity<?> getAllSeniorReward(HttpSession session){
+
+        long userIdx = SessionUtil.getLoginSeniorIdx(session);
+        List<Reward> rewardAllInfo = rewardsService.getAllSeniorReward(userIdx);
         SuccessResponse response = new SuccessResponse(true, "reward 조회 완료", rewardAllInfo);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -57,10 +73,13 @@ public class RewardsController {
     @PostMapping("/insert")
     public ResponseEntity<?> insertReward(@RequestParam(value = "url", required = false) @NonNull final MultipartFile multipartFile,
                                           @RequestParam(value = "userIdx", required = false) @NonNull final String userIdx,
-                                          @RequestParam(value = "description", required = false) final String description
+                                          @RequestParam(value = "type", required = false) @NonNull  final RewardType type,
+                                          @RequestParam(value = "description", required = false) final String description,
+                                          HttpSession session
     ) throws IOException {
 
-        Reward reward = s3Service.insertRewardFile(Long.parseLong(userIdx), description, multipartFile);
+        long uploaderIdx = SessionUtil.getLoginGuardianIdx(session);
+        Reward reward = s3Service.insertRewardFile(Long.parseLong(userIdx), uploaderIdx, description, type, multipartFile);
         SuccessResponse response = new SuccessResponse(true, "리워드 추가 완료", reward);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -86,6 +105,18 @@ public class RewardsController {
 
         rewardsService.deleteReward(rewardIdx);
         SuccessResponse response = new SuccessResponse(true, "reward 삭제 완료", null);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    /**
+     * 리워드 달성 현황
+     */
+    @GetMapping("/montly/{userIdx}/{month}")
+    public ResponseEntity<?> getRewardMontly(@PathVariable("userIdx") @NonNull long userIdx,
+                                             @PathVariable("month") @NonNull int month){
+        Map<Integer, Double> montlyReward = rewardsService.getRewardMontly(userIdx, month);
+        SuccessResponse response = new SuccessResponse(true, "reward 조회 완료", montlyReward);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import static com.widyu.healthcare.support.config.AppConfig.REWARD_POINT;
 
@@ -27,9 +28,15 @@ public class RewardsService {
     private static final String POINT_CODE_PREFIX = "point_code:";
 
     // 열린 리워드 전체 조회
-    public List<Reward> getAllReward(Long userIdx){
+    public List<Reward> getAllGurdianReward(Long userIdx){
         List<Reward> rewardList = rewardsMapper.getOpenedRewardByUserIdx(userIdx);
         rewardList.addAll(rewardsMapper.getClosedRewardByUserIdx(userIdx));
+        return rewardList;
+    }
+
+    public List<Reward> getAllSeniorReward(Long userIdx){
+        List<Reward> rewardList = rewardsMapper.getOpenedRewardByUserIdx(userIdx);
+        rewardList.addAll(rewardsMapper.getClosedRewardInfoByUserIdx(userIdx));
         return rewardList;
     }
 
@@ -57,6 +64,11 @@ public class RewardsService {
     public void deleteReward(long rewardIdx) throws IOException {
         s3Service.deleteRewardUrl(rewardIdx);
         rewardsMapper.deleteRewardByRewardIdx(rewardIdx);
+    }
+
+    // 리워드 월별 달성률 조회
+    public Map<Integer, Double> getRewardMontly(long userIdx, int month){
+        return rewardsMapper.getRewardMonthly(userIdx, month);
     }
 
     private static String buildRedisKey(String userIdx) {

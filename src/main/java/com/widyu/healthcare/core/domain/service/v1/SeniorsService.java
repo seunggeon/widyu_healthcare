@@ -23,7 +23,7 @@ import static com.widyu.healthcare.core.domain.domain.v1.UserType.SENIOR;
 @Service
 @RequiredArgsConstructor
 public class SeniorsService {
-    private SeniorsMapper seniorsMapper;
+    private final SeniorsMapper seniorsMapper;
     @Transactional(rollbackFor = RuntimeException.class)
     public String insertAndSetRelations(long guardianIdx, User EncryptedUser) {
 

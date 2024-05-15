@@ -4,6 +4,7 @@ import com.widyu.healthcare.core.domain.domain.v1.Reward;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface RewardsMapper {
@@ -14,8 +15,12 @@ public interface RewardsMapper {
     void updateRewardStatus(long rewardIdx, Integer status);
     List<Reward> getOpenedRewardByUserIdx(long userIdx);
     List<Reward> getClosedRewardByUserIdx(long userIdx);
+    List<Reward> getClosedRewardInfoByUserIdx(long userIdx);
     Reward getRewardByRewardId(long rewardIdx);
     long getPriceByRewardIdx(long rewardIdx);
     String getUrlByRewardIdx(long rewardIdx);
     void deleteRewardByRewardIdx(long rewardIdx);
+
+    long getRewardDaily(long userIdx, int day);
+    Map<Integer, Double> getRewardMonthly(long userIdx, int month);
 }

@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
+import java.util.Calendar;
 import java.util.stream.Collectors;
 
 import static com.widyu.healthcare.support.config.AppConfig.GOAL_POINT;
@@ -76,11 +77,16 @@ public class GoalsService {
             throw new RuntimeException("insert Goal ERROR! 목표 생성 메서드를 확인해주세요\n" + "Params : " + goal);
         }
 
+        // 현재 요일 구하기
+        Calendar calendar = Calendar.getInstance();
+        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+
         try {
             goalStatusList.forEach(goalStatus -> {
                 goalStatus.builder()
                         .goalIdx(goal.getGoalIdx());
-                goalsStatusMapper.insertGoalStatus(goalStatus);
+                if (goal.getDay().toCharArray()[dayOfWeek - 1] == '1')
+                        goalsStatusMapper.insertGoalStatus(goalStatus);
                 // 하루 지났을 때 수행 안한 목표는 실패로 만드는 스케줄러
                 scheduleTimerForGoalStatus(goalStatus);
             });

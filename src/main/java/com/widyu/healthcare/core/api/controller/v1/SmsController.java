@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/sms")
 public class SmsController {
-    private SmsService smsService;
+    private final SmsService smsService;
     /**
      * 문자 인증 번호 전송
      */

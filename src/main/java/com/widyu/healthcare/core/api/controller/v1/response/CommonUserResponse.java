@@ -14,6 +14,7 @@ import lombok.experimental.SuperBuilder;
  */
 @Getter
 @SuperBuilder
+@NoArgsConstructor
 public class CommonUserResponse {
     private long userIdx;
     private String name;

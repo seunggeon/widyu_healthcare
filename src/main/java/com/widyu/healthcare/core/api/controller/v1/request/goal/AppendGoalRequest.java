@@ -13,19 +13,12 @@ public class AppendGoalRequest {
 
     @NonNull
     private Goal goal;
-    @NonNull
-    private List<GoalStatus> goalStatusList;
     @Builder
     public AppendGoalRequest(Goal goal, List<GoalStatus> goalStatusList) {
         this.goal = goal;
-        this.goalStatusList = goalStatusList;
     }
     public Goal toGoal() {
         Goal goal = this.goal;
         return goal;
-    }
-    public List<GoalStatus> toGoalStatusList() {
-        List<GoalStatus> goalStatusList = this.goalStatusList;
-        return goalStatusList;
     }
 }

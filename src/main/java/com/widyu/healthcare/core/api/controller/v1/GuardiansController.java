@@ -32,8 +32,8 @@ import com.widyu.healthcare.support.utils.SessionUtil;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/guardian")
 public class GuardiansController {
-    private GuardiansService guardiansService;
-    private SeniorsService seniorsService;
+    private final GuardiansService guardiansService;
+    private final SeniorsService seniorsService;
     @PostMapping("register")
     public ResponseEntity<?> register(@RequestBody @Valid RegisterGuardianRequest guardianReq) {
         GuardianInfoResponse userInfo = guardiansService.insert(guardianReq.toEncryptedUser());

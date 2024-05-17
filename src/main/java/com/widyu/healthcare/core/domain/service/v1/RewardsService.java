@@ -1,5 +1,6 @@
 package com.widyu.healthcare.core.domain.service.v1;
 
+import com.widyu.healthcare.core.api.controller.v1.response.reward.RewardResponse;
 import com.widyu.healthcare.core.db.client.mapper.RedisMapper;
 import com.widyu.healthcare.core.domain.domain.v1.Reward;
 import com.widyu.healthcare.support.error.exception.InsufficientPointsException;
@@ -10,6 +11,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -27,16 +29,17 @@ public class RewardsService {
     private final GoalsStatusMapper goalsStatusMapper;
     private static final String POINT_CODE_PREFIX = "point_code:";
 
-    // 열린 리워드 전체 조회
-    public List<Reward> getAllGurdianReward(Long userIdx){
-        List<Reward> rewardList = rewardsMapper.getOpenedRewardByUserIdx(userIdx);
+    // 리워드 전체 조회(부양자)
+    public List<RewardResponse> getAllGurdianReward(Long userIdx){
+        List<RewardResponse> rewardList = rewardsMapper.getOpenedRewardByUserIdx(userIdx);
         rewardList.addAll(rewardsMapper.getClosedRewardByUserIdx(userIdx));
         return rewardList;
     }
 
-    public List<Reward> getAllSeniorReward(Long userIdx){
-        List<Reward> rewardList = rewardsMapper.getOpenedRewardByUserIdx(userIdx);
-        rewardList.addAll(rewardsMapper.getClosedRewardInfoByUserIdx(userIdx));
+    // 리워드 전체 조회(시니어)
+    public List<RewardResponse> getAllSeniorReward(Long userIdx){
+        List<RewardResponse> rewardList = rewardsMapper.getOpenedRewardByUserIdx(userIdx);
+        rewardList.addAll(rewardsMapper.getClosedRewardByUserIdxForSenior(userIdx));
         return rewardList;
     }
 
@@ -66,9 +69,20 @@ public class RewardsService {
         rewardsMapper.deleteRewardByRewardIdx(rewardIdx);
     }
 
-    // 리워드 월별 달성률 조회
-    public Map<Integer, Double> getRewardMontly(long userIdx, int month){
-        return rewardsMapper.getRewardMonthly(userIdx, month);
+    // 오늘 리워드 달성률 조회
+    public long getRewardRateToday(long userIdx){
+        // 오늘 날짜 가져오기
+        LocalDate today = LocalDate.now();
+        int month = today.getMonthValue();
+        int day = today.getDayOfMonth();
+
+        return rewardsMapper.getRewardRateDaily(userIdx, month, day);
+    }
+
+    // 월별 리워드 달성률 조회
+    public List<Map<Integer, Double>> getRewardRateMontly(long userIdx, int month){
+
+        return rewardsMapper.getRewardRateMonthly(userIdx, month);
     }
 
     private static String buildRedisKey(String userIdx) {

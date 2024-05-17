@@ -4,8 +4,6 @@ import jakarta.annotation.Nullable;
 import lombok.*;
 
 import java.sql.Time;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 public class GoalStatus {
@@ -28,5 +26,9 @@ public class GoalStatus {
         this.pillNum = pillNum;
         this.imgUrl = imgUrl;
         this.point = point;
+    }
+
+    public void setGoalIdx(long goalIdx){
+        this.goalIdx = goalIdx;
     }
 }

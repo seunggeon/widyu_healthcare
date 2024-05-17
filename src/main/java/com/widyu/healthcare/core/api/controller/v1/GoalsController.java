@@ -6,6 +6,7 @@ import com.widyu.healthcare.core.api.controller.v1.response.goal.MainGoalRespons
 import com.widyu.healthcare.core.api.controller.v1.response.goal.SeniorGoalResponse;
 import com.widyu.healthcare.core.api.controller.v1.response.SuccessResponse;
 
+import com.widyu.healthcare.core.domain.domain.v1.Goal;
 import com.widyu.healthcare.core.domain.service.v1.GoalsService;
 import com.widyu.healthcare.support.utils.SessionUtil;
 import com.widyu.healthcare.core.api.middleware.LoginCheck;
@@ -23,7 +24,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/goals")
 public class GoalsController {
-    private GoalsService goalsService;
+    private final GoalsService goalsService;
     /**
      * 보호자 목표 조회
      * @param apiUser
@@ -58,14 +59,13 @@ public class GoalsController {
 
     /**
      * 목표 생성
-     * @param appendGoalReq
+     * @param goal
      * @return
      */
     @PostMapping("/insert")
-    @LoginCheck(type = LoginCheck.UserType.COMMON)
-    public ResponseEntity<?> insertGoal(@RequestBody AppendGoalRequest appendGoalReq) {
+    public ResponseEntity<?> insertGoal(@RequestBody Goal goal) {
 
-        goalsService.insertGoal(appendGoalReq.toGoal(), appendGoalReq.toGoalStatusList());
+        goalsService.insertGoal(goal, goal.getGoalStatusList());
         SuccessResponse response = new SuccessResponse(true, "목표 추가 성공", null);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -74,15 +74,13 @@ public class GoalsController {
     /**
      * 목표 삭제
      * @param goalIdx
-     * @param apiUser
      * @return
      */
     @DeleteMapping("/delete/{goalIdx}")
     @LoginCheck(type = LoginCheck.UserType.COMMON)
-    public ResponseEntity<?> deleteGoal(@PathVariable long goalIdx, HttpSession apiUser){
+    public ResponseEntity<?> deleteGoal(@PathVariable long goalIdx){
 
-        long userIdx = SessionUtil.getLoginGuardianIdx(apiUser);
-        goalsService.deleteGoal(userIdx, goalIdx);
+        goalsService.deleteGoal(goalIdx);
         SuccessResponse response = new SuccessResponse(true, "목표 삭제 성공", null);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -95,8 +93,8 @@ public class GoalsController {
      */
     @PatchMapping("/edit")
     @LoginCheck(type = LoginCheck.UserType.COMMON)
-    public ResponseEntity<?> editGoal(@RequestBody UpdateGoalRequest updateGoalReq){
-        goalsService.updateGoal(updateGoalReq.toGoal(), updateGoalReq.toGoalStatusList());
+    public ResponseEntity<?> editGoal(@RequestBody Goal goal){
+        goalsService.updateGoal(goal, goal.getGoalStatusList());
         SuccessResponse response = new SuccessResponse(true, "목표 수정 성공", null);
 
         return new ResponseEntity<>(response, HttpStatus.OK);

@@ -1,6 +1,7 @@
 package com.widyu.healthcare.core.api.controller.v1;
 
 import com.widyu.healthcare.core.api.controller.v1.response.SuccessResponse;
+import com.widyu.healthcare.core.api.controller.v1.response.reward.RewardResponse;
 import com.widyu.healthcare.core.domain.domain.v1.Reward;
 import com.widyu.healthcare.core.domain.domain.v1.RewardType;
 import com.widyu.healthcare.support.error.exception.InsufficientPointsException;
@@ -26,8 +27,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/reward")
 public class RewardsController {
-    private S3Service s3Service;
-    private RewardsService rewardsService;
+    private final S3Service s3Service;
+    private final RewardsService rewardsService;
     /**
      * 리워드 전체 목록 조회
      */
@@ -35,7 +36,7 @@ public class RewardsController {
     public ResponseEntity<?> getAllGurdianReward(HttpSession session){
 
         long userIdx = SessionUtil.getLoginGuardianIdx(session);
-        List<Reward> rewardAllInfo = rewardsService.getAllGurdianReward(userIdx);
+        List<RewardResponse> rewardAllInfo = rewardsService.getAllGurdianReward(userIdx);
         SuccessResponse response = new SuccessResponse(true, "reward 조회 완료", rewardAllInfo);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -48,7 +49,7 @@ public class RewardsController {
     public ResponseEntity<?> getAllSeniorReward(HttpSession session){
 
         long userIdx = SessionUtil.getLoginSeniorIdx(session);
-        List<Reward> rewardAllInfo = rewardsService.getAllSeniorReward(userIdx);
+        List<RewardResponse> rewardAllInfo = rewardsService.getAllSeniorReward(userIdx);
         SuccessResponse response = new SuccessResponse(true, "reward 조회 완료", rewardAllInfo);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -59,7 +60,7 @@ public class RewardsController {
      */
     @GetMapping("/buy/{rewardIdx}")
     public ResponseEntity<?> getReward(@PathVariable Long rewardIdx, HttpSession session) throws InsufficientPointsException {
-        long userIdx = SessionUtil.getLoginGuardianIdx(session);
+        long userIdx = SessionUtil.getLoginSeniorIdx(session);
         Reward rewardInfo = rewardsService.getReward(userIdx, rewardIdx);
         SuccessResponse response = new SuccessResponse(true, "reward 구매 완료", rewardInfo);
 
@@ -110,13 +111,25 @@ public class RewardsController {
     }
 
     /**
-     * 리워드 달성 현황
+     * 리워드 일별 달성률
      */
-    @GetMapping("/montly/{userIdx}/{month}")
+    @GetMapping("/rate/today/{userIdx}")
+    public ResponseEntity<?> getRewardDaily(@PathVariable("userIdx") @NonNull long userIdx){
+
+        long todayRewardRate = rewardsService.getRewardRateToday(userIdx);
+        SuccessResponse response = new SuccessResponse(true, "reward 일별 달성률 조회 완료", todayRewardRate);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    /**
+     * 리워드 월별 달성률
+     */
+    @GetMapping("/rate/montly/{userIdx}/{month}")
     public ResponseEntity<?> getRewardMontly(@PathVariable("userIdx") @NonNull long userIdx,
                                              @PathVariable("month") @NonNull int month){
-        Map<Integer, Double> montlyReward = rewardsService.getRewardMontly(userIdx, month);
-        SuccessResponse response = new SuccessResponse(true, "reward 조회 완료", montlyReward);
+        List<Map<Integer, Double>> montlyRewardRate = rewardsService.getRewardRateMontly(userIdx, month);
+        SuccessResponse response = new SuccessResponse(true, "reward 월별 달성률 조회 완료", montlyRewardRate);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

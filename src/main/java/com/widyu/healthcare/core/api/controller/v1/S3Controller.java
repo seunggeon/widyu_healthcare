@@ -18,7 +18,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/s3")
 public class S3Controller {
-    private S3Service s3Service;
+    private final S3Service s3Service;
 
     /**
      * 사진 업로드 (약 인증)

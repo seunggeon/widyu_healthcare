@@ -1,5 +1,6 @@
 package com.widyu.healthcare.core.api.controller.v1;
 
+import com.google.firebase.database.annotations.NotNull;
 import com.widyu.healthcare.core.domain.domain.v1.UserStatus;
 import com.widyu.healthcare.core.api.controller.v1.request.senior.RegisterSeniorRequest;
 import com.widyu.healthcare.core.api.controller.v1.response.SuccessResponse;
@@ -20,6 +21,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @Log4j2
@@ -79,7 +81,8 @@ public class SeniorsController {
     }
 
     @PatchMapping("profile")
-    public ResponseEntity<?> updateProfile(@RequestBody @Valid UpdateSeniorProfileRequest profileReq, HttpSession apiUser) {
+    public ResponseEntity<?> updateProfile(@RequestBody @Valid UpdateSeniorProfileRequest profileReq, @RequestParam(value = "url", required = false) @NotNull final MultipartFile multipartFile
+                                           , HttpSession apiUser) {
         seniorsService.updateProfile(SessionUtil.getLoginSeniorIdx(apiUser), profileReq.toUser());
         SuccessResponse response = new SuccessResponse(true, "시니어 프로릴 수정 성공", null);
 

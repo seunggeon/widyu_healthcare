@@ -1,5 +1,6 @@
 package com.widyu.healthcare.core.api.controller.v1;
 
+import com.google.firebase.database.annotations.NotNull;
 import com.widyu.healthcare.core.api.controller.v1.request.guardian.FindGuardianIdRequest;
 import com.widyu.healthcare.core.api.controller.v1.request.guardian.FindGuardianPasswordRequest;
 import com.widyu.healthcare.core.api.controller.v1.request.senior.RegisterSeniorRequest;
@@ -26,6 +27,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.widyu.healthcare.support.utils.SessionUtil;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Log4j2
 @RestController
@@ -79,11 +83,22 @@ public class GuardiansController {
     @LoginCheck(type = UserType.GUARDIAN)
     public ResponseEntity<?> targetAndSeniorsInfo(HttpSession apiUser) {
         long targetIdx = SessionUtil.getLoginGuardianIdx(apiUser);
-        FamilyInfoResponse targetAndSeniorsInfo = guardiansService.getSeniorsAndMyInfo(targetIdx);
+        FamilyInfoResponse targetAndSeniorsInfo = guardiansService.getSeniorsAndTargetInfo(targetIdx);
         SuccessResponse response = new SuccessResponse(true, "보호자의 모든 시니어 조회 성공", targetAndSeniorsInfo);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @GetMapping("index/of-family")
+    @LoginCheck(type = UserType.GUARDIAN)
+    public ResponseEntity<?> seniorsIdxOfTarget(HttpSession apiUser) {
+        long targetIdx = SessionUtil.getLoginGuardianIdx(apiUser);
+        List<Long> getSeniorsIdx = guardiansService.getFamilyIdxOfTarget(targetIdx);
+        SuccessResponse response = new SuccessResponse(true, "보호자의 모든 시니어 Idx 성공", getSeniorsIdx);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
 
     @PostMapping ("add/more-seniors")
     @LoginCheck(type = UserType.GUARDIAN)
@@ -102,7 +117,8 @@ public class GuardiansController {
      */
     @PatchMapping ("profile")
     @LoginCheck(type = UserType.GUARDIAN)
-    public ResponseEntity<?> updateProfile(@RequestBody UpdateGuardianProfileRequest profileRequest, HttpSession session) {
+    public ResponseEntity<?> updateProfile(@RequestBody UpdateGuardianProfileRequest profileRequest, @RequestParam(value = "url", required = false) @NotNull final MultipartFile multipartFile
+                                           ,HttpSession session) {
         guardiansService.updateProfile(SessionUtil.getLoginGuardianIdx(session), profileRequest.toUser());
         SuccessResponse response = new SuccessResponse(true, "보호자의 프로필 수정 성공", null);
 

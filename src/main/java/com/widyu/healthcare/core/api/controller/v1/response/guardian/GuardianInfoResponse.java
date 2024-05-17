@@ -3,6 +3,7 @@ package com.widyu.healthcare.core.api.controller.v1.response.guardian;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.widyu.healthcare.core.api.controller.v1.response.CommonUserResponse;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import java.util.ArrayList;

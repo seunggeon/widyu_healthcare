@@ -95,15 +95,21 @@ public class GuardiansService {
     }
 
     @Transactional(rollbackFor = RuntimeException.class)
-    public FamilyInfoResponse getSeniorsAndMyInfo(long userIdx){
-        GuardianInfoResponse myInfo = guardiansMapper.findByIdx(userIdx);
+    public FamilyInfoResponse getSeniorsAndTargetInfo(long userIdx){
+        GuardianInfoResponse targetInfo = guardiansMapper.findByIdx(userIdx);
         List<SeniorInfoResponse> seniorDetailList = guardiansMapper.findSeniorsByIdx(userIdx);
 
         FamilyInfoResponse familyInfo = FamilyInfoResponse.builder()
-                .guardianInfoResponseList(myInfo.toList())
+                .guardianInfoResponseList(targetInfo.toList())
                 .seniorInfoResponseList(seniorDetailList)
                 .build();
         return familyInfo;
+    }
+
+    public List<Long> getFamilyIdxOfTarget(long userIdx){
+        List<Long> seniorIdxList = guardiansMapper.findSeniorsIdxByIdx(userIdx);
+
+        return seniorIdxList;
     }
 
     public void updateProfile(long userIdx, User user){

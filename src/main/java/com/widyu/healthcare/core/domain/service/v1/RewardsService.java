@@ -22,7 +22,6 @@ import static com.widyu.healthcare.support.config.AppConfig.REWARD_POINT;
 @RequiredArgsConstructor
 public class RewardsService {
 
-
     private final RewardsMapper rewardsMapper;
     private final RedisMapper redisMapper;
     private final S3Service s3Service;
@@ -45,7 +44,7 @@ public class RewardsService {
 
     // 리워드 open (=구매)
     public Reward getReward(Long userIdx, Long rewardIdx) throws InsufficientPointsException {
-
+        // 유저의 총 point redis에서 차감
         if (redisMapper.getPoint(buildRedisKey(userIdx.toString())) - REWARD_POINT < 0)
             throw new InsufficientPointsException("point 부족");
 
@@ -57,6 +56,7 @@ public class RewardsService {
             throw new RuntimeException("get reward ERROR! 리워드 구매 메서드를 확인해주세요\n" + "Params : userIdx:" + userIdx);
         }
 
+        // Reward 도
         rewardsMapper.updateRewardStatus(rewardIdx, 1);
         Reward reward = rewardsMapper.getRewardByRewardId(rewardIdx);
 

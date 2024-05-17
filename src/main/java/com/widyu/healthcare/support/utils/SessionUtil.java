@@ -15,9 +15,11 @@ public class SessionUtil {
     }
     public static void setLoginGuardianIdx(HttpSession session, long userIdx) {
         session.setAttribute(LOGIN_GUADIANCE_ID, userIdx);
+        session.setMaxInactiveInterval(3600);
     }
     public static void setLoginSeniorIdx(HttpSession session, long userIdx) {
         session.setAttribute(LOGIN_SENIOR_ID, userIdx);
+        session.setMaxInactiveInterval(3600);
     }
     public static void logoutGuardian(HttpSession session) {
         session.removeAttribute(LOGIN_GUADIANCE_ID);

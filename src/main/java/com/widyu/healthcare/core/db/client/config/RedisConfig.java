@@ -12,7 +12,7 @@ import org.springframework.data.redis.repository.configuration.EnableRedisReposi
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @RequiredArgsConstructor
-@EnableRedisRepositories
+//@EnableRedisRepositories
 @Configuration
 public class RedisConfig {
 
@@ -25,12 +25,9 @@ public class RedisConfig {
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory(){
-        RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
-        redisStandaloneConfiguration.setHostName(host);
-        redisStandaloneConfiguration.setPassword(password);
-        redisStandaloneConfiguration.setPort(port);
-        LettuceConnectionFactory lettuceConnectionFactory = new LettuceConnectionFactory(redisStandaloneConfiguration);
-        return lettuceConnectionFactory;
+        RedisStandaloneConfiguration config = new RedisStandaloneConfiguration("apn1-composed-mayfly-33582.upstash.io", 33582);
+        config.setPassword("e24e68b4d31e47a9aced9c8de289055b");
+        return new LettuceConnectionFactory(config);
     }
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {

@@ -23,7 +23,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/goals")
 public class GoalsController {
-    private GoalsService goalsService;
+    private final GoalsService goalsService;
     /**
      * 보호자 목표 조회
      * @param apiUser

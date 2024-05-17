@@ -20,8 +20,8 @@ import java.util.Random;
 @RequiredArgsConstructor
 public class SmsService {
 
-    private RedisMapper redisMapper;
-    private DefaultMessageService messageService;
+    private final RedisMapper redisMapper;
+    private final DefaultMessageService messageService;
     private static final String VERIFICATION_CODE_PREFIX = "verification_code:";
 
     public SingleMessageSentResponse sendCodeAndSaveRedis(String phoneNumber, String code) {

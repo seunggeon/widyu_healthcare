@@ -23,8 +23,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/reward")
 public class RewardsController {
-    private S3Service s3Service;
-    private RewardsService rewardsService;
+    private final S3Service s3Service;
+    private final RewardsService rewardsService;
     /**
      * 리워드 전체 목록 조회
      */

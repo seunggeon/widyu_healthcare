@@ -14,8 +14,9 @@ import lombok.experimental.SuperBuilder;
  */
 @Getter
 @SuperBuilder
+@NoArgsConstructor
 public class CommonUserResponse {
-    private long userIdx;
+    private Long userIdx;
     private String name;
     private String profileImageUrl;
     @JsonIgnore

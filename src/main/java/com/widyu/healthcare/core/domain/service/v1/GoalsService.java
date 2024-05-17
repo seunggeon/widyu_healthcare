@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
+import java.util.Calendar;
 import java.util.stream.Collectors;
 
 import static com.widyu.healthcare.support.config.AppConfig.GOAL_POINT;
@@ -76,17 +77,22 @@ public class GoalsService {
             throw new RuntimeException("insert Goal ERROR! 목표 생성 메서드를 확인해주세요\n" + "Params : " + goal);
         }
 
+        // 현재 요일 구하기
+        Calendar calendar = Calendar.getInstance();
+        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+        log.info("[week]: {}", dayOfWeek);
+
         try {
             goalStatusList.forEach(goalStatus -> {
-                goalStatus.builder()
-                        .goalIdx(goal.getGoalIdx());
-                goalsStatusMapper.insertGoalStatus(goalStatus);
+                goalStatus.setGoalIdx(goal.getGoalIdx());
+                if (goal.getDay().toCharArray()[dayOfWeek - 1] == '1')
+                    goalsStatusMapper.insertGoalStatus(goalStatus);
                 // 하루 지났을 때 수행 안한 목표는 실패로 만드는 스케줄러
                 scheduleTimerForGoalStatus(goalStatus);
             });
         } catch (RuntimeException e) {
             log.error("insert Goal Status ERROR!", e);
-            throw new RuntimeException("insert insert Goal Status ERROR! 목표 생성 메서드를 확인해주세요\n" + "Params : " + goal);
+            throw new RuntimeException("insert insert Goal Status ERROR! 목표 생성 메서드를 확인해주세요\n" + "Params : " + goalStatusList);
         }
     }
 
@@ -103,14 +109,14 @@ public class GoalsService {
     }
 
     // 목표 삭제
-    public void deleteGoal(long userIdx, long goalIdx){
+    public void deleteGoal(long goalIdx){
 
         goalsStatusMapper.deleteGoalStatus(goalIdx);
 
-        int deleteCount = goalsMapper.deleteGoal(userIdx, goalIdx);
+        int deleteCount = goalsMapper.deleteGoal(goalIdx);
         if (deleteCount != 1){
             log.error("delete Goal ERROR! goalIdx: {} has not been deleted", goalIdx);
-            throw new RuntimeException("delete Goal ERROR! 목표 삭제 메서드를 확인해주세요\n" + "Params : userIdx:" + userIdx + ", goalIdx: " + goalIdx);
+            throw new RuntimeException("delete Goal ERROR! 목표 삭제 메서드를 확인해주세요\n" + "Params : goalIdx: " + goalIdx);
         }
     }
 

@@ -24,7 +24,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class GuardiansService {
-    private GuardiansMapper guardiansMapper;
+    private final GuardiansMapper guardiansMapper;
     @Transactional(rollbackFor = RuntimeException.class)
     public GuardianInfoResponse insert(User EncryptedUser) {
         boolean duplIdResult = isDuplicatedId(EncryptedUser.getId());

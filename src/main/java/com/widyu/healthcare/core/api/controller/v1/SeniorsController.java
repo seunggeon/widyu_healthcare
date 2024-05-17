@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/senior")
 public class SeniorsController {
-    private SeniorsService seniorsService;
+    private final SeniorsService seniorsService;
     @PostMapping("register/{guardianIdx}")
     public ResponseEntity<?> register(@PathVariable long guardianIdx, @RequestBody @Valid RegisterSeniorRequest seniorInfo) {
         String loginCode = seniorsService.insertAndSetRelations(guardianIdx, seniorInfo.toEncryptedUser());

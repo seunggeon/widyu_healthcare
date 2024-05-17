@@ -16,6 +16,6 @@ public interface GoalsMapper {
     int insertGoal(Goal goal);
     long getGoalIdx(Goal goal);
     int updateGoal(Goal goal);
-    int deleteGoal(long userIdx, long goalIdx);
+    int deleteGoal(long goalIdx);
 
 }

@@ -6,7 +6,7 @@
 <mapper namespace="com.widyu.healthcare.core.db.mapper.v1.RewardsMapper">
 
     <insert id="insertReward" parameterType="com.widyu.healthcare.core.domain.domain.v1.Reward">
-        INSERT INTO rewards (userIdx, url, description, status, point) VALUES (#{userIdx}, #{url}, #{description}, #{status}, #{point})
+        INSERT INTO rewards (userIdx, uploaderIdx, url, description, status, point, type) VALUES (#{userIdx}, #{uploaderIdx}, #{url}, #{description}, #{status}, #{point}, #{type})
     </insert>
 
     <update id="updateReward" parameterType="com.widyu.healthcare.core.domain.domain.v1.Reward">
@@ -27,15 +27,27 @@
         WHERE rewardIdx = #{rewardIdx}
     </update>
 
-    <select id="getOpenedRewardByUserIdx" parameterType="java.lang.Long">
-        SELECT * FROM rewards
-        WHERE userIdx = #{userIdx} AND status = 1
+    <select id="getOpenedRewardByUserIdx" parameterType="java.lang.Long" resultType="com.widyu.healthcare.core.api.controller.v1.response.reward.RewardResponse">
+        SELECT r.rewardIdx, r.uploaderIdx, r.description, r.type, r.url, r.status, r.point, u.profileImageUrl
+        FROM rewards r
+        JOIN users u ON r.uploaderIdx = u.userIdx
+        WHERE r.userIdx = #{userIdx} AND r.status = 1;
     </select>
 
-    <select id="getClosedRewardByUserIdx" parameterType="java.lang.Long">
-        SELECT rewardIdx, description, type, status, point FROM rewards
-        WHERE userIdx = #{userIdx} AND status = 0
+    <select id="getClosedRewardByUserIdx" parameterType="java.lang.Long" resultType="com.widyu.healthcare.core.api.controller.v1.response.reward.RewardResponse">
+        SELECT r.rewardIdx, r.uploaderIdx, r.type, r.url, r.status, r.description,r.point, u.profileImageUrl
+        FROM rewards r
+        JOIN users u ON r.uploaderIdx = u.userIdx
+        WHERE r.userIdx = #{userIdx} AND r.status = 0;
     </select>
+
+    <select id="getClosedRewardByUserIdxForSenior" parameterType="java.lang.Long" resultType="com.widyu.healthcare.core.api.controller.v1.response.reward.RewardResponse">
+        SELECT r.rewardIdx, r.uploaderIdx, r.type, r.status, r.description, r.point, u.profileImageUrl
+        FROM rewards r
+        JOIN users u ON r.uploaderIdx = u.userIdx
+        WHERE r.userIdx = #{userIdx} AND r.status = 0;
+    </select>
+
 
     <select id="getRewardByRewardId" parameterType="java.lang.Long" resultType="com.widyu.healthcare.core.domain.domain.v1.Reward">
         SELECT * FROM rewards
@@ -57,5 +69,25 @@
         FROM rewards
         WHERE rewardIdx = #{rewardIdx}
     </delete>
+
+    <select id="getRewardRateDaily">
+        SELECT (SUM(CASE WHEN gs.status = 1 THEN 1 ELSE 0 END) / COUNT(*))
+        FROM goalsstatus gs
+        JOIN goals g ON gs.goalIdx = g.goalIdx
+        WHERE g.userIdx = #{userIdx}
+        AND MONTH(gs.createdDate) = #{month}
+        AND DAY(gs.createdDate) = #{day}
+    </select>
+
+    <select id="getRewardRateMonthly">
+        SELECT
+        DAY(gs.createdDate) AS day,
+        (SUM(CASE WHEN gs.status = 1 THEN 1 ELSE 0 END) / COUNT(*)) AS daily_achievement_rate
+        FROM goalsstatus gs
+        JOIN goals g ON gs.goalIdx = g.goalIdx
+        WHERE g.userIdx = #{userIdx}
+        AND MONTH(gs.createdDate) = #{month}
+        GROUP BY DAY(gs.createdDate)
+    </select>
 
 </mapper>

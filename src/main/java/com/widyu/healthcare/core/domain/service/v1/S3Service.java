@@ -8,6 +8,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.widyu.healthcare.core.domain.domain.v1.Reward;
 import com.widyu.healthcare.core.db.mapper.v1.GoalsStatusMapper;
 import com.widyu.healthcare.core.db.mapper.v1.RewardsMapper;
+import com.widyu.healthcare.core.domain.domain.v1.RewardType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,10 +49,10 @@ public class S3Service {
     }
 
     // 리워드 파일 업로드
-    public Reward insertRewardFile(long userIdx, String description, MultipartFile multipartFile) throws IOException {
+    public Reward insertRewardFile(long userIdx, long uploaderIdx, String description, RewardType type, MultipartFile multipartFile) throws IOException {
 
         String url = upload(multipartFile);
-        Reward reward = new Reward(userIdx, description, url);
+        Reward reward = new Reward(userIdx, uploaderIdx, description, url, type);
         rewardsMapper.insertReward(reward);
 
         return reward;

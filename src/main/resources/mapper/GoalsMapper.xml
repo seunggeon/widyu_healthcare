@@ -96,7 +96,7 @@
     <delete id="deleteGoal">
         DELETE
         FROM Goals
-        WHERE userIdx = #{userIdx} AND goalIdx = #{goalIdx}
+        WHERE goalIdx = #{goalIdx}
     </delete>
 
     <update id = "updateGoal" parameterType="com.widyu.healthcare.core.domain.domain.v1.Goal">

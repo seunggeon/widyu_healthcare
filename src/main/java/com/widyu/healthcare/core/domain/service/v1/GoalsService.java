@@ -69,7 +69,7 @@ public class GoalsService {
     }
 
     // 목표 생성
-    public void insertGoal(Goal goal, List<GoalStatus> goalStatusList){
+    public Goal insertGoal(Goal goal, List<GoalStatus> goalStatusList){
 
         int insertGoalCount = goalsMapper.insertGoal(goal);
         if (insertGoalCount != 1){
@@ -94,6 +94,7 @@ public class GoalsService {
             log.error("insert Goal Status ERROR!", e);
             throw new RuntimeException("insert insert Goal Status ERROR! 목표 생성 메서드를 확인해주세요\n" + "Params : " + goalStatusList);
         }
+        return goal;
     }
 
     // 목표 수정

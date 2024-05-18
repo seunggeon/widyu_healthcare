@@ -6,6 +6,7 @@ import lombok.*;
 import java.sql.Time;
 
 @Getter
+@NoArgsConstructor
 public class GoalStatus {
 
     private long goalStatusIdx;
@@ -14,16 +15,16 @@ public class GoalStatus {
     @NonNull
     private Time time;
     @NonNull
-    private byte status;
+    private int status;
     private Long pillNum;
     private String imgUrl;
     private long point;
     @Builder
-    public GoalStatus(long goalStatusIdx, long goalIdx, @NonNull Time time, Long pillNum, String imgUrl, long point) {
+    public GoalStatus(long goalStatusIdx, long goalIdx, @NonNull Time time, int status, Long pillNum, String imgUrl, long point) {
         this.goalStatusIdx = goalStatusIdx;
         this.goalIdx = goalIdx;
         this.time = time;
-        this.status = (byte)0;
+        this.status = status;
         this.pillNum = pillNum;
         this.imgUrl = imgUrl;
         this.point = point;

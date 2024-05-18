@@ -8,7 +8,7 @@
         <result property="userIdx" column="userIdx"/>
         <result property="name" column="name"/>
         <result property="profileImageUrl" column="profileImageUrl"/>
-        <result property="type" column="type"/>
+        <result property="userType" column="type"/>
         <result property="phoneNumber" column="phoneNumber"/>
         <result property="address" column="address"/>
         <result property="birth" column="birth"/>
@@ -53,8 +53,8 @@
     </select>
 
     <insert id="insertRelationWithSenior">
-        INSERT INTO relations(seniorIdx, guardianIdx)
-        VALUES( #{seniorIdx}, #{guardianIdx} )
+        INSERT INTO relations(seniorIdx, userIdx)
+        VALUES( #{seniorIdx}, #{userIdx} )
     </insert>
 
     <update id="updateRelationWithSenior" parameterType="long">
@@ -71,7 +71,7 @@
     </select>
 
     <select id="findByIdx" resultMap="SeniorDetailResponseDtoMap">
-        SELECT ud.userIdx, u.name as name, u.profileImageUrl, u.type, ud.inviteCode, ud.phoneNumber, ud.address, ud.birth, ud.isDisease
+        SELECT ud.userIdx, u.name as name, u.profileImageUrl, u.type AS userType, ud.inviteCode, ud.phoneNumber, ud.address, ud.birth, ud.isDisease
         FROM usersdetail ud
         LEFT JOIN users u ON ud.userIdx = u.userIdx
         WHERE ud.userIdx = #{userIdx}
@@ -95,6 +95,12 @@
             WHERE seniorIdx = #{userIdx}
         )
         LIMIT 10;
+    </select>
+
+    <select id="findGuardiansIdxByIdx" resultType="long">
+        SELECT guardianIdx
+        FROM relations
+        WHERE userIdx = #{userIdx}
     </select>
 
     <select id="findGuardianByGuardianId" resultType="com.widyu.healthcare.core.api.controller.v1.response.guardian.GuardianInfoResponse">

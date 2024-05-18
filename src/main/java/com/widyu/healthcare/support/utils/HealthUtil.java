@@ -16,8 +16,11 @@ public class HealthUtil {
     public static HealthStatus determineEmergency(double heartBit) {
         if (heartBit > criteriaOfEmergency) {
             return Emergency;
-        } else {
+        } else if(heartBit > criteriaOfEmergency) {
             return Daily;
+        }
+        else {
+            return Well;
         }
     }
     public static HealthStatus compareAverages(double dailyAverage) {

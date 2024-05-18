@@ -21,6 +21,7 @@ import java.util.List;
  */
 @Getter
 @SuperBuilder
+@NoArgsConstructor
 public class SeniorGoalResponse extends CommonUserResponse implements GoalCalculatable {
     @JsonIgnore
     private double achieveGoal;

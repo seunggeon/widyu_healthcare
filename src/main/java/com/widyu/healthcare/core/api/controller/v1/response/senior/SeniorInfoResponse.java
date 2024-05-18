@@ -13,6 +13,7 @@ import lombok.experimental.SuperBuilder;
  */
 @Getter
 @SuperBuilder
+@NoArgsConstructor
 public class SeniorInfoResponse extends CommonUserResponse {
     private String inviteCode;
     private String phoneNumber;

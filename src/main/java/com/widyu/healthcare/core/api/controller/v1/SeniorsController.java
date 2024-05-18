@@ -72,14 +72,6 @@ public class SeniorsController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("add/{guardianIdx}")
-    public ResponseEntity<?> addGuardian(@PathVariable long guardianIdx, HttpSession apiUser) {
-        seniorsService.addGuardian(guardianIdx, SessionUtil.getLoginSeniorIdx(apiUser));
-        SuccessResponse response = new SuccessResponse(true, "보호자 추가 등록 성공", null);
-
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
-    }
-
     @PatchMapping("profile")
     public ResponseEntity<?> updateProfile(@RequestBody @Valid UpdateSeniorProfileRequest profileReq, @RequestParam(value = "url", required = false) @NotNull final MultipartFile multipartFile
                                            , HttpSession apiUser) {

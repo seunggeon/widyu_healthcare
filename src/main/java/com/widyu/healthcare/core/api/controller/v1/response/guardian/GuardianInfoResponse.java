@@ -3,6 +3,7 @@ package com.widyu.healthcare.core.api.controller.v1.response.guardian;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.widyu.healthcare.core.api.controller.v1.response.CommonUserResponse;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
@@ -18,6 +19,7 @@ import java.util.List;
  */
 @Getter
 @SuperBuilder
+@NoArgsConstructor
 public class GuardianInfoResponse extends CommonUserResponse {
     private String id;
     @JsonIgnore

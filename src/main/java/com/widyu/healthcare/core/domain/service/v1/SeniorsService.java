@@ -103,15 +103,6 @@ public class SeniorsService {
         return guardians;
     }
 
-    public void addGuardian(long guardianIdx, long seniorIdx) {
-        int relationInsertCount = seniorsMapper.insertRelationWithSenior(guardianIdx, seniorIdx);
-        if(relationInsertCount != 1) {
-            log.error("set Senior Relation during register ERROR! guadianIdx : ", guardianIdx);
-            throw new RuntimeException(
-                    "set Senior Relation during register ERROR! 보호자 추가 등록 메서드를 확인해주세요\n" + "guadianIdx : " + guardianIdx);
-        }
-    }
-
     @Transactional(rollbackFor = RuntimeException.class)
     public void updateProfile(long userIdx, User user){
         int updateCount = seniorsMapper.updateProfile(userIdx, user.getName(), user.getProfileImageUrl(), user.getBirth(), user.getPhoneNumber(), user.getAddress(), user.getIsDisease());

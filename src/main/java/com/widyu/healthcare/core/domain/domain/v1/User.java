@@ -3,6 +3,7 @@ package com.widyu.healthcare.core.domain.domain.v1;
 import jakarta.annotation.Nullable;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
 
@@ -10,6 +11,7 @@ import java.util.List;
 
 @Getter
 @SuperBuilder
+@NoArgsConstructor
 public class User extends UserDetail {
 
     private long userIdx;

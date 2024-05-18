@@ -9,7 +9,6 @@ import com.widyu.healthcare.core.domain.service.v1.RewardsService;
 import com.widyu.healthcare.core.domain.service.v1.S3Service;
 import com.widyu.healthcare.support.utils.SessionUtil;
 import jakarta.servlet.http.HttpSession;
-import jakarta.websocket.Session;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -32,8 +31,8 @@ public class RewardsController {
     /**
      * 리워드 전체 목록 조회
      */
-    @GetMapping("/gurdian/all")
-    public ResponseEntity<?> getAllGurdianReward(HttpSession session){
+    @GetMapping("/guardian/all")
+    public ResponseEntity<?> getAllGuardianReward(HttpSession session){
 
         long userIdx = SessionUtil.getLoginGuardianIdx(session);
         List<RewardResponse> rewardAllInfo = rewardsService.getAllGurdianReward(userIdx);

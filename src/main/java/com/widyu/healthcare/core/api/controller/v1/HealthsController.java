@@ -35,7 +35,7 @@ public class HealthsController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @GetMapping("info/of-seniors/main")
+    @GetMapping("info/of-senior/main")
     @LoginCheck(type = LoginCheck.UserType.COMMON)
     public ResponseEntity<?> MainHealthPage(HttpSession apiUser) {
         SeniorMainHealthResponse mainHealthResponse = healthsService.getRecentHealthOfSeniors(SessionUtil.getLoginSeniorIdx(apiUser));
@@ -44,7 +44,7 @@ public class HealthsController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @GetMapping("info/senior/detail")
+    @GetMapping("info/of-senior/detail")
     @LoginCheck(type = LoginCheck.UserType.SENIOR)
     public ResponseEntity<?> DetailHealthPage(HttpSession apiUser) {
         SeniorDetailHealthResponse detailHealthResponse = healthsService.getSeniorDetailInfoAndHealthInfo(SessionUtil.getLoginSeniorIdx(apiUser));
@@ -53,7 +53,7 @@ public class HealthsController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @GetMapping("info/senior/{type}")
+    @GetMapping("info/of-senior/{type}")
     @LoginCheck(type = LoginCheck.UserType.COMMON)
     public ResponseEntity<?> findHeartBitInfo(@PathVariable String type, HttpSession apiUser) {
         HealthTypeResponse heartBitResponse = healthsService.getDailyHearth(SessionUtil.getLoginSeniorIdx(apiUser), HealthType.valueOf(type));

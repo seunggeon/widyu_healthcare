@@ -2,9 +2,11 @@ package com.widyu.healthcare.core.api.controller.v1.response.reward;
 
 import com.widyu.healthcare.core.domain.domain.v1.RewardType;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 @Getter
+@NoArgsConstructor
 public class RewardResponse {
 
     @NonNull

@@ -2,8 +2,10 @@ package com.widyu.healthcare.core.domain.domain.v1;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class Disease {
     private Long diseaseIdx;
     private String name;

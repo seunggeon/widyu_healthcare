@@ -8,6 +8,7 @@ import com.widyu.healthcare.core.api.controller.v1.request.guardian.LoginGuardia
 import com.widyu.healthcare.core.api.controller.v1.request.guardian.UpdateGuardianProfileRequest;
 import com.widyu.healthcare.core.api.controller.v1.request.guardian.RegisterGuardianRequest;
 
+import com.widyu.healthcare.core.api.controller.v1.response.FamilyIdxResponse;
 import com.widyu.healthcare.core.api.controller.v1.response.SuccessResponse;
 import com.widyu.healthcare.core.api.controller.v1.response.CommonUserResponse;
 import com.widyu.healthcare.core.api.controller.v1.response.FamilyInfoResponse;
@@ -49,7 +50,7 @@ public class GuardiansController {
     @PostMapping("login")
     public ResponseEntity<?> login(@RequestBody @Valid LoginGuardianRequest loginReq,
                                                HttpSession session) {
-        CommonUserResponse guardianInfo = guardiansService.loginByIdAndPassword(loginReq.getId(), SHA256Util.encryptSHA256(loginReq.getPassword()), loginReq.getFcmToken(), session);
+        guardiansService.loginByIdAndPassword(loginReq.getId(), SHA256Util.encryptSHA256(loginReq.getPassword()), loginReq.getFcmToken(), session);
         SuccessResponse response = new SuccessResponse(true, "보호자 로그인 성공", null);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -73,8 +74,8 @@ public class GuardiansController {
 
     @PostMapping("find/password")
     public ResponseEntity<?> findPassword(@RequestBody @Valid FindGuardianPasswordRequest findPasswordReq) {
-        GuardianInfoResponse guardianInfo = guardiansService.findPassword(findPasswordReq.getId(), findPasswordReq.getNewPassword(), findPasswordReq.getName(), findPasswordReq.getPhoneNumber());
-        SuccessResponse response = new SuccessResponse(true, "보호자 비밀번호 찾기 성공", guardianInfo);
+        guardiansService.findPassword(findPasswordReq.getId(), findPasswordReq.getNewPassword(), findPasswordReq.getName(), findPasswordReq.getPhoneNumber());
+        SuccessResponse response = new SuccessResponse(true, "보호자 비밀번호 재설정 성공",null);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -93,18 +94,26 @@ public class GuardiansController {
     @LoginCheck(type = UserType.GUARDIAN)
     public ResponseEntity<?> seniorsIdxOfTarget(HttpSession apiUser) {
         long targetIdx = SessionUtil.getLoginGuardianIdx(apiUser);
-        List<Long> getSeniorsIdx = guardiansService.getFamilyIdxOfTarget(targetIdx);
-        SuccessResponse response = new SuccessResponse(true, "보호자의 모든 시니어 Idx 성공", getSeniorsIdx);
+        FamilyIdxResponse getFamilyIdx = guardiansService.getFamilyIdxOfTarget(targetIdx);
+        SuccessResponse response = new SuccessResponse(true, "보호자의 모든 가족 Idx 조회 성공", getFamilyIdx);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-
     @PostMapping ("add/more-seniors")
     @LoginCheck(type = UserType.GUARDIAN)
     public ResponseEntity<?> addMoreSeniors(@RequestBody RegisterSeniorRequest seniorReq, HttpSession apiUser) {
-        seniorsService.insertAndSetRelations(SessionUtil.getLoginGuardianIdx(apiUser), seniorReq.toEncryptedUser());
-        SuccessResponse response = new SuccessResponse(true, "시니어 추가 등록", null);
+        String loginCode = seniorsService.insertAndSetRelations(SessionUtil.getLoginGuardianIdx(apiUser), seniorReq.toEncryptedUser());
+        SuccessResponse response = new SuccessResponse(true, "시니어 추가 등록 성공", loginCode);
+
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @GetMapping("add/other-guardians/{guardianIdx}")
+    @LoginCheck(type = UserType.GUARDIAN)
+    public ResponseEntity<?> addGuardian(@PathVariable Long guardianIdx, HttpSession apiUser) {
+        guardiansService.addGuardian(guardianIdx, SessionUtil.getLoginGuardianIdx(apiUser));
+        SuccessResponse response = new SuccessResponse(true, "다른 보호자 추가 등록 성공", null);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }

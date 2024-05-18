@@ -1,6 +1,5 @@
 package com.widyu.healthcare.core.db.mapper.v1;
 
-import com.widyu.healthcare.core.api.controller.v1.request.guardian.RegisterGuardianRequest;
 import com.widyu.healthcare.core.api.controller.v1.response.guardian.GuardianInfoResponse;
 import com.widyu.healthcare.core.api.controller.v1.response.senior.SeniorInfoResponse;
 import com.widyu.healthcare.core.api.controller.v1.response.CommonUserResponse;
@@ -20,8 +19,12 @@ public interface GuardiansMapper {
     public CommonUserResponse findByIdAndPassword(@Param("id") String id, @Param("password") String password);
     public GuardianInfoResponse findByIdx(@Param("userIdx") long userIdx);
     public List<SeniorInfoResponse> findSeniorsByIdx(@Param("userIdx") long userIdx);
-    public List<Long> findSeniorsIdxByIdx(@Param("guardianIdx") long userIdx);
+    public List<Long> findSeniorsIdxByIdx(@Param("userIdx") long userIdx);
+    public List<Long> findGuardiansIdxByIdx(@Param("userIdx") long userIdx);
+
     public GuardianInfoResponse findIdByNameAndNumber(@Param("name") String name, @Param("phoneNumber") String phoneNumber);
-    public GuardianInfoResponse updatePasswordByGuardianInfos(@Param("id") String id, @Param("newPassword") String newPassword, @Param("name") String name, @Param("phoneNumber") String phoneNumber);
+    public int updatePassword(@Param("id") String id, @Param("newPassword") String newPassword, @Param("name") String name, @Param("phoneNumber") String phoneNumber);
+    public int insertRelation(@Param("guardianIdx") long guardianIdx, @Param("userIdx") long targetIdx);
+
     public int updateProfile(@Param("userIdx") long userIdx, @Param("name") String name, @Param("profileImageUrl") String profileImageUrl, @Param("phoneNumber") String phoneNumber, @Param("address") String address, @Param("birth") String birth);
 }

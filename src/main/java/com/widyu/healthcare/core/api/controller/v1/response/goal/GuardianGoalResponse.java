@@ -14,6 +14,7 @@ import lombok.experimental.SuperBuilder;
 
 @Getter
 @SuperBuilder
+@NoArgsConstructor
 public class GuardianGoalResponse extends CommonUserResponse implements GoalCalculatable {
     @JsonIgnore
     private double achieveGoal;

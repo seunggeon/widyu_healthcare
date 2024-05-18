@@ -65,8 +65,8 @@ public class GoalsController {
     @PostMapping("/insert")
     public ResponseEntity<?> insertGoal(@RequestBody Goal goal) {
 
-        goalsService.insertGoal(goal, goal.getGoalStatusList());
-        SuccessResponse response = new SuccessResponse(true, "목표 추가 성공", null);
+        Goal resultGoal = goalsService.insertGoal(goal, goal.getGoalStatusList());
+        SuccessResponse response = new SuccessResponse(true, "목표 추가 성공", resultGoal);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

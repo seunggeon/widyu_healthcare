@@ -77,7 +77,6 @@ public class GoalsController {
      * @return
      */
     @DeleteMapping("/delete/{goalIdx}")
-    @LoginCheck(type = LoginCheck.UserType.COMMON)
     public ResponseEntity<?> deleteGoal(@PathVariable long goalIdx){
 
         goalsService.deleteGoal(goalIdx);
@@ -92,7 +91,6 @@ public class GoalsController {
      * @return
      */
     @PatchMapping("/edit")
-    @LoginCheck(type = LoginCheck.UserType.COMMON)
     public ResponseEntity<?> editGoal(@RequestBody Goal goal){
         goalsService.updateGoal(goal, goal.getGoalStatusList());
         SuccessResponse response = new SuccessResponse(true, "목표 수정 성공", null);
@@ -106,10 +104,9 @@ public class GoalsController {
      * @return
      */
     @PatchMapping("/success/{goalStatusIdx}")
-    @LoginCheck(type = LoginCheck.UserType.COMMON)
     public ResponseEntity<?> editStatusSuccess(@PathVariable long goalStatusIdx, HttpSession apiUser) throws IOException {
 
-        long userIdx = SessionUtil.getLoginGuardianIdx(apiUser);
+        Long userIdx = SessionUtil.getLoginCommonIdx(apiUser);
         goalsService.updateStatusSuccess(userIdx, goalStatusIdx);
         SuccessResponse response = new SuccessResponse(true, "목표 상태 변경 성공", null);
 

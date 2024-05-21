@@ -4,6 +4,8 @@ import com.widyu.healthcare.core.domain.domain.v1.GoalStatus;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Mapper
 public interface GoalsStatusMapper {
@@ -19,4 +21,8 @@ public interface GoalsStatusMapper {
     long getGoalStatusIdx(GoalStatus goalStatus);
     int updateStatus(long goalStatusIdx, long status);
     int updateTotalPoint(long userIdx, long value);
+
+
+    Double getGoalRateDaily(long userIdx, int month, int day);
+    List<Map<Integer, Double>> getGoalRateMonthly(long userIdx, int month);
 }

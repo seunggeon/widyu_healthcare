@@ -26,18 +26,27 @@
         <collection property="goalsAndStatus" javaType="java.util.ArrayList" resultMap="goalsMap"></collection>
     </resultMap>
 
-    <resultMap id="goalsMap" type="java.util.HashMap">
-        <result property="goalIdx" column="goalIdx"/>
+    <resultMap id="goalsMap" type="com.widyu.healthcare.core.domain.domain.v1.Goal">
+        <id property="goalIdx" column="goalIdx"/>
+        <result property="userIdx" column="userIdx"/>
         <result property="title" column="title"/>
         <result property="description" column="description"/>
-        <result property="type" column="goalType"/>
+        <result property="type" column="type"/>
         <result property="day" column="day"/>
-        <result property="startDate" column="startDate"/>
-        <result property="endDate" column="endDate"/>
-        <collection property="goalStatusDtoList" javaType="java.util.ArrayList" resultMap="goalStatusMap"></collection>
+        <collection property="goalStatusList" ofType="com.widyu.healthcare.core.domain.domain.v1.GoalStatus" resultMap="goalStatusMap"/>
     </resultMap>
 
-    <resultMap id="goalStatusMap" type="java.util.HashMap">
+    <resultMap id="GoalResultMap" type="com.widyu.healthcare.core.domain.domain.v1.Goal">
+        <id property="goalIdx" column="goalIdx"/>
+        <result property="userIdx" column="userIdx"/>
+        <result property="title" column="title"/>
+        <result property="description" column="description"/>
+        <result property="type" column="type"/>
+        <result property="day" column="day"/>
+        <collection property="goalStatusList" ofType="com.widyu.healthcare.core.domain.domain.v1.GoalStatus" column="goalIdx" select="selectGoalStatuses"/>
+    </resultMap>
+
+    <resultMap id="goalStatusMap" type="com.widyu.healthcare.core.domain.domain.v1.GoalStatus">
         <result property="goalIdx" column="goalIdx"/>
         <result property="time" column="time"/>
         <result property="status" column="status"/>
@@ -70,11 +79,16 @@
         WHERE u.userIdx = #{userIdx}
     </select>
 
-    <select id="getGoalsById" parameterType="java.lang.Long" resultType="com.widyu.healthcare.core.domain.domain.v1.Goal">
-        SELECT * FROM goals WHERE userIdx = #{id}
+    <select id="getGoalsByUserIdx" parameterType="java.lang.Long" resultMap="GoalResultMap" >
+        SELECT *
+        FROM goals WHERE userIdx = #{userIdx}
     </select>
 
-    <select id="getGoalByGoalId" parameterType="java.lang.Long" resultType="com.widyu.healthcare.core.domain.domain.v1.Goal">
+    <select id="selectGoalStatuses" resultType="com.widyu.healthcare.core.domain.domain.v1.GoalStatus">
+        SELECT * FROM goalsstatus WHERE goalIdx = #{goalIdx}
+    </select>
+
+    <select id="getGoalByGoalIdx" parameterType="java.lang.Long" resultType="com.widyu.healthcare.core.domain.domain.v1.Goal">
         SELECT * FROM goals WHERE userIdx = #{userIdx} AND goalIdx = #{goalIdx}
     </select>
 

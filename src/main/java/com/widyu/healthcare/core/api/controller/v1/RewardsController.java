@@ -2,6 +2,7 @@ package com.widyu.healthcare.core.api.controller.v1;
 
 import com.widyu.healthcare.core.api.controller.v1.response.SuccessResponse;
 import com.widyu.healthcare.core.api.controller.v1.response.reward.RewardResponse;
+import com.widyu.healthcare.core.domain.domain.v1.GoalStatus;
 import com.widyu.healthcare.core.domain.domain.v1.Reward;
 import com.widyu.healthcare.core.domain.domain.v1.RewardType;
 import com.widyu.healthcare.support.error.exception.InsufficientPointsException;
@@ -106,30 +107,6 @@ public class RewardsController {
 
         rewardsService.deleteReward(rewardIdx);
         SuccessResponse response = new SuccessResponse(true, "reward 삭제 완료", null);
-
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    /**
-     * 리워드 일별 달성률
-     */
-    @GetMapping("/rate/today/{userIdx}")
-    public ResponseEntity<?> getRewardDaily(@PathVariable("userIdx") @NonNull long userIdx){
-
-        long todayRewardRate = rewardsService.getRewardRateToday(userIdx);
-        SuccessResponse response = new SuccessResponse(true, "reward 일별 달성률 조회 완료", todayRewardRate);
-
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    /**
-     * 리워드 월별 달성률
-     */
-    @GetMapping("/rate/montly/{userIdx}/{month}")
-    public ResponseEntity<?> getRewardMontly(@PathVariable("userIdx") @NonNull long userIdx,
-                                             @PathVariable("month") @NonNull int month){
-        List<Map<Integer, Double>> montlyRewardRate = rewardsService.getRewardRateMontly(userIdx, month);
-        SuccessResponse response = new SuccessResponse(true, "reward 월별 달성률 조회 완료", montlyRewardRate);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

@@ -69,22 +69,6 @@ public class RewardsService {
         rewardsMapper.deleteRewardByRewardIdx(rewardIdx);
     }
 
-    // 오늘 리워드 달성률 조회
-    public long getRewardRateToday(long userIdx){
-        // 오늘 날짜 가져오기
-        LocalDate today = LocalDate.now();
-        int month = today.getMonthValue();
-        int day = today.getDayOfMonth();
-
-        return rewardsMapper.getRewardRateDaily(userIdx, month, day);
-    }
-
-    // 월별 리워드 달성률 조회
-    public List<Map<Integer, Double>> getRewardRateMontly(long userIdx, int month){
-
-        return rewardsMapper.getRewardRateMonthly(userIdx, month);
-    }
-
     private static String buildRedisKey(String userIdx) {
         return POINT_CODE_PREFIX + userIdx;
     }

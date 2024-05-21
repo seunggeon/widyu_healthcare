@@ -21,7 +21,4 @@ public interface RewardsMapper {
     long getPriceByRewardIdx(long rewardIdx);
     String getUrlByRewardIdx(long rewardIdx);
     void deleteRewardByRewardIdx(long rewardIdx);
-
-    long getRewardRateDaily(long userIdx, int month, int day);
-    List<Map<Integer, Double>> getRewardRateMonthly(long userIdx, int month);
 }

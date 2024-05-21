@@ -3,7 +3,7 @@ package com.widyu.healthcare.core.domain.domain.v1;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter

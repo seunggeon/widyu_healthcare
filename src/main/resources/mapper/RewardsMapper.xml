@@ -28,21 +28,21 @@
     </update>
 
     <select id="getOpenedRewardByUserIdx" parameterType="java.lang.Long" resultType="com.widyu.healthcare.core.api.controller.v1.response.reward.RewardResponse">
-        SELECT r.rewardIdx, r.uploaderIdx, r.description, r.type, r.url, r.status, r.point, u.profileImageUrl
+        SELECT r.rewardIdx, r.uploaderIdx, r.description, r.type, r.url, r.status, r.point, u.userIdx as uploaderIdx, u.profileImageUrl as uploaderImageUrl, u.name as uploaderName
         FROM rewards r
         JOIN users u ON r.uploaderIdx = u.userIdx
         WHERE r.userIdx = #{userIdx} AND r.status = 1;
     </select>
 
     <select id="getClosedRewardByUserIdx" parameterType="java.lang.Long" resultType="com.widyu.healthcare.core.api.controller.v1.response.reward.RewardResponse">
-        SELECT r.rewardIdx, r.uploaderIdx, r.type, r.url, r.status, r.description,r.point, u.profileImageUrl
+        SELECT r.rewardIdx, r.uploaderIdx, r.type, r.url, r.status, r.description,r.point, u.userIdx as uploaderIdx, u.profileImageUrl as uploaderImageUrl, u.name as uploaderName
         FROM rewards r
         JOIN users u ON r.uploaderIdx = u.userIdx
         WHERE r.userIdx = #{userIdx} AND r.status = 0;
     </select>
 
     <select id="getClosedRewardByUserIdxForSenior" parameterType="java.lang.Long" resultType="com.widyu.healthcare.core.api.controller.v1.response.reward.RewardResponse">
-        SELECT r.rewardIdx, r.uploaderIdx, r.type, r.status, r.description, r.point, u.profileImageUrl
+        SELECT r.rewardIdx, r.uploaderIdx, r.type, r.status, r.description, r.point, u.userIdx as uploaderIdx, u.profileImageUrl as uploaderImageUrl, u.name as uploaderName
         FROM rewards r
         JOIN users u ON r.uploaderIdx = u.userIdx
         WHERE r.userIdx = #{userIdx} AND r.status = 0;
@@ -69,25 +69,4 @@
         FROM rewards
         WHERE rewardIdx = #{rewardIdx}
     </delete>
-
-    <select id="getRewardRateDaily">
-        SELECT (SUM(CASE WHEN gs.status = 1 THEN 1 ELSE 0 END) / COUNT(*))
-        FROM goalsstatus gs
-        JOIN goals g ON gs.goalIdx = g.goalIdx
-        WHERE g.userIdx = #{userIdx}
-        AND MONTH(gs.createdDate) = #{month}
-        AND DAY(gs.createdDate) = #{day}
-    </select>
-
-    <select id="getRewardRateMonthly">
-        SELECT
-        DAY(gs.createdDate) AS day,
-        (SUM(CASE WHEN gs.status = 1 THEN 1 ELSE 0 END) / COUNT(*)) AS daily_achievement_rate
-        FROM goalsstatus gs
-        JOIN goals g ON gs.goalIdx = g.goalIdx
-        WHERE g.userIdx = #{userIdx}
-        AND MONTH(gs.createdDate) = #{month}
-        GROUP BY DAY(gs.createdDate)
-    </select>
-
 </mapper>

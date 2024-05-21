@@ -13,6 +13,9 @@ public class RewardResponse {
     long rewardIdx;
     @NonNull
     long uploaderIdx; //uploader Idx
+    @NonNull
+    String uploaderName; //uploader name
+    String uploaderImageUrl; //uploader의 profileImage
     String description;
     @NonNull
     RewardType type;
@@ -21,5 +24,4 @@ public class RewardResponse {
     private byte status; //closed:0, Open:1
     @NonNull
     long point;
-    String profileImageUrl; //uploader의 profileImage
 }

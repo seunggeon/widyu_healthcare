@@ -4,6 +4,8 @@ import com.widyu.healthcare.core.domain.domain.v1.Goal;
 import com.widyu.healthcare.core.api.controller.v1.response.goal.GuardianGoalResponse;
 import com.widyu.healthcare.core.api.controller.v1.response.goal.SeniorGoalResponse;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -11,7 +13,7 @@ import java.util.List;
 public interface GoalsMapper {
     SeniorGoalResponse findBySeniorIdx(long userIdx);
     GuardianGoalResponse findByGuardianIdx(long userIdx);
-    List<Goal> getGoalsByIdx(long userIdx);
+    List<Goal> getGoalsByUserIdx(@Param("userIdx") long userIdx);
     Goal getGoalByGoalIdx(long userIdx, long goalIdx);
     int insertGoal(Goal goal);
     long getGoalIdx(Goal goal);

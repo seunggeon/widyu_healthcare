@@ -71,4 +71,24 @@
         WHERE userIdx=#{userIdx}
     </update>
 
+    <select id="getGoalRateDaily">
+        SELECT (SUM(CASE WHEN gs.status = 1 THEN 1 ELSE 0 END) / COUNT(*))
+        FROM goalsstatus gs
+        JOIN goals g ON gs.goalIdx = g.goalIdx
+        WHERE g.userIdx = #{userIdx}
+        AND MONTH(gs.createdDate) = #{month}
+        AND DAY(gs.createdDate) = #{day}
+    </select>
+
+    <select id="getGoalRateMonthly">
+        SELECT
+        DAY(gs.createdDate) AS day,
+        (SUM(CASE WHEN gs.status = 1 THEN 1 ELSE 0 END) / COUNT(*)) AS daily_achievement_rate
+        FROM goalsstatus gs
+        JOIN goals g ON gs.goalIdx = g.goalIdx
+        WHERE g.userIdx = #{userIdx}
+        AND MONTH(gs.createdDate) = #{month}
+        GROUP BY DAY(gs.createdDate)
+    </select>
+
 </mapper>

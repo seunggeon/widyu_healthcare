@@ -11,7 +11,6 @@ import com.widyu.healthcare.core.db.mapper.v1.GoalsStatusMapper;
 import com.widyu.healthcare.core.db.mapper.v1.GoalsMapper;
 import com.widyu.healthcare.core.db.mapper.v1.GuardiansMapper;
 import com.widyu.healthcare.core.db.mapper.v1.SeniorsMapper;
-import com.widyu.healthcare.support.utils.GoalUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.quartz.*;
@@ -42,7 +41,10 @@ public class GoalsService {
     public MainGoalResponse getTargetUserGoalsAndSeniorGoals(long targetIdx){
 
         // 본인(보호자) 목표 정보
-        GuardianGoalResponse myGoal = GoalUtil.calculatePercentageAndReturn(goalsMapper.findByGuardianIdx(targetIdx));
+        GuardianGoalResponse myGoal = GuardianGoalResponse.builder()
+                .goals(goalsMapper.getGoalsByUserIdx(targetIdx))
+                .percentageOfGoal(getGoalRateToday(targetIdx))
+                .build();
 
         // 가족들(시니어) 목표 정보
         List<Long> seniorsIdxOnFamily = guardiansMapper.findSeniorsIdxByIdx(targetIdx);
@@ -62,14 +64,28 @@ public class GoalsService {
     }
 
     public SeniorGoalResponse getTargetSeniorGoals(long targetIdx){
+
+
         // 본인(시니어) 목표 정보
-        SeniorGoalResponse myGoal = GoalUtil.calculatePercentageAndReturn(goalsMapper.findBySeniorIdx(targetIdx));
+        SeniorGoalResponse myGoal = SeniorGoalResponse.builder()
+                .goals(goalsMapper.getGoalsByUserIdx(targetIdx))
+                .sequence(targetIdx)
+                .percentageOfGoal(getGoalRateToday(targetIdx))
+                .build();
 
         return myGoal;
     }
 
+    // 목표 조회
+    public List<Goal> getGoal(long userIdx){
+
+        List<Goal> goalList = goalsMapper.getGoalsByUserIdx(userIdx);
+
+        return goalList;
+    }
+
     // 목표 생성
-    public void insertGoal(Goal goal, List<GoalStatus> goalStatusList){
+    public Goal insertGoal(Goal goal, List<GoalStatus> goalStatusList){
 
         int insertGoalCount = goalsMapper.insertGoal(goal);
         if (insertGoalCount != 1){
@@ -94,6 +110,7 @@ public class GoalsService {
             log.error("insert Goal Status ERROR!", e);
             throw new RuntimeException("insert insert Goal Status ERROR! 목표 생성 메서드를 확인해주세요\n" + "Params : " + goalStatusList);
         }
+        return goal;
     }
 
     // 목표 수정
@@ -148,6 +165,26 @@ public class GoalsService {
 
         // 푸쉬 알림
         fcmService.sendMessage(seniorsMapper.findFCM(userIdx), "목표 달성", "축하드립니다");
+    }
+
+    // 오늘 목표 달성률 조회
+    public Double getGoalRateToday(long userIdx){
+        // 오늘 날짜 가져오기
+        LocalDate today = LocalDate.now();
+        int month = today.getMonthValue();
+        int day = today.getDayOfMonth();
+
+        Double percentage = goalsStatusMapper.getGoalRateDaily(userIdx, month, day);
+
+        if (percentage == null)
+            percentage = (double) 0;
+        return percentage;
+    }
+
+    // 월별 목표 달성률 조회
+    public List<Map<Integer, Double>> getGoalRateMontly(long userIdx, int month){
+
+        return goalsStatusMapper.getGoalRateMonthly(userIdx, month);
     }
 
     private void scheduleTimerForGoalStatus(GoalStatus goalStatus) {

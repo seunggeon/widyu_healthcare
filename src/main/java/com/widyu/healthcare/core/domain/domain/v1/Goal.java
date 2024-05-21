@@ -21,13 +21,12 @@ public class Goal {
     private List<GoalStatus> goalStatusList;
 
     @Builder
-    public Goal(@NonNull long userIdx, @NonNull String title, String description, GoalType type, String day, List<GoalStatus> goalStatusList) {
+    public Goal(@NonNull long userIdx, @NonNull String title, String description, GoalType type, String day) {
         this.userIdx = userIdx;
         this.title = title;
         this.description = description;
         this.type = type;
         this.day = day;
-        this.goalStatusList = goalStatusList;
     }
     public List<GoalStatus> toGoalStatusList() {
         List<GoalStatus> GoalStatusList = this.goalStatusList;

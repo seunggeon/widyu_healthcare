@@ -11,12 +11,16 @@ import com.widyu.healthcare.core.domain.service.v1.GoalsService;
 import com.widyu.healthcare.support.utils.SessionUtil;
 import com.widyu.healthcare.core.api.middleware.LoginCheck;
 import jakarta.servlet.http.HttpSession;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 
 @Log4j2
@@ -31,7 +35,6 @@ public class GoalsController {
      * @return targetUserGoalsAndSeniorGoals
      */
     @GetMapping("/guardian/main")
-    @LoginCheck(type = LoginCheck.UserType.GUARDIAN)
     public ResponseEntity<?> getGuardianMainPage(HttpSession apiUser){
 
         long targetIdx = SessionUtil.getLoginGuardianIdx(apiUser);
@@ -58,6 +61,20 @@ public class GoalsController {
     }
 
     /**
+     * 목표 조회
+     */
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllGoal(HttpSession apiUser){
+
+        long targetIdx = SessionUtil.getLoginCommonIdx(apiUser);
+        List<Goal> goal = goalsService.getGoal(targetIdx);
+        SuccessResponse response = new SuccessResponse(true, "시니어 목표 메인 페이지 조회 성공", goal);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
+    }
+
+    /**
      * 목표 생성
      * @param goal
      * @return
@@ -66,8 +83,8 @@ public class GoalsController {
     @LoginCheck(type = LoginCheck.UserType.COMMON)
     public ResponseEntity<?> insertGoal(@RequestBody Goal goal) {
 
-        goalsService.insertGoal(goal, goal.getGoalStatusList());
-        SuccessResponse response = new SuccessResponse(true, "목표 추가 성공", null);
+        Goal resultGoal = goalsService.insertGoal(goal, goal.getGoalStatusList());
+        SuccessResponse response = new SuccessResponse(true, "목표 추가 성공", resultGoal);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -78,7 +95,6 @@ public class GoalsController {
      * @return
      */
     @DeleteMapping("/delete/{goalIdx}")
-    @LoginCheck(type = LoginCheck.UserType.COMMON)
     public ResponseEntity<?> deleteGoal(@PathVariable long goalIdx){
 
         goalsService.deleteGoal(goalIdx);
@@ -93,7 +109,6 @@ public class GoalsController {
      * @return
      */
     @PatchMapping("/edit")
-    @LoginCheck(type = LoginCheck.UserType.COMMON)
     public ResponseEntity<?> editGoal(@RequestBody Goal goal){
         goalsService.updateGoal(goal, goal.getGoalStatusList());
         SuccessResponse response = new SuccessResponse(true, "목표 수정 성공", null);
@@ -107,12 +122,35 @@ public class GoalsController {
      * @return
      */
     @PatchMapping("/success/{goalStatusIdx}")
-    @LoginCheck(type = LoginCheck.UserType.COMMON)
     public ResponseEntity<?> editStatusSuccess(@PathVariable long goalStatusIdx, HttpSession apiUser) throws IOException {
 
-        long userIdx = SessionUtil.getLoginGuardianIdx(apiUser);
+        Long userIdx = SessionUtil.getLoginCommonIdx(apiUser);
         goalsService.updateStatusSuccess(userIdx, goalStatusIdx);
         SuccessResponse response = new SuccessResponse(true, "목표 상태 변경 성공", null);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    /**
+     * 목표 일별 달성률
+     */
+    @GetMapping("/rate/today/{userIdx}")
+    public ResponseEntity<?> getGaolDaily(@PathVariable("userIdx") @NonNull long userIdx){
+
+        Double todayGoalRate = goalsService.getGoalRateToday(userIdx);
+        SuccessResponse response = new SuccessResponse(true, "reward 일별 달성률 조회 완료", todayGoalRate);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    /**
+     * 목표 월별 달성률
+     */
+    @GetMapping("/rate/montly/{userIdx}/{month}")
+    public ResponseEntity<?> getGoalMontly(@PathVariable("userIdx") @NonNull long userIdx,
+                                             @PathVariable("month") @NonNull int month){
+        List<Map<Integer, Double>> montlyGoalRate = goalsService.getGoalRateMontly(userIdx, month);
+        SuccessResponse response = new SuccessResponse(true, "reward 월별 달성률 조회 완료", montlyGoalRate);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

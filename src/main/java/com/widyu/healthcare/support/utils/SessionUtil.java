@@ -7,6 +7,12 @@ public class SessionUtil {
     private static final String LOGIN_GUADIANCE_ID = "LOGIN_GUADIANCE_ID";
     private static final String LOGIN_SENIOR_ID = "LOGIN_SENIOR_ID";
 
+    public static long getLoginCommonIdx(HttpSession session){
+        if (session.getAttribute(LOGIN_GUADIANCE_ID) != null)
+            return (long) session.getAttribute(LOGIN_GUADIANCE_ID);
+        else
+            return (long) session.getAttribute(LOGIN_SENIOR_ID);
+    }
     public static long getLoginGuardianIdx(HttpSession session) {
         return (long) session.getAttribute(LOGIN_GUADIANCE_ID);
     }

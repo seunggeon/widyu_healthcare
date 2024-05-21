@@ -11,7 +11,7 @@
         <result property="userType" column="userType"/>
         <result property="achieveGoal" column="achieveGoal"/>
         <result property="totalGoal" column="totalGoal"/>
-        <collection property="goalsAndStatus" javaType="java.util.ArrayList" resultMap="goalsMap"></collection>
+        <collection property="goals" javaType="java.util.ArrayList" resultMap="goalsMap"></collection>
     </resultMap>
 
     <resultMap id="SeniorGoalResponseDtoMap" type="com.widyu.healthcare.core.api.controller.v1.response.goal.SeniorGoalResponse">
@@ -23,7 +23,7 @@
         <result property="totalGoal" column="totalGoal"/>
         <result property="totalPoint" column="totalPoint"/>
         <result property="sequence" column="userIdx"/>
-        <collection property="goalsAndStatus" javaType="java.util.ArrayList" resultMap="goalsMap"></collection>
+        <collection property="goals" ofType="com.widyu.healthcare.core.domain.domain.v1.Goal" resultMap="goalsMap"/>
     </resultMap>
 
     <resultMap id="goalsMap" type="com.widyu.healthcare.core.domain.domain.v1.Goal">
@@ -34,16 +34,6 @@
         <result property="type" column="type"/>
         <result property="day" column="day"/>
         <collection property="goalStatusList" ofType="com.widyu.healthcare.core.domain.domain.v1.GoalStatus" resultMap="goalStatusMap"/>
-    </resultMap>
-
-    <resultMap id="GoalResultMap" type="com.widyu.healthcare.core.domain.domain.v1.Goal">
-        <id property="goalIdx" column="goalIdx"/>
-        <result property="userIdx" column="userIdx"/>
-        <result property="title" column="title"/>
-        <result property="description" column="description"/>
-        <result property="type" column="type"/>
-        <result property="day" column="day"/>
-        <collection property="goalStatusDtoList" javaType="java.util.ArrayList" resultMap="goalStatusMap"></collection>
     </resultMap>
 
     <resultMap id="goalStatusMap" type="com.widyu.healthcare.core.domain.domain.v1.GoalStatus">
@@ -80,7 +70,7 @@
         WHERE u.userIdx = #{userIdx}
     </select>
 
-    <select id="getGoalsByUserIdx" parameterType="java.lang.Long" resultMap="GoalResultMap" >
+    <select id="getGoalsByUserIdx" parameterType="java.lang.Long" resultMap="goalsMap">
         SELECT *
         FROM goals WHERE userIdx = #{userIdx}
     </select>

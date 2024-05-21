@@ -1,11 +1,9 @@
 package com.widyu.healthcare.core.domain.domain.v1;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NonNull;
+import lombok.*;
 
 @Getter
+@NoArgsConstructor
 public class Reward {
 
     long rewardIdx;

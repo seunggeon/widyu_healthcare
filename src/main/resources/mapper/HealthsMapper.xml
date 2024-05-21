@@ -3,20 +3,20 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.widyu.healthcare.core.db.mapper.v1.RewardsMapper">
-    <resultMap id="DailyHealthMap" type="com.widyu.healthcare.core.domain.domain.v1.Health">
+<mapper namespace="com.widyu.healthcare.core.db.mapper.v1.HealthsMapper">
+    <resultMap id="RecentHealthMap" type="com.widyu.healthcare.core.domain.domain.v1.Health">
         <result property="userIdx" column="userIdx"/>
         <result property="name" column="name"/>
         <result property="profileImageUrl" column="profileImageUrl"/>
         <result property="latitude" column="latitude"/>
         <result property="longitude" column="longitude"/>
         <collection property="healthData" javaType="java.util.ArrayList">
-            <result property="healthType" column="type"/>
+            <result property="healthType" column="healthType"/>
             <result property="data" column="data"/>
         </collection>
     </resultMap>
 
-    <resultMap id="RecentHealthMap" type="com.widyu.healthcare.core.domain.domain.v1.Health">
+    <resultMap id="DailyHealthMap" type="com.widyu.healthcare.core.domain.domain.v1.Health">
         <result property="userIdx" column="userIdx"/>
         <result property="name" column="name"/>
         <result property="profileImageUrl" column="profileImageUrl"/>
@@ -26,31 +26,29 @@
         </collection>
     </resultMap>
 
-    <insert id="insertHeartBitAndStatus" parameterType="com.widyu.healthcare.core.domain.domain.v1.HealthData">
-        INSERT INTO healths (userIdx, data, status, type) VALUES (#{userIdx}, #{recentHeartBit}, #{status}, #{type})
+    <insert id="insertRecentHeartBitAndStatus" parameterType="com.widyu.healthcare.core.domain.domain.v1.HealthData">
+        INSERT INTO healths (userIdx, data, status, type) VALUES (#{userIdx}, #{health.data}, #{health.status}, 'heartBit')
     </insert>
 
     <select id="getRecentHealth" resultMap="RecentHealthMap">
         SELECT
             h.data,
-            h.createdDate,
-            h.type,
+            h.type AS healthType,
             u.userIdx,
             u.name,
             u.profileImageUrl,
             l.latitude,
             l.longitude
-        FROM healths h
+        FROM users u
         JOIN (
-                SELECT userIdx, type, MAX(createdDate) AS maxCreatedDate
-                FROM healths
-                GROUP BY userIdx, type
-            ) latestData
-        ON h.userIdx = latestData.userIdx
-        AND h.type = latestData.type
-        AND h.createdDate = latestData.maxCreatedDate
-        LEFT JOIN users u ON h.userIdx = u.userIdx
-        LEFT JOIN locations l ON h.userIdx = l.userId
+            SELECT userIdx, type, MAX(createdDate) AS maxCreatedDate
+            FROM healths
+            WHERE userIdx = #{userIdx}
+            GROUP BY userIdx, type
+        ) AS latest
+        ON u.userIdx = latest.userIdx
+        JOIN healths h ON h.userIdx = latest.userIdx AND h.type = latest.type AND h.createdDate = latest.maxCreatedDate
+        LEFT JOIN locations l ON u.userIdx = l.userIdx;
     </select>
 
     <select id="getDailyHealth" resultMap="DailyHealthMap">

@@ -8,6 +8,7 @@ import java.sql.Time;
 import static com.widyu.healthcare.support.config.AppConfig.GOAL_POINT;
 
 @Getter
+@NoArgsConstructor
 public class GoalStatus {
 
     private long goalStatusIdx;
@@ -15,19 +16,19 @@ public class GoalStatus {
     private long goalIdx;
     @NonNull
     private Time time;
-    @NonNull
-    private byte status;
     @Nullable
+    private int status;
     private Long pillNum;
     @Nullable
     private String imgUrl;
     private long point;
     @Builder
-    public GoalStatus(long goalStatusIdx, long goalIdx, @NonNull Time time, Long pillNum, String imgUrl) {
+    public GoalStatus(long goalStatusIdx, long goalIdx, @NonNull Time time, int status, Long pillNum, String imgUrl, long point) {
+
         this.goalStatusIdx = goalStatusIdx;
         this.goalIdx = goalIdx;
         this.time = time;
-        this.status = (byte)0;
+        this.status = status;
         this.pillNum = pillNum;
         this.imgUrl = imgUrl;
         this.point = GOAL_POINT;

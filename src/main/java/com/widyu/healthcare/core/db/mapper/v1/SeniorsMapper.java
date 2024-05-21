@@ -18,7 +18,7 @@ public interface SeniorsMapper {
     public int insertDetail(User encryptedUser);
     public int update(@Param("userIdx") long seniorIdx, @Param("name") String name, @Param("type") UserType type);
     public int insertDiseases(@Param("userIdx") long userIdx, @Param("diseases") List<Disease> diseases);
-    public int insertRelationWithSenior(@Param("guardianIdx") long guardianIdx, @Param("seniorIdx") long seniorIdx);
+    public int insertRelationWithSenior(@Param("userIdx") long userIdx, @Param("seniorIdx") long seniorIdx);
     public int updateFCM(@Param("seniorIdx") long seniorIdx, @Param("fcmToken") String fcmToken);
     public String findFCM(@Param("userIdx") long userIdx);
     public CommonUserResponse findByInviteCode(@Param("inviteCode") String inviteCode);

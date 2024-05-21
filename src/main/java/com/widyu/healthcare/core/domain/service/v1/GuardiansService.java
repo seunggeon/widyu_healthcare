@@ -2,10 +2,12 @@ package com.widyu.healthcare.core.domain.service.v1;
 
 import com.widyu.healthcare.core.api.controller.v1.request.guardian.UpdateGuardianProfileRequest;
 import com.widyu.healthcare.core.api.controller.v1.request.guardian.RegisterGuardianRequest;
+import com.widyu.healthcare.core.api.controller.v1.response.FamilyIdxResponse;
 import com.widyu.healthcare.core.api.controller.v1.response.FamilyInfoResponse;
 import com.widyu.healthcare.core.api.controller.v1.response.guardian.GuardianInfoResponse;
 import com.widyu.healthcare.core.api.controller.v1.response.senior.SeniorInfoResponse;
 import com.widyu.healthcare.core.api.controller.v1.response.CommonUserResponse;
+import com.widyu.healthcare.core.db.mapper.v1.SeniorsMapper;
 import com.widyu.healthcare.core.domain.domain.v1.User;
 import com.widyu.healthcare.core.domain.domain.v1.UserStatus;
 import com.widyu.healthcare.support.error.exception.DuplicateIdException;
@@ -18,6 +20,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 
 @Log4j2
@@ -25,6 +28,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GuardiansService {
     private final GuardiansMapper guardiansMapper;
+    private final SeniorsMapper seniorsMapper;
     @Transactional(rollbackFor = RuntimeException.class)
     public GuardianInfoResponse insert(User EncryptedUser) {
         boolean duplIdResult = isDuplicatedId(EncryptedUser.getId());
@@ -82,12 +86,11 @@ public class GuardiansService {
         return userInfo;
     }
 
-    public GuardianInfoResponse findPassword(String id, String newPassword, String name, String phoneNumber){
-        GuardianInfoResponse userInfo = guardiansMapper.updatePasswordByGuardianInfos(id, SHA256Util.encryptSHA256(newPassword), name, phoneNumber);
-        if(userInfo == null){
+    public void findPassword(String id, String newPassword, String name, String phoneNumber){
+        int updateCount = guardiansMapper.updatePassword(id, SHA256Util.encryptSHA256(newPassword), name, phoneNumber);
+        if(updateCount == 0){
             throw new DuplicateIdException("비밀번호 찾기 Guardian ERROR! 회원정보가 없습니다.\n");
         }
-        return userInfo;
     }
 
     public boolean isDuplicatedId(String id) {
@@ -106,10 +109,25 @@ public class GuardiansService {
         return familyInfo;
     }
 
-    public List<Long> getFamilyIdxOfTarget(long userIdx){
-        List<Long> seniorIdxList = guardiansMapper.findSeniorsIdxByIdx(userIdx);
+    public FamilyIdxResponse getFamilyIdxOfTarget(long userIdx){
+        List<Long> seniorsIdxList = guardiansMapper.findSeniorsIdxByIdx(userIdx);
+        List<Long> guardiansIdxList = guardiansMapper.findGuardiansIdxByIdx(userIdx);
+        // null 값 제거
+        seniorsIdxList.removeAll(Collections.singletonList(null));
+        guardiansIdxList.removeAll(Collections.singletonList(null));
+        return FamilyIdxResponse.builder()
+                .seniorsIdxList(seniorsIdxList)
+                .guardiansIdxList(guardiansIdxList)
+                .build();
+    }
 
-        return seniorIdxList;
+    public void addGuardian(long guardianIdx, long targetIdx) {
+        int relationInsertCount = guardiansMapper.insertRelation(guardianIdx, targetIdx);
+        if(relationInsertCount != 1) {
+            log.error("set Senior Relation during register ERROR! guadianIdx : ", guardianIdx);
+            throw new RuntimeException(
+                    "set Senior Relation during register ERROR! 보호자 추가 등록 메서드를 확인해주세요\n" + "guadianIdx : " + guardianIdx);
+        }
     }
 
     public void updateProfile(long userIdx, User user){

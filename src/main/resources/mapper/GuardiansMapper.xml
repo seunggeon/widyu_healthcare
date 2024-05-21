@@ -14,6 +14,7 @@
         <result property="birth" column="birth"/>
         <result property="isDisease" column="isDisease"/>
         <collection property="diseases" column="{userIdx = userIdx}" javaType="java.util.ArrayList" ofType="com.widyu.healthcare.core.domain.domain.v1.Disease" select="findDiseasesByIdx">
+            <result property="diseaseIdx" column="diseaseIdx"/>
             <result property="name" column="diseaseName"/>
             <result property="drugName" column="drugName"/>
             <result property="explanation" column="explanation"/>
@@ -65,6 +66,11 @@
           AND u.status != 'DELETE'
     </select>
 
+    <insert id="insertRelation">
+        INSERT INTO relations(guardianIdx, userIdx)
+        VALUES( #{guardianIdx}, #{userIdx} )
+    </insert>
+
     <select id="findSeniorsByIdx" resultMap="SeniorDetailResponseDtoMap">
         SELECT ud.userIdx, u.name as name, u.profileImageUrl, u.type AS userType, ud.inviteCode, ud.phoneNumber, ud.address, ud.birth, ud.isDisease
         FROM usersdetail ud
@@ -72,14 +78,15 @@
         WHERE ud.userIdx IN (
             SELECT seniorIdx
             FROM relations
-            WHERE guardianIdx = #{userIdx}
+            WHERE userIdx = #{userIdx}
+            AND seniorIdx is not null
         )
         AND u.status != 'DELETE'
         GROUP BY ud.userIdx;
     </select>
 
     <select id="findDiseasesByIdx" resultType="java.util.HashMap">
-        SELECT name AS diseaseName, drugName, explanation, favoriteHospital, dosageTime
+        SELECT diseaseIdx, name AS diseaseName, drugName, explanation, favoriteHospital, dosageTime
         FROM diseases
         WHERE userIdx = #{userIdx}
     </select>
@@ -87,12 +94,19 @@
     <select id="findSeniorsIdxByIdx">
         SELECT seniorIdx
         FROM relations
-        WHERE guardianIdx = #{guardianIdx}
+        WHERE userIdx = #{userIdx}
+          AND seniorIdx is not null
     </select>
 
-    <!--  TODO : indexing 적용하기 -->
+    <select id="findGuardiansIdxByIdx">
+        SELECT guardianIdx
+        FROM relations
+        WHERE userIdx = #{userIdx}
+          AND guardianIdx is not null
+    </select>
+
     <select id="findIdByNameAndNumber" resultType="com.widyu.healthcare.core.api.controller.v1.response.guardian.GuardianInfoResponse">
-        SELECT u.name, u.profileImageUrl, ud.id, ud.phoneNumber
+        SELECT u.userIdx, u.name, u.profileImageUrl, ud.id, ud.phoneNumber
         FROM usersdetail as ud
         JOIN users as u ON ud.userIdx = u.userIdx
         WHERE u.name = #{name}
@@ -100,12 +114,11 @@
           AND u.status != 'DELETE'
     </select>
 
-    <update id="updatePasswordByGuardianInfos">
+    <update id="updatePassword">
         UPDATE usersdetail as ud
         SET ud.password = #{newPassword}
         WHERE ud.id = #{id}
           AND ud.phoneNumber = #{phoneNumber}
-          AND u.status != 'DELETE'
     </update>
 
     <update id="updateProfile">

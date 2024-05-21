@@ -22,7 +22,9 @@ import java.util.List;
  */
 @Getter
 @SuperBuilder
-public class SeniorGoalResponse implements GoalCalculatable {
+@NoArgsConstructor
+public class SeniorGoalResponse extends CommonUserResponse implements GoalCalculatable {
+
     @JsonIgnore
     private double achieveGoal;
     @JsonIgnore

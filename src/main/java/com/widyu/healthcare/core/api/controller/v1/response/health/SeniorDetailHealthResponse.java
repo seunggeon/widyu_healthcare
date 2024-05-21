@@ -10,6 +10,7 @@ import com.widyu.healthcare.core.domain.domain.v1.Health;
 import com.widyu.healthcare.core.domain.domain.v1.User;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
@@ -17,6 +18,7 @@ import java.util.List;
  * 보호자 메인 화면
  */
 @Getter
+@NoArgsConstructor
 public class SeniorDetailHealthResponse {
     SeniorInfoResponse target;
 //    @JsonIgnore

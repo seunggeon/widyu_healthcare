@@ -6,6 +6,7 @@ import com.widyu.healthcare.core.api.controller.v1.response.goal.GuardianGoalRes
 import com.widyu.healthcare.core.api.controller.v1.response.goal.SeniorGoalResponse;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.List;
  * 보호자 메인 화면
  */
 @Getter
+@NoArgsConstructor
 public class SeniorMainHealthResponse {
     private long userIdx;
     private String name;

@@ -9,6 +9,7 @@ import com.widyu.healthcare.core.domain.domain.v1.HealthType;
 import com.widyu.healthcare.support.utils.HealthUtil;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
@@ -16,6 +17,7 @@ import java.util.List;
  * 보호자 메인 화면
  */
 @Getter
+@NoArgsConstructor
 public class HealthTypeResponse {
     private long userIdx;
     private String name;

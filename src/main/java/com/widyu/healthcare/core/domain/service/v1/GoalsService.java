@@ -50,7 +50,8 @@ public class GoalsService {
         List<Long> seniorsIdxOnFamily = guardiansMapper.findSeniorsIdxByIdx(targetIdx);
         List<SeniorGoalResponse> seniorsGoalList;
         seniorsGoalList = seniorsIdxOnFamily.stream()
-                .map(seniorIdx -> getTargetSeniorGoals(seniorIdx))
+                .map(userIdx -> goalsMapper.findBySeniorIdx(userIdx))
+                .peek(dto -> dto.percentageFromGoals())
                 .collect(Collectors.toList());
 
         // 본인과 가족들 목표 정보

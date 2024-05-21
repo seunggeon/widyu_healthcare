@@ -16,7 +16,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 public class CommonUserResponse {
-    private long userIdx;
+    private Long userIdx;
     private String name;
     private String profileImageUrl;
     @JsonIgnore
@@ -24,7 +24,7 @@ public class CommonUserResponse {
     private UserType userType;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    public long getUserIdx() {
-        return userIdx == 0 ? null : userIdx;
+    public Long getUserIdx() {
+        return userIdx == null ? 0 : userIdx;
     }
 }

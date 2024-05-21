@@ -40,11 +40,7 @@ public class GoalsService {
     private static final String POINT_CODE_PREFIX = "point_code:";
     public MainGoalResponse getTargetUserGoalsAndSeniorGoals(long targetIdx){
 
-        // 본인(보호자) 목표 정보
-        GuardianGoalResponse myGoal = GuardianGoalResponse.builder()
-                .goals(goalsMapper.getGoalsByUserIdx(targetIdx))
-                .percentageOfGoal(getGoalRateToday(targetIdx))
-                .build();
+        GuardianGoalResponse myGoal = goalsMapper.findByGuardianIdx(targetIdx);
 
         // 가족들(시니어) 목표 정보
         List<Long> seniorsIdxOnFamily = guardiansMapper.findSeniorsIdxByIdx(targetIdx);
@@ -65,13 +61,8 @@ public class GoalsService {
 
     public SeniorGoalResponse getTargetSeniorGoals(long targetIdx){
 
-
         // 본인(시니어) 목표 정보
-        SeniorGoalResponse myGoal = SeniorGoalResponse.builder()
-                .goals(goalsMapper.getGoalsByUserIdx(targetIdx))
-                .sequence(targetIdx)
-                .percentageOfGoal(getGoalRateToday(targetIdx))
-                .build();
+        SeniorGoalResponse myGoal = goalsMapper.findBySeniorIdx(targetIdx);
 
         return myGoal;
     }

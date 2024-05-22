@@ -1,5 +1,6 @@
 package com.widyu.healthcare.core.domain.service.v1;
 
+import java.io.IOException;
 import java.util.List;
 
 import com.widyu.healthcare.core.api.controller.v1.response.FamilyInfoResponse;
@@ -16,6 +17,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import com.widyu.healthcare.support.error.exception.DuplicateIdException;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import static com.widyu.healthcare.core.domain.domain.v1.UserType.SENIOR;
 
@@ -24,6 +26,7 @@ import static com.widyu.healthcare.core.domain.domain.v1.UserType.SENIOR;
 @RequiredArgsConstructor
 public class SeniorsService {
     private final SeniorsMapper seniorsMapper;
+    private final S3Service s3Service;
     @Transactional(rollbackFor = RuntimeException.class)
     public String insertAndSetRelations(long guardianIdx, User EncryptedUser) {
 
@@ -104,12 +107,21 @@ public class SeniorsService {
     }
 
     @Transactional(rollbackFor = RuntimeException.class)
-    public void updateProfile(long userIdx, User user){
-        int updateCount = seniorsMapper.updateProfile(userIdx, user.getName(), user.getProfileImageUrl(), user.getBirth(), user.getPhoneNumber(), user.getAddress(), user.getIsDisease());
+    public void updateProfile(long userIdx, User user) throws IOException {
+        int updateCount = seniorsMapper.updateProfile(userIdx, user.getName(), user.getBirth(), user.getPhoneNumber(), user.getAddress(), user.getIsDisease());
         if(updateCount == 0){
             log.error("update senior profile ERROR! update fail, count is {}", updateCount);
             throw new DuplicateIdException("update senior profile ERROR! \n" + "update userIdx : " + userIdx);
         }
         user.getDiseases().stream().forEach(disease -> seniorsMapper.updateDisease(userIdx, disease));
+    }
+
+    public void updateProfileImage(long userIdx, MultipartFile multipartFile) throws IOException {
+        String profileImageUrl = s3Service.upload(multipartFile);
+        int updateCount = seniorsMapper.updateProfileImage(userIdx, profileImageUrl);
+        if(updateCount == 0){
+            log.error("update senior profile image ERROR! update fail, count is {}", updateCount);
+            throw new DuplicateIdException("update senior profile image ERROR! \n" + "update userIdx : " + userIdx);
+        }
     }
 }

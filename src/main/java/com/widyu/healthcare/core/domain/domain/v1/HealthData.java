@@ -11,14 +11,16 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 public class HealthData {
+    private long healthIdx;
     private double data;
     private HealthStatus status;
-    private HealthType type;
+    private HealthType healthType;
 
     @Builder
-    public HealthData(double data, HealthStatus status, HealthType type) {
+    public HealthData(long healthIdx, double data, HealthStatus status, HealthType healthType) {
+        this.healthIdx = healthIdx;
         this.data = data;
         this.status = status;
-        this.type = type;
+        this.healthType = healthType;
     }
 }

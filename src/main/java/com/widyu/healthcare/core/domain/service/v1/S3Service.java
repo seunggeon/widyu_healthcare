@@ -70,7 +70,7 @@ public class S3Service {
         rewardsMapper.updateRewardUrl(null, rewardIdx);
     }
 
-    private String upload(MultipartFile multipartFile) throws IOException {
+    public String upload(MultipartFile multipartFile) throws IOException {
 
         String fileName = multipartFile.getOriginalFilename();
         ObjectMetadata objectMetadata = new ObjectMetadata();

@@ -5,11 +5,9 @@ import com.widyu.healthcare.core.api.controller.v1.response.health.HealthTypeRes
 import com.widyu.healthcare.core.api.controller.v1.response.health.SeniorDetailHealthResponse;
 import com.widyu.healthcare.core.api.controller.v1.response.health.SeniorMainHealthResponse;
 import com.widyu.healthcare.core.api.controller.v1.response.senior.SeniorInfoResponse;
-import com.widyu.healthcare.core.db.mapper.v1.GuardiansMapper;
 import com.widyu.healthcare.core.db.mapper.v1.HealthsMapper;
 import com.widyu.healthcare.core.db.mapper.v1.SeniorsMapper;
 import com.widyu.healthcare.core.domain.domain.v1.*;
-import com.widyu.healthcare.support.error.exception.DuplicateIdException;
 import com.widyu.healthcare.support.utils.HealthUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -17,9 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import static com.widyu.healthcare.core.domain.domain.v1.HealthType.heartBit;
 
 @Log4j2
 @Service
@@ -35,7 +30,7 @@ public class HealthsService {
             throw new RuntimeException("insert Goal ERROR! 심장 박동 수 추가 메서드를 확인해주세요\n" + "Params : " + heartBit);
         }
 
-        if(heartBit.getStatus() == HealthStatus.Emergency){
+        if(heartBit.getStatus() == HealthStatus.EMERGENCY){
             // TODO: 응급 상황 푸쉬 알림
         }
     }
@@ -48,7 +43,7 @@ public class HealthsService {
                 .profileImageUrl(healthResponse.getProfileImageUrl())
                 .longitude(healthResponse.getLongitude())
                 .latitude(healthResponse.getLatitude())
-                .recentHeartBit(healthResponse.getHeartBitData())
+                .recentHeartBit(healthResponse.getAverageHeartBitData(healthResponse.getHealthData()))
                 .watchConnection(1)
                 .build();
     }
@@ -60,7 +55,7 @@ public class HealthsService {
         List<GuardianInfoResponse> guardians = seniorsMapper.findGuardiansByIdx(userIdx);
         return SeniorDetailHealthResponse.builder()
                 .target(target)
-                .recentHeartBit(healthResponse.getHeartBitData())
+                .recentHeartBit(healthResponse.getAverageHeartBitData(healthResponse.getHealthData()))
                 .guardians(guardians)
                 .build();
     }
@@ -75,8 +70,8 @@ public class HealthsService {
                 .userIdx(healthResponse.getUserIdx())
                 .name(healthResponse.getName())
                 .profileImageUrl(healthResponse.getProfileImageUrl())
-                .timeGraphData(HealthUtil.calculateAveragesEachTime(healthResponse.getDailyDataList()))
-                .dailyAverage(HealthUtil.calculateDailyAverage(healthResponse.getDailyDataList()))
+                .timeGraphData(HealthUtil.calculateAveragesEachTime(healthResponse.getDailyDataList(healthResponse.getHealthData())))
+                .dailyAverage(HealthUtil.calculateDailyAverage(healthResponse.getDailyDataList(healthResponse.getHealthData())))
                 .healthType(type)
                 .build();
     }

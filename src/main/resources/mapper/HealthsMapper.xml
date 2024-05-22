@@ -10,20 +10,21 @@
         <result property="profileImageUrl" column="profileImageUrl"/>
         <result property="latitude" column="latitude"/>
         <result property="longitude" column="longitude"/>
-        <collection property="healthData" javaType="java.util.ArrayList">
-            <result property="healthType" column="healthType"/>
-            <result property="data" column="data"/>
-        </collection>
+        <collection property="healthData" javaType="java.util.ArrayList" resultMap="healthDataMap"></collection>
     </resultMap>
 
     <resultMap id="DailyHealthMap" type="com.widyu.healthcare.core.domain.domain.v1.Health">
         <result property="userIdx" column="userIdx"/>
         <result property="name" column="name"/>
         <result property="profileImageUrl" column="profileImageUrl"/>
-        <collection property="healthData" column="{userIdx = userIdx}, {month = month}, {day = day}," javaType="java.util.ArrayList" select="findDailyDataByType">
-            <result property="data" column="data"/>
-            <result property="healthType" column="type"/>
-        </collection>
+        <collection property="healthData" javaType="java.util.ArrayList" resultMap="healthDataMap"></collection>
+    </resultMap>
+
+    <resultMap id="healthDataMap" type="com.widyu.healthcare.core.domain.domain.v1.HealthData">
+        <!--healthIdx 없으면 중복값 제거됨-->
+        <id property="healthIdx"  column="healthIdx"/>
+        <result property="data" column="data"/>
+        <result property="healthType" column="healthType"/>
     </resultMap>
 
     <insert id="insertRecentHeartBitAndStatus" parameterType="com.widyu.healthcare.core.domain.domain.v1.HealthData">
@@ -32,9 +33,10 @@
 
     <select id="getRecentHealth" resultMap="RecentHealthMap">
         SELECT
+            u.userIdx,
+            h.healthIdx,
             h.data,
             h.type AS healthType,
-            u.userIdx,
             u.name,
             u.profileImageUrl,
             l.latitude,
@@ -47,23 +49,18 @@
             GROUP BY userIdx, type
         ) AS latest
         ON u.userIdx = latest.userIdx
-        JOIN healths h ON h.userIdx = latest.userIdx AND h.type = latest.type AND h.createdDate = latest.maxCreatedDate
+        JOIN healths h ON h.userIdx = latest.userIdx
         LEFT JOIN locations l ON u.userIdx = l.userIdx;
     </select>
 
     <select id="getDailyHealth" resultMap="DailyHealthMap">
-        SELECT u.userIdx, u.name, u.profileImageUrl
-        FROM users as u
-        WHERE userIdx = #{userIdx}
-    </select>
-
-    <select id="findDailyDataByType" resultType="com.widyu.healthcare.core.domain.domain.v1.HealthData">
-        SELECT h.data
-        FROM healths as h
+        SELECT u.userIdx, u.name, u.profileImageUrl, h.data, h.type AS healthType, h.healthIdx
+        FROM users AS u
+        LEFT JOIN healths AS h ON h.userIdx = u.userIdx
         WHERE h.userIdx = #{userIdx}
-        AND h.type = #{healthType}
-        AND MONTH(h.createdDate) = #{month}
-        AND DAY(h.createdDate) = #{day}
+            AND h.type = #{healthType}
+            AND MONTH(h.createdDate) = #{month}
+            AND DAY(h.createdDate) = #{day}
         LIMIT 1440;
     </select>
 

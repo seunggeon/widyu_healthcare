@@ -19,7 +19,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
@@ -28,7 +30,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GuardiansService {
     private final GuardiansMapper guardiansMapper;
-    private final SeniorsMapper seniorsMapper;
+    private final S3Service s3Service;
     @Transactional(rollbackFor = RuntimeException.class)
     public GuardianInfoResponse insert(User EncryptedUser) {
         boolean duplIdResult = isDuplicatedId(EncryptedUser.getId());
@@ -130,11 +132,20 @@ public class GuardiansService {
         }
     }
 
-    public void updateProfile(long userIdx, User user){
-        int updateCount = guardiansMapper.updateProfile(userIdx, user.getName(), user.getProfileImageUrl(), user.getPhoneNumber(), user.getAddress(), user.getBirth());
+    public void updateProfile(long userIdx, User user) throws IOException {
+        int updateCount = guardiansMapper.updateProfile(userIdx, user.getName(), user.getPhoneNumber(), user.getAddress(), user.getBirth());
         if(updateCount == 0){
             log.error("update Guardian profile ERROR! update fail, count is {}", updateCount);
             throw new DuplicateIdException("update Guardian profile ERROR! \n" + "update : " + user);
+        }
+    }
+
+    public void updateProfileImage(long userIdx, MultipartFile multipartFile) throws IOException {
+        String profileImageUrl = s3Service.upload(multipartFile);
+        int updateCount = guardiansMapper.updateProfileImage(userIdx, profileImageUrl);
+        if(updateCount == 0){
+            log.error("update Guardian profile ERROR! update fail, count is {}", updateCount);
+            throw new DuplicateIdException("update Guardian profile ERROR! \n" + "update : " + userIdx);
         }
     }
 }

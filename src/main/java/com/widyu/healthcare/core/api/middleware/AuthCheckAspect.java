@@ -50,12 +50,10 @@ public class AuthCheckAspect {
         if(session == null) {
             throw new IllegalStateException("Session is null");
         }
-        long guardianIdx = SessionUtil.getLoginGuardianIdx(session);
-        if (guardianIdx == 0) {
-            throw new HttpStatusCodeException(HttpStatus.UNAUTHORIZED, "id is null from server session") {};
-        }
-        long seniorIdx = SessionUtil.getLoginSeniorIdx(session);
-        if (seniorIdx == 0) {
+
+        long commonIdx = SessionUtil.getLoginCommonIdx(session);
+
+        if (commonIdx == 0) {
             throw new HttpStatusCodeException(HttpStatus.UNAUTHORIZED, "id is null from server session") {};
         }
     }

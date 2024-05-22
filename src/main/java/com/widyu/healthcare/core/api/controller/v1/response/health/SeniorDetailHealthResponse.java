@@ -20,29 +20,12 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 public class SeniorDetailHealthResponse {
+    @JsonProperty("ResponseOldHealthDto")
     SeniorInfoResponse target;
-//    @JsonIgnore
-//    private long userIdx;
-//    private String name;
-//    private String profileImageUrl;
-//    // phoneNumber
-//    // address
-//    // birth
-//    // disease
-//    // drugName
-//    // favoriteHospital
-//    // explanation
     @JsonProperty("heartBit")
     private double recentHeartBit;
-//    @JsonProperty("o2")
-//    private double recentOxygenSaturation;
-//    @JsonProperty("temperature")
-//    private double recentTemperature;
-
+    @JsonProperty("ResponseYoungInfoDto")
     List<GuardianInfoResponse> guardians;
-    // guardian Name
-    // guardian phoneNumber
-    // guardian address
 
     @Builder
     public SeniorDetailHealthResponse(SeniorInfoResponse target, double recentHeartBit, List<GuardianInfoResponse> guardians) {

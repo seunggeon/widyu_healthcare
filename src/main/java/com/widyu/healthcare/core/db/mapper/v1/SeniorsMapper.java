@@ -25,7 +25,9 @@ public interface SeniorsMapper {
     public SeniorInfoResponse findByIdx(@Param("userIdx") long userIdx);
     public List<GuardianInfoResponse> findGuardiansByIdx(@Param("userIdx") long userIdx);
     public GuardianInfoResponse findGuardianByGuardianId(@Param("id") String id);
-    public int updateProfile(@Param("userIdx") long userIdx, @Param("name") String name, @Param("profileImageUrl") String profileImageUrl, @Param("birth") String birth, @Param("phoneNumber") String phoneNumber, @Param("address") String address, @Param("isDisease") Boolean isDisease);
+    public int updateProfile(@Param("userIdx") long userIdx, @Param("name") String name, @Param("birth") String birth, @Param("phoneNumber") String phoneNumber, @Param("address") String address, @Param("isDisease") Boolean isDisease);
+    public int updateProfileImage(@Param("userIdx") long userIdx, @Param("profileImageUrl") String profileImageUrl);
+
     public void updateDisease(@Param("userIdx") long userIdx, @Param("disease") Disease diseases);
 
 }

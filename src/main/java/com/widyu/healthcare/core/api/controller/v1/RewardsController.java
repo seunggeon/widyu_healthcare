@@ -36,7 +36,7 @@ public class RewardsController {
     public ResponseEntity<?> getAllGuardianReward(HttpSession session){
 
         long userIdx = SessionUtil.getLoginGuardianIdx(session);
-        List<RewardResponse> rewardAllInfo = rewardsService.getAllGurdianReward(userIdx);
+        List<RewardResponse> rewardAllInfo = rewardsService.getAllGuardianReward(userIdx);
         SuccessResponse response = new SuccessResponse(true, "reward 조회 완료", rewardAllInfo);
 
         return new ResponseEntity<>(response, HttpStatus.OK);

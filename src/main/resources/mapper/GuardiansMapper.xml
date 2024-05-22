@@ -128,9 +128,6 @@
             <if test="name != null">
                 u.name = #{name},
             </if>
-            <if test="profileImageUrl != null">
-                u.profileImageUrl = #{profileImageUrl},
-            </if>
             <if test="phoneNumber != null">
                 ud.phoneNumber = #{phoneNumber},
             </if>
@@ -139,6 +136,17 @@
             </if>
             <if test="birth != null">
                 ud.birth = #{birth},
+            </if>
+        </set>
+        WHERE u.userIdx = #{userIdx}
+        AND u.status != 'DELETE'
+    </update>
+
+    <update id="updateProfileImage">
+        UPDATE users as u
+        <set>
+            <if test="profileImageUrl != null">
+                u.profileImageUrl = #{profileImageUrl},
             </if>
         </set>
         WHERE u.userIdx = #{userIdx}

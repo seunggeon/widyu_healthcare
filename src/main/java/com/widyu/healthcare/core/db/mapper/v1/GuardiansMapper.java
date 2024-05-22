@@ -25,6 +25,7 @@ public interface GuardiansMapper {
     public GuardianInfoResponse findIdByNameAndNumber(@Param("name") String name, @Param("phoneNumber") String phoneNumber);
     public int updatePassword(@Param("id") String id, @Param("newPassword") String newPassword, @Param("name") String name, @Param("phoneNumber") String phoneNumber);
     public int insertRelation(@Param("guardianIdx") long guardianIdx, @Param("userIdx") long targetIdx);
+    public int updateProfile(@Param("userIdx") long userIdx, @Param("name") String name, @Param("phoneNumber") String phoneNumber, @Param("address") String address, @Param("birth") String birth);
+    public int updateProfileImage(@Param("userIdx") long userIdx, @Param("profileImageUrl") String profileImageUrl);
 
-    public int updateProfile(@Param("userIdx") long userIdx, @Param("name") String name, @Param("profileImageUrl") String profileImageUrl, @Param("phoneNumber") String phoneNumber, @Param("address") String address, @Param("birth") String birth);
 }

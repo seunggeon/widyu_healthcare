@@ -18,8 +18,6 @@ public class UpdateSeniorProfileRequest {
     @Nullable
     private String name;
     @Nullable
-    private String profileImageUrl;
-    @Nullable
     private String birth;
     @Nullable
     private String phoneNumber;
@@ -32,7 +30,6 @@ public class UpdateSeniorProfileRequest {
     public User toUser() {
         User user = User.builder()
                 .name(this.name)
-                .profileImageUrl(this.profileImageUrl)
                 .phoneNumber(this.phoneNumber)
                 .birth(this.birth)
                 .address(this.address)

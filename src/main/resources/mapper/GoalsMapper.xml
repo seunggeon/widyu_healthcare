@@ -37,8 +37,7 @@
     </resultMap>
 
     <resultMap id="goalStatusMap" type="com.widyu.healthcare.core.domain.domain.v1.GoalStatus">
-        <result property="goalIdx" column="goalIdx"/>
-        <result property="goalStatusIdx" column="goalStatusIdx"/>
+        <id property="goalStatusIdx" column="goalStatusIdx"/>
         <result property="time" column="time"/>
         <result property="status" column="status"/>
         <result property="pillNum" column="pillNum"/>

@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.*;
 import com.widyu.healthcare.support.utils.SessionUtil;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Log4j2
@@ -121,15 +122,25 @@ public class GuardiansController {
     /**
      * 보호자 프로필 수정 (일부)
      * @param profileRequest
-     * @param session
+     * @param apiUser
      * @return
      */
     @PatchMapping ("profile")
     @LoginCheck(type = UserType.GUARDIAN)
-    public ResponseEntity<?> updateProfile(@RequestBody UpdateGuardianProfileRequest profileRequest, @RequestParam(value = "url", required = false) @NotNull final MultipartFile multipartFile
-                                           ,HttpSession session) {
-        guardiansService.updateProfile(SessionUtil.getLoginGuardianIdx(session), profileRequest.toUser());
+    public ResponseEntity<?> editProfile(@RequestBody UpdateGuardianProfileRequest profileRequest,
+                                           HttpSession apiUser) throws IOException {
+        guardiansService.updateProfile(SessionUtil.getLoginGuardianIdx(apiUser), profileRequest.toUser());
         SuccessResponse response = new SuccessResponse(true, "보호자의 프로필 수정 성공", null);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PatchMapping ("profile/image")
+    @LoginCheck(type = UserType.GUARDIAN)
+    public ResponseEntity<?> editProfileImage(@RequestParam(value = "url", required = false) @NotNull final MultipartFile multipartFile,
+                                           HttpSession apiUser) throws IOException {
+        guardiansService.updateProfileImage(SessionUtil.getLoginGuardianIdx(apiUser), multipartFile);
+        SuccessResponse response = new SuccessResponse(true, "보호자의 프로필 이미지 수정 성공", null);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

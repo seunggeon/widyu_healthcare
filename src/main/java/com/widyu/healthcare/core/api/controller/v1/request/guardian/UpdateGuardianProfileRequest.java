@@ -15,17 +15,14 @@ public class UpdateGuardianProfileRequest {
     @Nullable
     private String name;
     @Nullable
-    private String profileImageUrl;
-    @Nullable
     private String phoneNumber;
     @Nullable
     private String address;
     @Nullable
     private String birth;
     @Builder
-    public UpdateGuardianProfileRequest(String name, String profileImageUrl, String phoneNumber, String address, String birth) {
+    public UpdateGuardianProfileRequest(String name, String phoneNumber, String address, String birth) {
         this.name = name;
-        this.profileImageUrl = profileImageUrl;
         this.phoneNumber = phoneNumber;
         this.address = address;
         this.birth = birth;
@@ -33,7 +30,6 @@ public class UpdateGuardianProfileRequest {
     public User toUser() {
         User user = User.builder()
                 .name(this.name)
-                .profileImageUrl(this.profileImageUrl)
                 .phoneNumber(this.phoneNumber)
                 .birth(this.birth)
                 .address(this.address)

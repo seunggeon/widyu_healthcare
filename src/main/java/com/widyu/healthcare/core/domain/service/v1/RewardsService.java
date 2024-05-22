@@ -29,7 +29,7 @@ public class RewardsService {
     private static final String POINT_CODE_PREFIX = "point_code:";
 
     // 리워드 전체 조회(부양자)
-    public List<RewardResponse> getAllGurdianReward(Long userIdx){
+    public List<RewardResponse> getAllGuardianReward(Long userIdx){
         List<RewardResponse> rewardList = rewardsMapper.getOpenedRewardByUserIdx(userIdx);
         rewardList.addAll(rewardsMapper.getClosedRewardByUserIdx(userIdx));
         return rewardList;

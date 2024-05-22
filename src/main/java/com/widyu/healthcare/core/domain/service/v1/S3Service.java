@@ -5,6 +5,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.widyu.healthcare.core.db.mapper.v1.GuardiansMapper;
 import com.widyu.healthcare.core.domain.domain.v1.Reward;
 import com.widyu.healthcare.core.db.mapper.v1.GoalsStatusMapper;
 import com.widyu.healthcare.core.db.mapper.v1.RewardsMapper;
@@ -18,6 +19,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 @Log4j2
 @Service
@@ -32,6 +35,7 @@ public class S3Service {
 
     private final AmazonS3 amazonS3Client;
     private final GoalsStatusMapper goalsStatusMapper;
+    private final GuardiansMapper guardiansMapper;
     private final RewardsMapper rewardsMapper;
     // 목표 인증 파일 업로드
     public void insertGoalFile(long goalStatusIdx, MultipartFile multipartFile) throws IOException {
@@ -49,13 +53,20 @@ public class S3Service {
     }
 
     // 리워드 파일 업로드
-    public Reward insertRewardFile(long userIdx, long uploaderIdx, String description, RewardType type, MultipartFile multipartFile) throws IOException {
+    public List<Reward> insertRewardFile(long uploaderIdx, String description, RewardType type, MultipartFile multipartFile) throws IOException {
 
         String url = upload(multipartFile);
-        Reward reward = new Reward(userIdx, uploaderIdx, description, url, type);
-        rewardsMapper.insertReward(reward);
+        List<Long> seniorsIdxOnFamily = guardiansMapper.findSeniorsIdxByIdx(uploaderIdx);
+        List<Reward> rewardList = new ArrayList<>();
+        
+        seniorsIdxOnFamily.forEach(seniorIdx -> {
+            Reward reward = new Reward(seniorIdx, uploaderIdx, description, url, type);
+            rewardList.add(reward);
+            rewardsMapper.insertReward(reward);
+        });
 
-        return reward;
+
+        return rewardList;
     }
 
     // 리워드 파일 수정

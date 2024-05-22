@@ -73,14 +73,13 @@ public class RewardsController {
      */
     @PostMapping("/insert")
     public ResponseEntity<?> insertReward(@RequestParam(value = "url", required = false) @NonNull final MultipartFile multipartFile,
-                                          @RequestParam(value = "userIdx", required = false) @NonNull final String userIdx,
                                           @RequestParam(value = "type", required = false) @NonNull  final RewardType type,
                                           @RequestParam(value = "description", required = false) final String description,
                                           HttpSession session
     ) throws IOException {
 
         long uploaderIdx = SessionUtil.getLoginGuardianIdx(session);
-        Reward reward = s3Service.insertRewardFile(Long.parseLong(userIdx), uploaderIdx, description, type, multipartFile);
+        List<Reward> reward = s3Service.insertRewardFile(uploaderIdx, description, type, multipartFile);
         SuccessResponse response = new SuccessResponse(true, "리워드 추가 완료", reward);
 
         return new ResponseEntity<>(response, HttpStatus.OK);

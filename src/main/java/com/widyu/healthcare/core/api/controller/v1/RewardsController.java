@@ -78,7 +78,8 @@ public class RewardsController {
                                           HttpSession session
     ) throws IOException {
 
-        long uploaderIdx = SessionUtil.getLoginGuardianIdx(session);
+        //long uploaderIdx = SessionUtil.getLoginGuardianIdx(session);
+        long uploaderIdx = 45;
         List<Reward> reward = s3Service.insertRewardFile(uploaderIdx, description, type, multipartFile);
         SuccessResponse response = new SuccessResponse(true, "리워드 추가 완료", reward);
 

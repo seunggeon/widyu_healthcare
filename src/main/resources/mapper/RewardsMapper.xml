@@ -7,6 +7,9 @@
 
     <insert id="insertReward" parameterType="com.widyu.healthcare.core.domain.domain.v1.Reward">
         INSERT INTO rewards (userIdx, uploaderIdx, url, description, status, point, type) VALUES (#{userIdx}, #{uploaderIdx}, #{url}, #{description}, #{status}, #{point}, #{type})
+        <selectKey keyProperty="rewardIdx" order="AFTER" resultType="java.lang.Long">
+            SELECT LAST_INSERT_ID() AS rewardIdx
+        </selectKey>
     </insert>
 
     <update id="updateReward" parameterType="com.widyu.healthcare.core.domain.domain.v1.Reward">

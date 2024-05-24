@@ -173,7 +173,7 @@ public class GoalsService {
     }
 
     // 월별 목표 달성률 조회
-    public List<Map<Integer, Double>> getGoalRateMontly(long userIdx, int month){
+    public List<Map<Integer, Double>> getGoalRateMonthly(long userIdx, int month){
 
         return goalsStatusMapper.getGoalRateMonthly(userIdx, month);
     }

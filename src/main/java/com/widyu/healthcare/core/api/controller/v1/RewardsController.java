@@ -90,8 +90,12 @@ public class RewardsController {
      */
     @PatchMapping("/update")
     // TODO: Reward 도메인 분리 -> .toReward
-    public ResponseEntity<?> updateReward(@RequestBody Reward reward) {
-        s3Service.updateReward(reward);
+    public ResponseEntity<?> updateReward(@RequestParam(value = "rewardIdx", required = false) @NonNull final long rewardIdx,
+                                          @RequestParam(value = "url", required = false) @NonNull final MultipartFile multipartFile,
+                                          @RequestParam(value = "type", required = false) @NonNull  final RewardType type,
+                                          @RequestParam(value = "description", required = false) final String description,
+                                          HttpSession session) throws IOException {
+        s3Service.updateReward(rewardIdx, description, type, multipartFile);
         SuccessResponse response = new SuccessResponse(true, "reward 수정 완료", null);
 
         return new ResponseEntity<>(response, HttpStatus.OK);

@@ -23,7 +23,7 @@
         <result property="totalGoal" column="totalGoal"/>
         <result property="totalPoint" column="totalPoint"/>
         <result property="sequence" column="userIdx"/>
-        <collection property="goals" ofType="com.widyu.healthcare.core.domain.domain.v1.Goal" resultMap="goalsMap"/>
+        <collection property="goals" javaType="java.util.ArrayList" resultMap="goalsMap"/>
     </resultMap>
 
     <resultMap id="goalsMap" type="com.widyu.healthcare.core.domain.domain.v1.Goal">
@@ -48,7 +48,7 @@
     <select id="findByGuardianIdx" resultMap="GuardianGoalResponseDtoMap">
         SELECT  u.userIdx, u.name, u.profileImageUrl, u.type AS userType,
                 ud.totalGoal, ud.achieveGoal,
-                g.goalIdx, g.title, g.description, g.type AS goalType, g.day,
+                g.goalIdx, g.title, g.description, g.type AS type, g.day,
                 gs.goalStatusIdx, gs.time, gs.status, gs.pillNum, gs.imgUrl, gs.point
         FROM users u
                  LEFT JOIN usersdetail ud ON u.userIdx = ud.userIdx
@@ -60,7 +60,7 @@
     <select id="findBySeniorIdx" resultMap="SeniorGoalResponseDtoMap">
         SELECT  u.userIdx, u.name, u.profileImageUrl, u.type AS userType,
                 ud.totalGoal, ud.achieveGoal, ud.totalPoint,
-                g.goalIdx, g.title, g.description, g.type AS goalType, g.day,
+                g.goalIdx, g.title, g.description, g.type AS type, g.day,
                 gs.goalStatusIdx, gs.time, gs.status, gs.pillNum, gs.imgUrl, gs.point
         FROM users u
                  LEFT JOIN usersdetail ud ON u.userIdx = ud.userIdx

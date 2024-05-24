@@ -146,10 +146,10 @@ public class GoalsController {
     /**
      * 목표 월별 달성률
      */
-    @GetMapping("/rate/montly/{userIdx}/{month}")
+    @GetMapping("/rate/monthly/{userIdx}/{month}")
     public ResponseEntity<?> getGoalMontly(@PathVariable("userIdx") @NonNull long userIdx,
                                              @PathVariable("month") @NonNull int month){
-        List<Map<Integer, Double>> montlyGoalRate = goalsService.getGoalRateMontly(userIdx, month);
+        List<Map<Integer, Double>> montlyGoalRate = goalsService.getGoalRateMonthly(userIdx, month);
         SuccessResponse response = new SuccessResponse(true, "reward 월별 달성률 조회 완료", montlyGoalRate);
 
         return new ResponseEntity<>(response, HttpStatus.OK);

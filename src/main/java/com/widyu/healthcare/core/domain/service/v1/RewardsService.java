@@ -30,14 +30,13 @@ public class RewardsService {
 
     // 리워드 전체 조회(부양자)
     public List<RewardResponse> getAllGuardianReward(Long userIdx){
-        List<RewardResponse> rewardList = rewardsMapper.getOpenedRewardByUserIdx(userIdx);
-        rewardList.addAll(rewardsMapper.getClosedRewardByUserIdx(userIdx));
+        List<RewardResponse> rewardList = rewardsMapper.getRewardByUserIdxForGuardian(userIdx);
         return rewardList;
     }
 
     // 리워드 전체 조회(시니어)
     public List<RewardResponse> getAllSeniorReward(Long userIdx){
-        List<RewardResponse> rewardList = rewardsMapper.getOpenedRewardByUserIdx(userIdx);
+        List<RewardResponse> rewardList = rewardsMapper.getOpenedRewardByUserIdxForSenior(userIdx);
         rewardList.addAll(rewardsMapper.getClosedRewardByUserIdxForSenior(userIdx));
         return rewardList;
     }

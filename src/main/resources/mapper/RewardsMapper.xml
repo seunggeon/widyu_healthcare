@@ -41,7 +41,7 @@
         SELECT r.rewardIdx, r.uploaderIdx, r.type, r.url, r.status, r.description,r.point, u.userIdx as uploaderIdx, u.profileImageUrl as uploaderImageUrl, u.name as uploaderName
         FROM rewards r
         JOIN users u ON r.uploaderIdx = u.userIdx
-        WHERE r.userIdx = #{userIdx} AND r.status = 0;
+        WHERE r.userIdx = #{userIdx};
     </select>
 
     <select id="getClosedRewardByUserIdxForSenior" parameterType="java.lang.Long" resultType="com.widyu.healthcare.core.api.controller.v1.response.reward.RewardResponse">

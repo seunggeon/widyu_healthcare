@@ -110,8 +110,10 @@ public class GoalsController {
      */
     @PatchMapping("/edit")
     public ResponseEntity<?> editGoal(@RequestBody Goal goal){
-        goalsService.updateGoal(goal, goal.getGoalStatusList());
-        SuccessResponse response = new SuccessResponse(true, "목표 수정 성공", null);
+
+        goalsService.deleteGoal(goal.getGoalIdx());
+        Goal resultGoal = goalsService.insertGoal(goal, goal.getGoalStatusList());
+        SuccessResponse response = new SuccessResponse(true, "목표 수정 성공", resultGoal);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

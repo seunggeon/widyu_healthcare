@@ -1,7 +1,9 @@
 package com.widyu.healthcare.support.error;
 
+import com.google.api.client.auth.oauth2.TokenResponseException;
 import com.widyu.healthcare.support.error.exception.DuplicateIdException;
 import com.widyu.healthcare.support.error.exception.InsufficientPointsException;
+import com.widyu.healthcare.support.error.exception.MissingTokenException;
 import com.widyu.healthcare.support.error.exception.NoDataException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -33,4 +35,11 @@ public class ErrorController {
     ErrorResponse response = new ErrorResponse(false, e.getMessage() ,104);
     return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
   }
+
+  @ExceptionHandler(MissingTokenException.class)
+  public ResponseEntity<Object> TokenNullException(MissingTokenException e) {
+    ErrorResponse response = new ErrorResponse(false, e.getMessage() ,105);
+    return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+  }
+
 }

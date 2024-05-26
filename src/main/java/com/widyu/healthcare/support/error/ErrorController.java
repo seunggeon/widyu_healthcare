@@ -1,8 +1,6 @@
 package com.widyu.healthcare.support.error;
 
-import com.widyu.healthcare.support.error.exception.DuplicateIdException;
-import com.widyu.healthcare.support.error.exception.InsufficientPointsException;
-import com.widyu.healthcare.support.error.exception.NoDataException;
+import com.widyu.healthcare.support.error.exception.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,4 +31,17 @@ public class ErrorController {
     ErrorResponse response = new ErrorResponse(false, e.getMessage() ,104);
     return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
   }
+
+  @ExceptionHandler(MissingTokenException.class)
+  public ResponseEntity<Object> MissingTokenException(MissingTokenException e) {
+    ErrorResponse response = new ErrorResponse(false, e.getMessage() ,105);
+    return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+  }
+
+  @ExceptionHandler(MissingFileException.class)
+  public ResponseEntity<Object> MissingFileException(MissingFileException e) {
+    ErrorResponse response = new ErrorResponse(false, e.getMessage() ,106);
+    return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+  }
+
 }

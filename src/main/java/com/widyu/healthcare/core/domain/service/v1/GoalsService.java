@@ -107,6 +107,7 @@ public class GoalsService {
     // 목표 수정
     public void updateGoal(Goal goal, List<GoalStatus> goalStatusList){
 
+
         int updateGoalCount = goalsMapper.updateGoal(goal);
         if (updateGoalCount != 1){
             log.error("update Goal ERROR! info from Goal table is not updated {}", goal);
@@ -140,7 +141,7 @@ public class GoalsService {
         }
 
         // 목표 달성 포인트 임시 저장
-        redisMapper.incrementPoint(buildRedisKey(userIdx.toString()), GOAL_POINT);
+        //redisMapper.incrementPoint(buildRedisKey(userIdx.toString()), GOAL_POINT);
 
         // 총 포인트 변경
         try {
@@ -150,7 +151,7 @@ public class GoalsService {
 //                throw new RuntimeException("update status success ERROR! 목표 상태 수정(성공) 메서드를 확인해주세요\n" + "Params : userIdx:" + userIdx);
 //            }
         } catch (RuntimeException e){
-            redisMapper.decrementPoint(buildRedisKey(userIdx.toString()), GOAL_POINT);
+            //redisMapper.decrementPoint(buildRedisKey(userIdx.toString()), GOAL_POINT);
             throw new RuntimeException("update status success ERROR! 목표 상태 수정(성공) 메서드를 확인해주세요\n" + "Params : userIdx:" + userIdx);
         }
 

@@ -11,20 +11,18 @@ import java.util.List;
 
 @Mapper
 public interface GuardiansMapper {
-
-    public int checkId(String id);
     public long insertDetail(User encryptedUser);
-    public int update(@Param("userIdx") long guardianIdx, @Param("name") String name);
-    public int updateFCM(long guardianIdx, String fcmToken);
+    public int insertRelationWithGuardian(@Param("guardianIdx") long guardianIdx, @Param("userIdx") long targetIdx);
+    public int checkId(String id);
     public CommonUserResponse findByIdAndPassword(@Param("id") String id, @Param("password") String password);
     public GuardianInfoResponse findByIdx(@Param("userIdx") long userIdx);
     public List<SeniorInfoResponse> findSeniorsByIdx(@Param("userIdx") long userIdx);
     public List<Long> findSeniorsIdxByIdx(@Param("userIdx") long userIdx);
     public List<Long> findGuardiansIdxByIdx(@Param("userIdx") long userIdx);
-
     public GuardianInfoResponse findIdByNameAndNumber(@Param("name") String name, @Param("phoneNumber") String phoneNumber);
     public int updatePassword(@Param("id") String id, @Param("newPassword") String newPassword, @Param("name") String name, @Param("phoneNumber") String phoneNumber);
-    public int insertRelation(@Param("guardianIdx") long guardianIdx, @Param("userIdx") long targetIdx);
+    public int update(@Param("userIdx") long guardianIdx, @Param("name") String name);
+    public int updateFCM(long guardianIdx, String fcmToken);
     public int updateProfile(@Param("userIdx") long userIdx, @Param("name") String name, @Param("phoneNumber") String phoneNumber, @Param("address") String address, @Param("birth") String birth);
     public int updateProfileImage(@Param("userIdx") long userIdx, @Param("profileImageUrl") String profileImageUrl);
 

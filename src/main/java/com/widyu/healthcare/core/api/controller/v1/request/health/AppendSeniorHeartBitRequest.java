@@ -1,6 +1,5 @@
 package com.widyu.healthcare.core.api.controller.v1.request.health;
 
-import com.widyu.healthcare.core.domain.domain.v1.Health;
 import com.widyu.healthcare.core.domain.domain.v1.HealthData;
 import com.widyu.healthcare.support.utils.HealthUtil;
 import jakarta.annotation.Nullable;
@@ -10,7 +9,7 @@ import lombok.Getter;
  *
  */
 @Getter
-public class AppenderSeniorHeartBitRequest {
+public class AppendSeniorHeartBitRequest {
     @Nullable
     private double heartBit;
 

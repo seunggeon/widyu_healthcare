@@ -7,6 +7,7 @@ import com.widyu.healthcare.core.api.controller.v1.response.FamilyInfoResponse;
 import com.widyu.healthcare.core.api.controller.v1.response.guardian.GuardianInfoResponse;
 import com.widyu.healthcare.core.api.controller.v1.response.senior.SeniorInfoResponse;
 import com.widyu.healthcare.core.api.controller.v1.response.CommonUserResponse;
+import com.widyu.healthcare.core.db.mapper.v1.HealthsMapper;
 import com.widyu.healthcare.core.db.mapper.v1.SeniorsMapper;
 import com.widyu.healthcare.core.domain.domain.v1.User;
 import com.widyu.healthcare.core.domain.domain.v1.UserStatus;
@@ -26,6 +27,7 @@ import static com.widyu.healthcare.core.domain.domain.v1.UserType.SENIOR;
 @RequiredArgsConstructor
 public class SeniorsService {
     private final SeniorsMapper seniorsMapper;
+    private final HealthsMapper healthsMapper;
     private final S3Service s3Service;
     @Transactional(rollbackFor = RuntimeException.class)
     public String insertAndSetRelations(long guardianIdx, User EncryptedUser) {
@@ -65,6 +67,14 @@ public class SeniorsService {
                     "set Senior Relation during register ERROR! 회원가입 메서드를 확인해주세요\n" + "guadianIdx : " + guardianIdx + "seniorIdx : " + EncryptedUser.getUserIdx());
         }
 
+        // 위치 테이블 기본값 저장
+        int locationInsertCount = healthsMapper.insertDefaultLocation(EncryptedUser.getUserIdx());
+        if(locationInsertCount != 1) {
+            log.error("set Senior Relation during register ERROR! guadianIdx : ", guardianIdx);
+            throw new RuntimeException(
+                    "set Senior Location during register ERROR! 회원가입 메서드를 확인해주세요\n" + "guadianIdx : " + guardianIdx + "seniorIdx : " + EncryptedUser.getUserIdx());
+        }
+
         return EncryptedUser.getInviteCode();
     }
     @Transactional(rollbackFor = RuntimeException.class)
@@ -90,12 +100,12 @@ public class SeniorsService {
     }
     @Transactional(rollbackFor = RuntimeException.class)
     public FamilyInfoResponse getGuardiansAndTargetInfo(long userIdx){
-        List<GuardianInfoResponse> guardianInfoList = seniorsMapper.findGuardiansByIdx(userIdx);
         SeniorInfoResponse targetInfo = seniorsMapper.findByIdx(userIdx);
+        List<GuardianInfoResponse> guardianInfoList = seniorsMapper.findGuardiansByIdx(userIdx);
 
         FamilyInfoResponse familyInfo = FamilyInfoResponse.builder()
+                .targetInfoResponse(targetInfo)
                 .guardianInfoResponseList(guardianInfoList)
-                .seniorInfoResponseList(targetInfo.toList())
                 .build();
         return familyInfo;
     }

@@ -11,7 +11,7 @@ import static com.widyu.healthcare.core.domain.domain.v1.HealthStatus.*;
 
 public class HealthUtil {
     static final double criteriaOfEmergency = 95; // 심장 박동수 응급 상황 기준치
-    static final double criteriaOfAverages = 95; // 심장 박동수 응급 상황 기준치
+    static final double criteriaOfAverages = 95; // 심장 박동수 평균 기준치
 
 
     public static HealthStatus determineEmergency(double heartBit) {

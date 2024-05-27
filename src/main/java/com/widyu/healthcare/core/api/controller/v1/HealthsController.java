@@ -1,8 +1,9 @@
 package com.widyu.healthcare.core.api.controller.v1;
 
-import com.widyu.healthcare.core.api.controller.v1.request.health.AppenderSeniorHeartBitRequest;
+import com.widyu.healthcare.core.api.controller.v1.request.health.AppendSeniorHeartBitRequest;
+import com.widyu.healthcare.core.api.controller.v1.request.health.UpdateSeniorLocationRequest;
 import com.widyu.healthcare.core.api.controller.v1.response.SuccessResponse;
-import com.widyu.healthcare.core.api.controller.v1.response.guardian.GuardianInfoResponse;
+import com.widyu.healthcare.core.api.controller.v1.response.health.GuardianMainHealthResponse;
 import com.widyu.healthcare.core.api.controller.v1.response.health.HealthTypeResponse;
 import com.widyu.healthcare.core.api.controller.v1.response.health.SeniorDetailHealthResponse;
 import com.widyu.healthcare.core.api.controller.v1.response.health.SeniorMainHealthResponse;
@@ -18,8 +19,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @Log4j2
 @RestController
 @RequiredArgsConstructor
@@ -28,17 +27,33 @@ public class HealthsController {
     private final HealthsService healthsService;
 
     @PostMapping("append/heart-bit")
-    public ResponseEntity<?> appendHeartBitFromWatch(@RequestBody @Valid AppenderSeniorHeartBitRequest heartBitReq, HttpSession apiUser) {
+    public ResponseEntity<?> appendHeartBitFromWatch(@RequestBody @Valid AppendSeniorHeartBitRequest heartBitReq, HttpSession apiUser) {
         healthsService.insertRecentHeartBitAndStatus(SessionUtil.getLoginSeniorIdx(apiUser), heartBitReq.toHealthData());
         SuccessResponse response = new SuccessResponse(true, "심장 박동수 DB 저장", null);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
+    @PatchMapping("update/location")
+    public ResponseEntity<?> updateLocation(@RequestBody @Valid UpdateSeniorLocationRequest locationReq, HttpSession apiUser) {
+        healthsService.updateRecentLocation(SessionUtil.getLoginSeniorIdx(apiUser), locationReq.toLocation());
+        SuccessResponse response = new SuccessResponse(true, "최신 위치 데이터 DB 저장", null);
+
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
 
     @GetMapping("info/of-senior/main")
-    @LoginCheck(type = LoginCheck.UserType.COMMON)
-    public ResponseEntity<?> MainHealthPage(HttpSession apiUser) {
-        SeniorMainHealthResponse mainHealthResponse = healthsService.getRecentHealthOfSeniors(SessionUtil.getLoginSeniorIdx(apiUser));
+    @LoginCheck(type = LoginCheck.UserType.SENIOR)
+    public ResponseEntity<?> SeniorMainHealthPage(HttpSession apiUser) {
+        SeniorMainHealthResponse mainHealthResponse = healthsService.getRecentHealthOfSenior(SessionUtil.getLoginSeniorIdx(apiUser));
+        SuccessResponse response = new SuccessResponse(true, "건강 메인 페이지 조회 성공", mainHealthResponse);
+
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @GetMapping("info/of-seniors/main")
+    @LoginCheck(type = LoginCheck.UserType.GUARDIAN)
+    public ResponseEntity<?> GuardianMainHealthPage(HttpSession apiUser) {
+        GuardianMainHealthResponse mainHealthResponse = healthsService.getRecentHealthOfSeniors(SessionUtil.getLoginGuardianIdx(apiUser));
         SuccessResponse response = new SuccessResponse(true, "건강 메인 페이지 조회 성공", mainHealthResponse);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);

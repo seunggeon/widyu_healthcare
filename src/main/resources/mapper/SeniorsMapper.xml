@@ -88,13 +88,13 @@
     <select id="findGuardiansByIdx" resultType="com.widyu.healthcare.core.api.controller.v1.response.guardian.GuardianInfoResponse">
         SELECT u.userIdx, u.name, u.profileImageUrl, u.type AS userType, ud.id, ud.phoneNumber, ud.address, ud.birth
         FROM usersdetail as ud
-        JOIN users as u ON ud.userIdx = u.userIdx
+        LEFT JOIN users as u ON ud.userIdx = u.userIdx
         WHERE ud.userIdx IN (
             SELECT guardianIdx
             FROM relations
-            WHERE seniorIdx = #{userIdx}
+            WHERE userIdx = #{userIdx}
         )
-        LIMIT 10;
+        AND u.status != 'DELETE'
     </select>
 
     <select id="findGuardiansIdxByIdx" resultType="long">

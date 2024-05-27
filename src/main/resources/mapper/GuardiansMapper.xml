@@ -66,13 +66,13 @@
           AND u.status != 'DELETE'
     </select>
 
-    <insert id="insertRelation">
+    <insert id="insertRelationWithGuardian">
         INSERT INTO relations(guardianIdx, userIdx)
         VALUES( #{guardianIdx}, #{userIdx} )
     </insert>
 
     <select id="findSeniorsByIdx" resultMap="SeniorDetailResponseDtoMap">
-        SELECT ud.userIdx, u.name as name, u.profileImageUrl, u.type AS userType, ud.inviteCode, ud.phoneNumber, ud.address, ud.birth, ud.isDisease
+        SELECT u.userIdx, u.name as name, u.profileImageUrl, u.type AS userType, ud.inviteCode, ud.phoneNumber, ud.address, ud.birth, ud.isDisease
         FROM usersdetail ud
         LEFT JOIN users u ON ud.userIdx = u.userIdx
         WHERE ud.userIdx IN (

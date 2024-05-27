@@ -73,13 +73,13 @@
         <appender-ref ref="console"/>
         <appender-ref ref="FILE" />
     </logger>
-    <Loggers>
-        <Logger name="com.widyu.healthcare.core.db.mapper.v1.*" level="trace"/>
-        <Root level="INFO" >
-            <AppenderRef ref="stdout"/>
-            <AppenderRef ref="file"/>
-        </Root>
-    </Loggers>
+<!--    <Loggers>-->
+<!--        <Logger name="com.widyu.healthcare.core.db.mapper.v1.*" level="trace"/>-->
+<!--        <Root level="INFO" >-->
+<!--            <AppenderRef ref="stdout"/>-->
+<!--            <AppenderRef ref="file"/>-->
+<!--        </Root>-->
+<!--    </Loggers>-->
 <!--    <if condition='property("log.config.mode").equals("release")'>-->
 <!--        <then>-->
 <!--            <logger name="${LOG_PACKAGE_NAME}" level="INFO" />-->

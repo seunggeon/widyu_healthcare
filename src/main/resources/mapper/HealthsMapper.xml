@@ -28,8 +28,18 @@
     </resultMap>
 
     <insert id="insertRecentHeartBitAndStatus" parameterType="com.widyu.healthcare.core.domain.domain.v1.HealthData">
-        INSERT INTO healths (userIdx, data, status, type) VALUES (#{userIdx}, #{health.data}, #{health.status}, 'heartBit')
+        INSERT INTO healths (userIdx, data, status, type) VALUES (#{userIdx}, #{health.data}, #{health.status}, 'HEARTBIT')
     </insert>
+
+    <insert id="insertDefaultLocation">
+        INSERT INTO locations (userIdx, latitude, longitude) VALUES (#{userIdx}, 0.0, 0.0)
+    </insert>
+
+    <update id="updateRecentLocation">
+        UPDATE locations
+        SET latitude = #{location.latitude}, longitude = #{location.longitude}
+        WHERE userIdx = #{userIdx}
+    </update>
 
     <select id="getRecentHealth" resultMap="RecentHealthMap">
         SELECT

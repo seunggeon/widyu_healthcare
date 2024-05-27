@@ -30,6 +30,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GuardiansService {
     private final GuardiansMapper guardiansMapper;
+    private final SeniorsMapper seniorsMapper;
     private final S3Service s3Service;
     @Transactional(rollbackFor = RuntimeException.class)
     public GuardianInfoResponse insert(User EncryptedUser) {
@@ -103,9 +104,11 @@ public class GuardiansService {
     public FamilyInfoResponse getSeniorsAndTargetInfo(long userIdx){
         GuardianInfoResponse targetInfo = guardiansMapper.findByIdx(userIdx);
         List<SeniorInfoResponse> seniorDetailList = guardiansMapper.findSeniorsByIdx(userIdx);
+        List<GuardianInfoResponse> guardianDetailList = seniorsMapper.findGuardiansByIdx(userIdx);
 
         FamilyInfoResponse familyInfo = FamilyInfoResponse.builder()
-                .guardianInfoResponseList(targetInfo.toList())
+                .targetInfoResponse(targetInfo)
+                .guardianInfoResponseList(guardianDetailList)
                 .seniorInfoResponseList(seniorDetailList)
                 .build();
         return familyInfo;
@@ -124,7 +127,7 @@ public class GuardiansService {
     }
 
     public void addGuardian(long guardianIdx, long targetIdx) {
-        int relationInsertCount = guardiansMapper.insertRelation(guardianIdx, targetIdx);
+        int relationInsertCount = guardiansMapper.insertRelationWithGuardian(guardianIdx, targetIdx);
         if(relationInsertCount != 1) {
             log.error("set Senior Relation during register ERROR! guadianIdx : ", guardianIdx);
             throw new RuntimeException(

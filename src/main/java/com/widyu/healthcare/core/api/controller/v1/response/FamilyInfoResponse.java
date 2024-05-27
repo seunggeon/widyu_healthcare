@@ -8,13 +8,16 @@ import lombok.Getter;
 
 import java.util.List;
 @Getter
-public class FamilyInfoResponse {
+public class FamilyInfoResponse<T> {
+    @JsonProperty("apiUserResponseDto")
+    T targetInfoResponse;
     @JsonProperty("guardianDetailResponseDtos")
     List<GuardianInfoResponse> guardianInfoResponseList;
     @JsonProperty("seniorDetailResponseDtos")
     List<SeniorInfoResponse> seniorInfoResponseList;
     @Builder
-    public FamilyInfoResponse(List<GuardianInfoResponse> guardianInfoResponseList, List<SeniorInfoResponse> seniorInfoResponseList) {
+    public FamilyInfoResponse(T targetInfoResponse, List<GuardianInfoResponse> guardianInfoResponseList, List<SeniorInfoResponse> seniorInfoResponseList) {
+        this.targetInfoResponse = targetInfoResponse;
         this.guardianInfoResponseList = guardianInfoResponseList;
         this.seniorInfoResponseList = seniorInfoResponseList;
     }

@@ -48,7 +48,7 @@ public class RewardsService {
         //    throw new InsufficientPointsException("point 부족");
 
         //redisMapper.decrementPoint(userIdx.toString(), REWARD_POINT);
-        int updateCount = goalsStatusMapper.updateTotalPoint(userIdx, REWARD_POINT);
+        int updateCount = goalsStatusMapper.updateTotalPoint(userIdx, -REWARD_POINT);
         if (updateCount != 1){
             log.error("update Total point ERROR! userIdx: {} total point is not updated", userIdx);
             //redisMapper.decrementPoint(buildRedisKey(userIdx.toString()), REWARD_POINT);

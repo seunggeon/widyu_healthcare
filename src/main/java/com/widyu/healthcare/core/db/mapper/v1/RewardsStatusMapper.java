@@ -11,6 +11,6 @@ public interface RewardsStatusMapper {
 
     void insertRewardStatus(Reward reward);
     List<RewardResponse> getRewardsIdxByUserIdx(long userIdx);
-    void updateRewardStatus(long rewardIdx, Integer status);
+    void updateRewardStatus(long rewardIdx, long userIdx, Integer status);
 
 }

@@ -39,7 +39,6 @@ public class RewardsService {
     // 리워드 전체 조회(시니어)
     public List<RewardResponse> getAllSeniorReward(Long userIdx){
         List<RewardResponse> rewardsList = rewardsStatusMapper.getRewardsIdxByUserIdx(userIdx);
-        rewardsList.replaceAll(rewardResponse -> rewardsMapper.getOpenedRewardByRewardIdxForSenior(rewardResponse.getRewardIdx()));
 
         return rewardsList;
     }
@@ -58,9 +57,8 @@ public class RewardsService {
             throw new RuntimeException("get reward ERROR! 리워드 구매 메서드를 확인해주세요\n" + "Params : userIdx:" + userIdx);
         }
 
-        // Reward 도
-        rewardsStatusMapper.updateRewardStatus(rewardIdx, 1);
-
+        rewardsStatusMapper.updateRewardStatus(rewardIdx, userIdx, 1);
+        rewardsMapper.updateRewardTotalStatus(rewardIdx, 1);
     }
 
     // 리워드 파일 삭제

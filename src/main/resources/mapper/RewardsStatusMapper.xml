@@ -10,15 +10,18 @@
     </insert>
 
     <select id="getRewardsIdxByUserIdx" parameterType="java.lang.Long" resultType="com.widyu.healthcare.core.api.controller.v1.response.reward.RewardResponse">
-        SELECT rs.rewardIdx, rs.status, rs.userIdx
+        SELECT rs.rewardIdx, rs.uploaderIdx, rs.status, r.type, r.url, r.description, r.point,
+        u.profileImageUrl AS uploaderImageUrl, u.name AS uploaderName
         FROM rewardsstatus rs
+        JOIN rewards r ON rs.rewardIdx = r.rewardIdx
+        JOIN users u ON r.uploaderIdx = u.userIdx
         WHERE rs.userIdx = #{userIdx};
     </select>
 
     <update id="updateRewardStatus" parameterType="map">
         UPDATE rewardsstatus
         SET status = #{status}
-        WHERE rewardIdx = #{rewardIdx}
+        WHERE rewardIdx = #{rewardIdx} AND userIdx = #{userIdx}
     </update>
 
 </mapper>

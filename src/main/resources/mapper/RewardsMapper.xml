@@ -24,42 +24,11 @@
         WHERE rewardIdx = #{rewardIdx}
     </update>
 
-    <select id="getOpenedRewardByUserIdxForSenior" parameterType="java.lang.Long" resultType="com.widyu.healthcare.core.api.controller.v1.response.reward.RewardResponse">
-        SELECT r.rewardIdx, r.uploaderIdx, r.description, r.type, r.url, r.status, r.point, u.userIdx as uploaderIdx, u.profileImageUrl as uploaderImageUrl, u.name as uploaderName
-        FROM rewards r
-        JOIN users u ON r.uploaderIdx = u.userIdx
-        WHERE r.userIdx = #{userIdx};
-    </select>
-
-    <select id="getClosedRewardsByUserIdxForSenior" parameterType="java.lang.Long" resultType="com.widyu.healthcare.core.api.controller.v1.response.reward.RewardResponse">
-        SELECT r.rewardIdx, r.uploaderIdx, r.description, r.type, r.url, r.status, r.point, u.userIdx as uploaderIdx, u.profileImageUrl as uploaderImageUrl, u.name as uploaderName
-        FROM rewards r
-        JOIN users u ON r.uploaderIdx = u.userIdx
-        WHERE r.userIdx = #{userIdx};
-    </select>
-
-    <select id="getOpenedRewardByRewardIdxForSenior" parameterType="java.lang.Long" resultType="com.widyu.healthcare.core.api.controller.v1.response.reward.RewardResponse">
-        SELECT r.rewardIdx, r.uploaderIdx, r.description, r.type, r.url, r.point, u.profileImageUrl as uploaderImageUrl, u.name as uploaderName
-        FROM rewards r
-        JOIN users u ON r.uploaderIdx = u.userIdx
-        WHERE r.rewardIdx = #{rewardIdx};
-    </select>
-
     <select id="getRewardByUserIdxForGuardian" parameterType="java.lang.Long" resultType="com.widyu.healthcare.core.api.controller.v1.response.reward.RewardResponse">
         SELECT r.rewardIdx, r.uploaderIdx, r.type, r.url, r.status, r.description,r.point, u.userIdx as uploaderIdx, u.profileImageUrl as uploaderImageUrl, u.name as uploaderName
         FROM rewards r
         JOIN users u ON r.uploaderIdx = u.userIdx
         WHERE r.uploaderIdx = #{userIdx};
-    </select>
-
-    <select id="getRewardByRewardId" parameterType="java.lang.Long" resultType="com.widyu.healthcare.core.domain.domain.v1.Reward">
-        SELECT * FROM rewards
-        WHERE rewardIdx = #{rewardIdx} AND status = 1
-    </select>
-
-    <select id="getPriceByRewardIdx" parameterType="java.lang.Long" resultType="java.lang.Long">
-        SELECT point FROM rewards
-        WHERE rewardIdx = #{rewardIdx}
     </select>
 
     <select id="getUrlByRewardIdx" parameterType="java.lang.Long" resultType="String">
@@ -72,4 +41,10 @@
         FROM rewards
         WHERE rewardIdx = #{rewardIdx}
     </delete>
+
+    <update id="updateRewardTotalStatus" parameterType="map">
+        UPDATE rewards
+        SET status = #{status}
+        WHERE rewardIdx = #{rewardIdx}
+    </update>
 </mapper>

@@ -6,7 +6,7 @@
 <mapper namespace="com.widyu.healthcare.core.db.mapper.v1.RewardsMapper">
 
     <insert id="insertReward" parameterType="com.widyu.healthcare.core.domain.domain.v1.Reward">
-        INSERT INTO rewards (userIdx, uploaderIdx, url, description, status, point, type) VALUES (#{userIdx}, #{uploaderIdx}, #{url}, #{description}, #{status}, #{point}, #{type})
+        INSERT INTO rewards (uploaderIdx, url, description, point, type) VALUES (#{uploaderIdx}, #{url}, #{description}, #{point}, #{type})
         <selectKey keyProperty="rewardIdx" order="AFTER" resultType="java.lang.Long">
             SELECT LAST_INSERT_ID() AS rewardIdx
         </selectKey>
@@ -24,17 +24,25 @@
         WHERE rewardIdx = #{rewardIdx}
     </update>
 
-    <update id="updateRewardStatus" parameterType="map">
-        UPDATE rewards
-        SET status = #{status}
-        WHERE rewardIdx = #{rewardIdx}
-    </update>
-
     <select id="getOpenedRewardByUserIdxForSenior" parameterType="java.lang.Long" resultType="com.widyu.healthcare.core.api.controller.v1.response.reward.RewardResponse">
         SELECT r.rewardIdx, r.uploaderIdx, r.description, r.type, r.url, r.status, r.point, u.userIdx as uploaderIdx, u.profileImageUrl as uploaderImageUrl, u.name as uploaderName
         FROM rewards r
         JOIN users u ON r.uploaderIdx = u.userIdx
-        WHERE r.userIdx = #{userIdx} AND r.status = 1;
+        WHERE r.userIdx = #{userIdx};
+    </select>
+
+    <select id="getClosedRewardsByUserIdxForSenior" parameterType="java.lang.Long" resultType="com.widyu.healthcare.core.api.controller.v1.response.reward.RewardResponse">
+        SELECT r.rewardIdx, r.uploaderIdx, r.description, r.type, r.url, r.status, r.point, u.userIdx as uploaderIdx, u.profileImageUrl as uploaderImageUrl, u.name as uploaderName
+        FROM rewards r
+        JOIN users u ON r.uploaderIdx = u.userIdx
+        WHERE r.userIdx = #{userIdx};
+    </select>
+
+    <select id="getOpenedRewardByRewardIdxForSenior" parameterType="java.lang.Long" resultType="com.widyu.healthcare.core.api.controller.v1.response.reward.RewardResponse">
+        SELECT r.rewardIdx, r.uploaderIdx, r.description, r.type, r.url, r.point, u.profileImageUrl as uploaderImageUrl, u.name as uploaderName
+        FROM rewards r
+        JOIN users u ON r.uploaderIdx = u.userIdx
+        WHERE r.rewardIdx = #{rewardIdx};
     </select>
 
     <select id="getRewardByUserIdxForGuardian" parameterType="java.lang.Long" resultType="com.widyu.healthcare.core.api.controller.v1.response.reward.RewardResponse">
@@ -43,14 +51,6 @@
         JOIN users u ON r.uploaderIdx = u.userIdx
         WHERE r.uploaderIdx = #{userIdx};
     </select>
-
-    <select id="getClosedRewardByUserIdxForSenior" parameterType="java.lang.Long" resultType="com.widyu.healthcare.core.api.controller.v1.response.reward.RewardResponse">
-        SELECT r.rewardIdx, r.uploaderIdx, r.type, r.status, r.description, r.point, u.userIdx as uploaderIdx, u.profileImageUrl as uploaderImageUrl, u.name as uploaderName
-        FROM rewards r
-        JOIN users u ON r.uploaderIdx = u.userIdx
-        WHERE r.userIdx = #{userIdx} AND r.status = 0;
-    </select>
-
 
     <select id="getRewardByRewardId" parameterType="java.lang.Long" resultType="com.widyu.healthcare.core.domain.domain.v1.Reward">
         SELECT * FROM rewards

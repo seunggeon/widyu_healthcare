@@ -6,6 +6,7 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.widyu.healthcare.core.db.mapper.v1.GuardiansMapper;
+import com.widyu.healthcare.core.db.mapper.v1.RewardsStatusMapper;
 import com.widyu.healthcare.core.domain.domain.v1.Reward;
 import com.widyu.healthcare.core.db.mapper.v1.GoalsStatusMapper;
 import com.widyu.healthcare.core.db.mapper.v1.RewardsMapper;
@@ -38,6 +39,7 @@ public class S3Service {
     private final GoalsStatusMapper goalsStatusMapper;
     private final GuardiansMapper guardiansMapper;
     private final RewardsMapper rewardsMapper;
+    private final RewardsStatusMapper rewardsStatusMapper;
     // 목표 인증 파일 업로드
     public void insertGoalFile(long goalStatusIdx, MultipartFile multipartFile) throws IOException {
 
@@ -59,11 +61,13 @@ public class S3Service {
         String url = upload(multipartFile);
         List<Long> seniorsIdxOnFamily = guardiansMapper.findSeniorsIdxByIdx(uploaderIdx);
         List<Reward> rewardList = new ArrayList<>();
-        
+
+        Reward reward = new Reward(-1, uploaderIdx, description, url, type);
+        rewardsMapper.insertReward(reward);
         seniorsIdxOnFamily.forEach(seniorIdx -> {
-            Reward reward = new Reward(seniorIdx, uploaderIdx, description, url, type);
-            rewardList.add(reward);
-            rewardsMapper.insertReward(reward);
+            reward.setUserIdx(seniorIdx);
+            rewardsStatusMapper.insertRewardStatus(reward);
+            //rewardsMapper.insertReward(reward);
         });
 
         return rewardList;

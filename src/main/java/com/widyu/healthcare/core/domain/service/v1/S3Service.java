@@ -74,12 +74,12 @@ public class S3Service {
     }
 
     // 리워드 파일 수정
-    public void updateReward(long rewardIdx, String description, RewardType type, MultipartFile multipartFile) throws IOException {
+    public void updateRewardFile(long rewardIdx, MultipartFile multipartFile) throws IOException {
 
         String oldUrl = rewardsMapper.getUrlByRewardIdx(rewardIdx);
         delete(oldUrl);
         String newUrl = upload(multipartFile);
-        rewardsMapper.updateReward(rewardIdx, description, type, newUrl);
+        rewardsMapper.updateRewardUrl(newUrl, rewardIdx);
     }
 
     // 리워드 파일 삭제

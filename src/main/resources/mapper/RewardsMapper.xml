@@ -14,7 +14,7 @@
 
     <update id="updateReward" parameterType="com.widyu.healthcare.core.domain.domain.v1.Reward">
         UPDATE rewards
-        SET url = #{url}, type = #{type}, description = #{description}
+        SET type = #{type}, description = #{description}
         WHERE rewardIdx = #{rewardIdx}
     </update>
 

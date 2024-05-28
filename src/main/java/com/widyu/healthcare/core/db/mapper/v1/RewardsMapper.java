@@ -12,7 +12,7 @@ import java.util.Map;
 public interface RewardsMapper {
 
     void insertReward(Reward reward);
-    void updateReward(long rewardIdx, String description, RewardType type, String url);
+    void updateReward(long rewardIdx, String description, RewardType type);
     void updateRewardUrl(String url, long rewardIdx);
     List<RewardResponse> getRewardByUserIdxForGuardian(long userIdx);
     String getUrlByRewardIdx(long rewardIdx);

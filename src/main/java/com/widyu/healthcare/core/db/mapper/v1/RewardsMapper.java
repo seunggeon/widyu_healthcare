@@ -14,12 +14,9 @@ public interface RewardsMapper {
     void insertReward(Reward reward);
     void updateReward(long rewardIdx, String description, RewardType type, String url);
     void updateRewardUrl(String url, long rewardIdx);
-    void updateRewardStatus(long rewardIdx, Integer status);
-    List<RewardResponse> getOpenedRewardByUserIdxForSenior(long userIdx);
     List<RewardResponse> getRewardByUserIdxForGuardian(long userIdx);
-    List<RewardResponse> getClosedRewardByUserIdxForSenior(long userIdx);
-    Reward getRewardByRewardId(long rewardIdx);
-    long getPriceByRewardIdx(long rewardIdx);
     String getUrlByRewardIdx(long rewardIdx);
     void deleteRewardByRewardIdx(long rewardIdx);
+    void updateRewardTotalStatus(long rewardIdx, Integer status);
+
 }

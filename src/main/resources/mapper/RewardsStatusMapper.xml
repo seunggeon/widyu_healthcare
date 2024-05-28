@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.widyu.healthcare.core.db.mapper.v1.RewardsStatusMapper">
+
+    <insert id="insertRewardStatus" parameterType="com.widyu.healthcare.core.domain.domain.v1.Reward">
+        INSERT INTO rewardsstatus (rewardIdx, uploaderIdx, userIdx, status) VALUES (#{rewardIdx}, #{uploaderIdx}, #{userIdx}, #{status})
+    </insert>
+
+    <select id="getRewardsIdxByUserIdx" parameterType="java.lang.Long" resultType="com.widyu.healthcare.core.api.controller.v1.response.reward.RewardResponse">
+        SELECT rs.rewardIdx, rs.uploaderIdx, rs.status, r.type, r.url, r.description, r.point,
+        u.profileImageUrl AS uploaderImageUrl, u.name AS uploaderName
+        FROM rewardsstatus rs
+        JOIN rewards r ON rs.rewardIdx = r.rewardIdx
+        JOIN users u ON r.uploaderIdx = u.userIdx
+        WHERE rs.userIdx = #{userIdx};
+    </select>
+
+    <update id="updateRewardStatus" parameterType="map">
+        UPDATE rewardsstatus
+        SET status = #{status}
+        WHERE rewardIdx = #{rewardIdx} AND userIdx = #{userIdx}
+    </update>
+
+    <delete id="deleteRewardsStatusByRewardIdx" parameterType="java.lang.Long">
+        DELETE
+        FROM rewardsstatus
+        WHERE rewardIdx = #{rewardIdx}
+    </delete>
+
+</mapper>

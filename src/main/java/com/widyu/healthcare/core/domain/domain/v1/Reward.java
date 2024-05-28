@@ -30,4 +30,7 @@ public class Reward {
         this.point = 30;
     }
 
+    public void setUserIdx(long userIdx){
+        this.userIdx = userIdx;
+    }
 }

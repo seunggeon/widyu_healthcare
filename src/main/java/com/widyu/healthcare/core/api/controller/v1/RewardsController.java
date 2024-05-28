@@ -61,8 +61,8 @@ public class RewardsController {
     @GetMapping("/buy/{rewardIdx}")
     public ResponseEntity<?> getReward(@PathVariable Long rewardIdx, HttpSession session) throws InsufficientPointsException {
         long userIdx = SessionUtil.getLoginSeniorIdx(session);
-        Reward rewardInfo = rewardsService.getReward(userIdx, rewardIdx);
-        SuccessResponse response = new SuccessResponse(true, "reward 구매 완료", rewardInfo);
+        rewardsService.getReward(userIdx, rewardIdx);
+        SuccessResponse response = new SuccessResponse(true, "reward 구매 완료", null);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
 

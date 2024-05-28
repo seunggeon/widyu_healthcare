@@ -4,6 +4,7 @@ import com.widyu.healthcare.core.api.controller.v1.response.reward.RewardRespons
 import com.widyu.healthcare.core.db.client.mapper.RedisMapper;
 import com.widyu.healthcare.core.db.mapper.v1.RewardsStatusMapper;
 import com.widyu.healthcare.core.domain.domain.v1.Reward;
+import com.widyu.healthcare.core.domain.domain.v1.RewardType;
 import com.widyu.healthcare.support.error.exception.InsufficientPointsException;
 import com.widyu.healthcare.core.db.mapper.v1.GoalsStatusMapper;
 import com.widyu.healthcare.core.db.mapper.v1.RewardsMapper;
@@ -66,6 +67,10 @@ public class RewardsService {
         s3Service.deleteRewardUrl(rewardIdx);
         rewardsStatusMapper.deleteRewardsStatusByRewardIdx(rewardIdx);
         rewardsMapper.deleteRewardByRewardIdx(rewardIdx);
+    }
+
+    public void updateRewardInfo(long rewardIdx, String description, RewardType type){
+        rewardsMapper.updateReward(rewardIdx, description, type);
     }
 
     private static String buildRedisKey(String userIdx) {

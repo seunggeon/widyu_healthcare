@@ -6,7 +6,7 @@
 <mapper namespace="com.widyu.healthcare.core.db.mapper.v1.RewardsMapper">
 
     <insert id="insertReward" parameterType="com.widyu.healthcare.core.domain.domain.v1.Reward">
-        INSERT INTO rewards (uploaderIdx, url, description, point, type) VALUES (#{uploaderIdx}, #{url}, #{description}, #{point}, #{type})
+        INSERT INTO rewards (uploaderIdx, url, description, point, type, status) VALUES (#{uploaderIdx}, #{url}, #{description}, #{point}, #{type}, #{status})
         <selectKey keyProperty="rewardIdx" order="AFTER" resultType="java.lang.Long">
             SELECT LAST_INSERT_ID() AS rewardIdx
         </selectKey>

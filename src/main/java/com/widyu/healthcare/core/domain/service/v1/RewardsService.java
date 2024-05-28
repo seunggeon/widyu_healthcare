@@ -64,6 +64,7 @@ public class RewardsService {
     // 리워드 파일 삭제
     public void deleteReward(long rewardIdx) throws IOException {
         s3Service.deleteRewardUrl(rewardIdx);
+        rewardsStatusMapper.deleteRewardsStatusByRewardIdx(rewardIdx);
         rewardsMapper.deleteRewardByRewardIdx(rewardIdx);
     }
 

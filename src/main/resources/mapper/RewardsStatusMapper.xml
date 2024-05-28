@@ -24,4 +24,10 @@
         WHERE rewardIdx = #{rewardIdx} AND userIdx = #{userIdx}
     </update>
 
+    <delete id="deleteRewardsStatusByRewardIdx" parameterType="java.lang.Long">
+        DELETE
+        FROM rewardsstatus
+        WHERE rewardIdx = #{rewardIdx}
+    </delete>
+
 </mapper>

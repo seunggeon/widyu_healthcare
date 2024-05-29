@@ -25,8 +25,13 @@ public class StatusJob implements Job {
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
 
+        log.info("statusJob");
+        LocalDateTime currentTime = LocalDateTime.now();
+        System.out.println("현재 시간: " + currentTime);
+
         JobDataMap jobDataMap = context.getTrigger().getJobDataMap();
         Long goalStatusIdx = jobDataMap.getLong("goalStatusIdx");
+        log.info("goalStatusIdx: {}", goalStatusIdx);
 
         if (goalStatusIdx != null) {
             GoalStatus goalStatus = goalsStatusMapper.getGoalStatusByGoalStatusIdx(goalStatusIdx);

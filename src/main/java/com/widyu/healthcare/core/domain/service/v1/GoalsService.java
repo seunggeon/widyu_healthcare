@@ -1,11 +1,13 @@
 package com.widyu.healthcare.core.domain.service.v1;
 
+import com.widyu.healthcare.core.db.client.config.JobConfig;
 import com.widyu.healthcare.core.db.client.mapper.RedisMapper;
 import com.widyu.healthcare.core.domain.domain.v1.Goal;
 import com.widyu.healthcare.core.api.controller.v1.response.goal.GuardianGoalResponse;
 import com.widyu.healthcare.core.api.controller.v1.response.goal.SeniorGoalResponse;
 import com.widyu.healthcare.core.api.controller.v1.response.goal.MainGoalResponse;
 import com.widyu.healthcare.core.domain.domain.v1.GoalStatus;
+import com.widyu.healthcare.support.jobs.GoalAlarmJob;
 import com.widyu.healthcare.support.jobs.StatusJob;
 import com.widyu.healthcare.core.db.mapper.v1.GoalsStatusMapper;
 import com.widyu.healthcare.core.db.mapper.v1.GoalsMapper;
@@ -37,6 +39,7 @@ public class GoalsService {
     private final RedisMapper redisMapper;
     private final FcmService fcmService;
     private final Scheduler scheduler;
+    private final JobConfig jobConfig;
     private static final String POINT_CODE_PREFIX = "point_code:";
     public MainGoalResponse getTargetUserGoalsAndSeniorGoals(long targetIdx){
 
@@ -96,6 +99,7 @@ public class GoalsService {
                     goalsStatusMapper.insertGoalStatus(goalStatus);
                 // 하루 지났을 때 수행 안한 목표는 실패로 만드는 스케줄러
                 scheduleTimerForGoalStatus(goalStatus);
+                //scheduleTimerForGoalAlarm();
             });
         } catch (RuntimeException e) {
             log.error("insert Goal Status ERROR!", e);
@@ -179,20 +183,30 @@ public class GoalsService {
         return goalsStatusMapper.getGoalRateMonthly(userIdx, month);
     }
 
-    private void scheduleTimerForGoalStatus(GoalStatus goalStatus) {
-        JobDetail jobDetail = JobBuilder.newJob(StatusJob.class)
-                .usingJobData("goalStatusIdx", goalStatus.getGoalStatusIdx()) // GoalStatusIdx를 JobData로 전달
-                .withIdentity("GoalStatusUpdateJob_" + goalStatus.getGoalStatusIdx())
-                .build();
+    public void scheduleTimerForGoalStatus(GoalStatus goalStatus) {
+        Map<String, Object> jobData = new HashMap<>();
+        jobData.put("goalStatusIdx", goalStatus.getGoalStatusIdx());
 
-        JobDataMap jobDataMap = new JobDataMap();
-        jobDataMap.put("goalStatusIdx", goalStatus.getGoalStatusIdx());
+        JobDetail jobDetail = jobConfig.createJobDetail(StatusJob.class, "GoalStatusUpdateJob_" + goalStatus.getGoalStatusIdx(), jobData);
 
-        Trigger trigger = TriggerBuilder.newTrigger()
-                .usingJobData(jobDataMap)
-                .withIdentity("GoalStatusUpdateTrigger_" + goalStatus.getGoalStatusIdx())
-                .startAt(Date.from(goalStatus.getTime().toLocalTime().atDate(LocalDate.now()).atZone(ZoneId.systemDefault()).toInstant())) // GoalStatus의 time에 따라 실행 시간 설정
-                .build();
+        Date startTime = Date.from(goalStatus.getTime().toLocalTime().atDate(LocalDate.now()).atZone(ZoneId.systemDefault()).toInstant());
+        Trigger trigger = jobConfig.createTrigger("GoalStatusUpdateTrigger_" + goalStatus.getGoalStatusIdx(), jobData, startTime);
+
+        try {
+            scheduler.scheduleJob(jobDetail, trigger);
+        } catch (SchedulerException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // 목표 시간에 fcm 알람 전송
+    public void scheduleTimerForGoalAlarm(String fcmToken, GoalStatus goalStatus) {
+        Map<String, Object> jobData = new HashMap<>();
+        jobData.put("fcmToken", fcmToken);
+
+        JobDetail jobDetail = jobConfig.createJobDetail(GoalAlarmJob.class, "GoalTimeAlarmJob_" + goalStatus.getGoalStatusIdx(), jobData);
+
+        Trigger trigger = jobConfig.createTrigger("GoalStatusUpdateTrigger_" + goalStatus.getGoalStatusIdx(), jobData, goalStatus.getTime());
 
         try {
             scheduler.scheduleJob(jobDetail, trigger);

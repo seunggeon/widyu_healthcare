@@ -3,12 +3,10 @@ package com.widyu.healthcare.core.domain.service.v1;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.api.client.auth.oauth2.TokenResponseException;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.common.net.HttpHeaders;
 import com.widyu.healthcare.core.domain.domain.v1.Fcm;
 import com.widyu.healthcare.support.error.exception.MissingTokenException;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import okhttp3.*;
 import org.springframework.core.io.ClassPathResource;
@@ -20,11 +18,14 @@ import java.util.List;
 
 @Log4j2
 @Service
-@RequiredArgsConstructor
 public class FcmService {
 
     private final String API_URL = "https://fcm.googleapis.com/v1/projects/widyu-1fb84/messages:send";
     private final ObjectMapper objectMapper;
+
+    public FcmService(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
 
     public void sendMessage(String targetToken, String title, String body) throws IOException {
         if (targetToken == null)

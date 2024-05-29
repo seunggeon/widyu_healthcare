@@ -185,6 +185,7 @@ public class GoalsService {
     }
 
     public void scheduleTimerForGoalStatus(GoalStatus goalStatus) {
+
         Map<String, Object> jobData = new HashMap<>();
         jobData.put("goalStatusIdx", goalStatus.getGoalStatusIdx());
 
@@ -192,6 +193,8 @@ public class GoalsService {
 
         Date startTime = Date.from(goalStatus.getTime().toLocalTime().atDate(LocalDate.now()).atZone(ZoneId.systemDefault()).toInstant());
         Trigger trigger = jobConfig.createTrigger("GoalStatusUpdateTrigger_" + goalStatus.getGoalStatusIdx(), jobData, startTime);
+
+        log.info("[scheduler] scheduleTimerForGoalStatus\n");
 
         try {
             scheduler.scheduleJob(jobDetail, trigger);
@@ -202,12 +205,16 @@ public class GoalsService {
 
     // 목표 시간에 fcm 알람 전송
     public void scheduleTimerForGoalAlarm(String fcmToken, GoalStatus goalStatus) {
+
         Map<String, Object> jobData = new HashMap<>();
         jobData.put("fcmToken", fcmToken);
 
+        Date startTime = Date.from(goalStatus.getTime().toLocalTime().atDate(LocalDate.now()).atZone(ZoneId.systemDefault()).toInstant());
         JobDetail jobDetail = jobConfig.createJobDetail(GoalAlarmJob.class, "GoalTimeAlarmJob_" + goalStatus.getGoalStatusIdx(), jobData);
 
-        Trigger trigger = jobConfig.createTrigger("GoalStatusUpdateTrigger_" + goalStatus.getGoalStatusIdx(), jobData, goalStatus.getTime());
+        Trigger trigger = jobConfig.createTrigger("GoalTimeAlarmTrigger_" + goalStatus.getGoalStatusIdx(), jobData, startTime);
+
+        log.info("[scheduler] scheduleTimerForGoalAlarm\n");
 
         try {
             scheduler.scheduleJob(jobDetail, trigger);

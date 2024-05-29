@@ -1,20 +1,24 @@
 package com.widyu.healthcare.support.jobs;
 
-import com.widyu.healthcare.core.domain.domain.v1.GoalStatus;
 import com.widyu.healthcare.core.domain.service.v1.FcmService;
+import lombok.extern.log4j.Log4j2;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 
+@Log4j2
+@Component
 public class GoalAlarmJob implements Job {
 
     @Autowired
-    private final FcmService fcmService;
+    private FcmService fcmService;
+
+    public GoalAlarmJob() {}
 
     public GoalAlarmJob(FcmService fcmService) {
         this.fcmService = fcmService;
@@ -22,8 +26,6 @@ public class GoalAlarmJob implements Job {
 
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
-
-        LocalDateTime currentTime = LocalDateTime.now();
 
         JobDataMap jobDataMap = context.getTrigger().getJobDataMap();
         String fcmToken = jobDataMap.getString("fcmToken");

@@ -1,22 +1,26 @@
 package com.widyu.healthcare.core.db.client.config;
 
+import com.widyu.healthcare.support.jobs.JobFactory;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.Date;
 import java.util.Map;
 
 @Configuration
 public class JobConfig {
 
+    @Autowired
+    private JobFactory jobFactory;
+
     @Bean
     public Scheduler scheduler() {
         try {
             Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
+            scheduler.setJobFactory(jobFactory);
             scheduler.start();
             return scheduler;
         } catch (SchedulerException e) {

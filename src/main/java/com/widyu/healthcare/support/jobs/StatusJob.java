@@ -11,17 +11,19 @@ import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-
 
 @Log4j2
 @Component
 public class StatusJob implements Job {
 
+
     @Autowired
-    private GoalsService goalsService;
-    @Autowired
-    private GoalsStatusMapper goalsStatusMapper;
+    private final GoalsStatusMapper goalsStatusMapper;
+
+    public StatusJob(GoalsStatusMapper goalsStatusMapper) {
+        this.goalsStatusMapper = goalsStatusMapper;
+    }
+
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
 

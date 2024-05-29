@@ -90,7 +90,8 @@ public class GoalsService {
         // 현재 요일 구하기
         Calendar calendar = Calendar.getInstance();
         int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
-        log.info("[week]: {}", dayOfWeek);
+        //log.info("[week]: {}", dayOfWeek);
+        String fcmToken = seniorsMapper.findFCM(goal.getUserIdx());
 
         try {
             goalStatusList.forEach(goalStatus -> {
@@ -99,7 +100,7 @@ public class GoalsService {
                     goalsStatusMapper.insertGoalStatus(goalStatus);
                 // 하루 지났을 때 수행 안한 목표는 실패로 만드는 스케줄러
                 scheduleTimerForGoalStatus(goalStatus);
-                //scheduleTimerForGoalAlarm();
+                scheduleTimerForGoalAlarm(fcmToken, goalStatus);
             });
         } catch (RuntimeException e) {
             log.error("insert Goal Status ERROR!", e);

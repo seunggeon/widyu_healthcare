@@ -33,11 +33,16 @@
     </update>
 
     <insert id="insertDiseases" parameterType="java.util.List">
-        INSERT INTO diseases(userIdx, name, drugName, explanation)
+        INSERT INTO diseases(userIdx, name, drugName, explanation, dosageTime)
         VALUES
         <foreach collection="diseases" item="disease" separator=",">
-           (#{userIdx}, #{disease.name}, #{disease.drugName}, #{disease.explanation})
+           (#{userIdx}, #{disease.name}, #{disease.drugName}, #{disease.explanation}, #{disease.dosageTime})
         </foreach>
+    </insert>
+
+    <insert id="insertDisease" parameterType="com.widyu.healthcare.core.domain.domain.v1.Disease">
+        INSERT INTO diseases(userIdx, name, drugName, explanation, dosageTime)
+        VALUES (#{userIdx}, #{disease.name}, #{disease.drugName}, #{disease.explanation}, #{disease.dosageTime})
     </insert>
 
     <update id="updateFCM">
@@ -150,9 +155,16 @@
 
     <update id="updateDisease" parameterType="com.widyu.healthcare.core.domain.domain.v1.Disease">
             UPDATE diseases
-            SET name = #{disease.name}, drugName = #{disease.drugName}, explanation = #{disease.explanation}
+            SET name = #{disease.name}, drugName = #{disease.drugName}, explanation = #{disease.explanation}, dosageTime = #{disease.dosageTime}
             WHERE diseaseIdx = #{disease.diseaseIdx}
-            AND userIdx = #{userIdx};
+             AND userIdx = #{userIdx};
     </update>
+
+    <delete id="deleteDisease" parameterType="java.lang.Long">
+        DELETE
+        FROM diseases
+        WHERE diseaseIdx = #{diseaseIdx}
+          AND userIdx = #{userIdx};
+    </delete>
 
 </mapper>

@@ -34,6 +34,7 @@ public class StatusJob implements Job {
         log.info("goalStatusIdx: {}", goalStatusIdx);
 
         if (goalStatusIdx != null) {
+            // 현재 goal status 받아오기
             GoalStatus goalStatus = goalsStatusMapper.getGoalStatusByGoalStatusIdx(goalStatusIdx);
             if (goalStatus.getStatus() == 0){
                 goalsStatusMapper.updateStatus(goalStatusIdx, -1L);

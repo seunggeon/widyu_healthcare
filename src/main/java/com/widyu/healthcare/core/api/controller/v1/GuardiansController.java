@@ -144,4 +144,24 @@ public class GuardiansController {
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @PatchMapping ("profile/of-senior/{seniorIdx}")
+    @LoginCheck(type = UserType.GUARDIAN)
+    public ResponseEntity<?> editSeniorProfile(@RequestBody UpdateGuardianProfileRequest profileRequest,
+                                               @PathVariable Long seniorIdx) throws IOException {
+        seniorsService.updateProfile(seniorIdx, profileRequest.toUser());
+        SuccessResponse response = new SuccessResponse(true, "보호자의 프로필 수정 성공", null);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PatchMapping ("profile/image/of-senior/{seniorIdx}")
+    @LoginCheck(type = UserType.GUARDIAN)
+    public ResponseEntity<?> editSeniorProfileImage(@RequestParam(value = "url", required = false) @NotNull final MultipartFile multipartFile,
+                                                    @PathVariable Long seniorIdx) throws IOException {
+        seniorsService.updateProfileImage(seniorIdx, multipartFile);
+        SuccessResponse response = new SuccessResponse(true, "보호자의 프로필 이미지 수정 성공", null);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }

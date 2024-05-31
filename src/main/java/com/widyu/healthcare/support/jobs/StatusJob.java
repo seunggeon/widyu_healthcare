@@ -11,24 +11,27 @@ import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+
 
 @Log4j2
 @Component
 public class StatusJob implements Job {
 
-
     @Autowired
-    private final GoalsStatusMapper goalsStatusMapper;
-
-    public StatusJob(GoalsStatusMapper goalsStatusMapper) {
-        this.goalsStatusMapper = goalsStatusMapper;
-    }
-
+    private GoalsService goalsService;
+    @Autowired
+    private GoalsStatusMapper goalsStatusMapper;
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
 
+        log.info("statusJob");
+        LocalDateTime currentTime = LocalDateTime.now();
+        System.out.println("현재 시간: " + currentTime);
+
         JobDataMap jobDataMap = context.getTrigger().getJobDataMap();
         Long goalStatusIdx = jobDataMap.getLong("goalStatusIdx");
+        log.info("goalStatusIdx: {}", goalStatusIdx);
 
         if (goalStatusIdx != null) {
             GoalStatus goalStatus = goalsStatusMapper.getGoalStatusByGoalStatusIdx(goalStatusIdx);

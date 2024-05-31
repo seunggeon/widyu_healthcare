@@ -91,4 +91,17 @@
         GROUP BY DAY(gs.createdDate)
     </select>
 
+
+    <select id="findStatusNotRegenerated" resultType="com.widyu.healthcare.core.domain.domain.v1.GoalStatus">
+        SELECT gs.goalIdx, gs.goalStatusIdx, gs.time, gs.pillNum, gs.imgUrl, gs.point
+        FROM goalsstatus gs
+        WHERE regenerated = 0
+    </select>
+
+    <update id="updateRegenerateComplete">
+        UPDATE goalsstatus
+        SET regenerated = 1
+        WHERE goalStatusIdx = #{goalStatusIdx}
+    </update>
+
 </mapper>

@@ -2,6 +2,7 @@ package com.widyu.healthcare.support.utils;
 
 import com.widyu.healthcare.core.domain.domain.v1.EmergencyDeterminable;
 import com.widyu.healthcare.core.domain.domain.v1.HealthStatus;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,7 +35,11 @@ public class HealthUtil {
             return NORMAL;
         }
     }
+    @Nullable
     public static List<Double> calculateAveragesEachTime(List<Double> input) {
+
+        if(input.isEmpty()) return null;
+
         List<Double> result = new ArrayList<>(24);
         int chunkSize = 60;
         int maxChunks = 24;

@@ -9,6 +9,7 @@ import com.widyu.healthcare.core.api.controller.v1.response.senior.SeniorInfoRes
 import com.widyu.healthcare.core.api.controller.v1.response.CommonUserResponse;
 import com.widyu.healthcare.core.db.mapper.v1.HealthsMapper;
 import com.widyu.healthcare.core.db.mapper.v1.SeniorsMapper;
+import com.widyu.healthcare.core.domain.domain.v1.Disease;
 import com.widyu.healthcare.core.domain.domain.v1.User;
 import com.widyu.healthcare.core.domain.domain.v1.UserStatus;
 import com.widyu.healthcare.support.utils.SessionUtil;
@@ -133,5 +134,18 @@ public class SeniorsService {
             log.error("update senior profile image ERROR! update fail, count is {}", updateCount);
             throw new DuplicateIdException("update senior profile image ERROR! \n" + "update userIdx : " + userIdx);
         }
+    }
+
+    public void insertDisease(long userIdx, Disease disease) throws IOException {
+        int insertCount = seniorsMapper.insertDisease(userIdx, disease);
+        if(insertCount == 0){
+            log.error("insert senior disease ERROR! insert fail, count is {}", insertCount);
+            throw new DuplicateIdException("insert senior disease ERROR! \n" + " seniorIdx : " + userIdx);
+        }
+    }
+
+    public void deleteDisease(long userIdx, Long diseaseIdx) throws IOException {
+        seniorsMapper.deleteDisease(userIdx, diseaseIdx);
+
     }
 }

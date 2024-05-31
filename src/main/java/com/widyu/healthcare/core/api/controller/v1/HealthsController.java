@@ -43,35 +43,53 @@ public class HealthsController {
 
     @GetMapping("info/of-senior/main")
     @LoginCheck(type = LoginCheck.UserType.SENIOR)
-    public ResponseEntity<?> SeniorMainHealthPage(HttpSession apiUser) {
+    public ResponseEntity<?> seniorMainHealthPage(HttpSession apiUser) {
         SeniorMainHealthResponse mainHealthResponse = healthsService.getRecentHealthOfSenior(SessionUtil.getLoginSeniorIdx(apiUser));
-        SuccessResponse response = new SuccessResponse(true, "건강 메인 페이지 조회 성공", mainHealthResponse);
+        SuccessResponse response = new SuccessResponse(true, "시니어 건강 메인 페이지 조회 성공", mainHealthResponse);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @GetMapping("info/of-seniors/main")
     @LoginCheck(type = LoginCheck.UserType.GUARDIAN)
-    public ResponseEntity<?> GuardianMainHealthPage(HttpSession apiUser) {
+    public ResponseEntity<?> guardianMainHealthPage(HttpSession apiUser) {
         GuardianMainHealthResponse mainHealthResponse = healthsService.getRecentHealthOfSeniors(SessionUtil.getLoginGuardianIdx(apiUser));
-        SuccessResponse response = new SuccessResponse(true, "건강 메인 페이지 조회 성공", mainHealthResponse);
+        SuccessResponse response = new SuccessResponse(true, "보호자 건강 메인 페이지 조회 성공", mainHealthResponse);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @GetMapping("info/of-senior/detail")
     @LoginCheck(type = LoginCheck.UserType.SENIOR)
-    public ResponseEntity<?> DetailHealthPage(HttpSession apiUser) {
+    public ResponseEntity<?> seniorDetailHealthPage(HttpSession apiUser) {
         SeniorDetailHealthResponse detailHealthResponse = healthsService.getSeniorDetailInfoAndHealthInfo(SessionUtil.getLoginSeniorIdx(apiUser));
         SuccessResponse response = new SuccessResponse(true, "건강 상세 페이지 조회 성공", detailHealthResponse);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    @GetMapping("info/of-senior/{seniorIdx}/detail")
+    @LoginCheck(type = LoginCheck.UserType.GUARDIAN)
+    public ResponseEntity<?> guardianDetailHealthPage(@PathVariable long seniorIdx) {
+        SeniorDetailHealthResponse detailHealthResponse = healthsService.getSeniorDetailInfoAndHealthInfo(seniorIdx);
+        SuccessResponse response = new SuccessResponse(true, "건강 상세 페이지 조회 성공", detailHealthResponse);
+
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
     @GetMapping("info/of-senior/{type}")
-    @LoginCheck(type = LoginCheck.UserType.COMMON)
-    public ResponseEntity<?> findHeartBitInfo(@PathVariable String type, HttpSession apiUser) {
+    @LoginCheck(type = LoginCheck.UserType.SENIOR)
+    public ResponseEntity<?> seniorHeartBitInfo(@PathVariable String type, HttpSession apiUser) {
         HealthTypeResponse heartBitResponse = healthsService.getDailyHearth(SessionUtil.getLoginSeniorIdx(apiUser), HealthType.valueOf(type));
+        SuccessResponse response = new SuccessResponse(true, "심장 박동 수 조회 성공", heartBitResponse);
+
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @GetMapping("info/of-senior/{seniorIdx}/{type}")
+    @LoginCheck(type = LoginCheck.UserType.GUARDIAN)
+    public ResponseEntity<?> guardianHeartBitInfo(@PathVariable String type, @PathVariable long seniorIdx) {
+        HealthTypeResponse heartBitResponse = healthsService.getDailyHearth(seniorIdx, HealthType.valueOf(type));
         SuccessResponse response = new SuccessResponse(true, "심장 박동 수 조회 성공", heartBitResponse);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);

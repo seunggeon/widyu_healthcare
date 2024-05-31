@@ -1,6 +1,7 @@
 package com.widyu.healthcare.core.api.controller.v1;
 
 import com.google.firebase.database.annotations.NotNull;
+import com.widyu.healthcare.core.api.controller.v1.request.senior.AppendDiseaseRequest;
 import com.widyu.healthcare.core.domain.domain.v1.UserStatus;
 import com.widyu.healthcare.core.api.controller.v1.request.senior.RegisterSeniorRequest;
 import com.widyu.healthcare.core.api.controller.v1.response.SuccessResponse;
@@ -67,14 +68,15 @@ public class SeniorsController {
     }
 
     @GetMapping("find/guardians/{guardianId}")
+    @LoginCheck(type = LoginCheck.UserType.SENIOR)
     public ResponseEntity<?> getGuardianById(@PathVariable String guardianId) {
         GuardianInfoResponse guardianInfo = seniorsService.findGuardianByGuardianId(guardianId);
         SuccessResponse response = new SuccessResponse(true, "찾고자 하는 보호자 ID 조회 성공", guardianInfo);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
     @PatchMapping("profile")
+    @LoginCheck(type = LoginCheck.UserType.SENIOR)
     public ResponseEntity<?> editProfile(@RequestBody @Valid UpdateSeniorProfileRequest profileReq,
                                          HttpSession apiUser) throws IOException {
         seniorsService.updateProfile(SessionUtil.getLoginSeniorIdx(apiUser), profileReq.toUser());
@@ -83,9 +85,28 @@ public class SeniorsController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @PatchMapping("profile/image")
+    @LoginCheck(type = LoginCheck.UserType.SENIOR)
     public ResponseEntity<?> editProfileImage(@RequestParam(value = "url", required = false) @NotNull final MultipartFile multipartFile, HttpSession apiUser) throws IOException {
         seniorsService.updateProfileImage(SessionUtil.getLoginSeniorIdx(apiUser), multipartFile);
         SuccessResponse response = new SuccessResponse(true, "시니어 프로필 이미지 수정 성공", null);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    @PostMapping("disease/of-senior/{seniorIdx}")
+    @LoginCheck(type = LoginCheck.UserType.COMMON)
+    public ResponseEntity<?> addDisease(@RequestBody @Valid AppendDiseaseRequest diseaseReq,
+                                         @PathVariable Long seniorIdx) throws IOException {
+        seniorsService.insertDisease(seniorIdx, diseaseReq.toDisease());
+        SuccessResponse response = new SuccessResponse(true, "질병 추가 성공", null);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    @DeleteMapping("disease/{diseaseIdx}/of-senior/{seniorIdx}")
+    @LoginCheck(type = LoginCheck.UserType.COMMON)
+    public ResponseEntity<?> deleteDisease(@PathVariable Long diseaseIdx,
+                                            @PathVariable Long seniorIdx) throws IOException {
+        seniorsService.deleteDisease(seniorIdx, diseaseIdx);
+        SuccessResponse response = new SuccessResponse(true, "질병 삭제 성공", null);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

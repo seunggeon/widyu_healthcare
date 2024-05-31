@@ -62,12 +62,6 @@
         VALUES( #{seniorIdx}, #{userIdx} )
     </insert>
 
-    <update id="updateRelationWithSenior" parameterType="long">
-        UPDATE relations
-        SET seniorIdx = #{seniorIdx}
-        WHERE guardianIdx = #{guardianIdx}
-    </update>
-
     <select id="findByInviteCode" resultType="com.widyu.healthcare.core.api.controller.v1.response.CommonUserResponse">
         SELECT u.userIdx, u.status
         FROM usersdetail as ud
@@ -95,9 +89,9 @@
         FROM usersdetail as ud
         LEFT JOIN users as u ON ud.userIdx = u.userIdx
         WHERE ud.userIdx IN (
-            SELECT guardianIdx
+            SELECT userIdx
             FROM relations
-            WHERE userIdx = #{userIdx}
+            WHERE seniorIdx = #{userIdx}
         )
         AND u.status != 'DELETE'
     </select>

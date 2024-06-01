@@ -100,6 +100,8 @@ public class HealthsService {
         int day = today.getDayOfMonth();
         Health healthResponse = healthsMapper.getDailyHealth(userIdx, month, day, String.valueOf(type));
 
+        if(healthResponse == null) return null;
+
         return HealthTypeResponse.builder()
                 .userIdx(healthResponse.getUserIdx())
                 .name(healthResponse.getName())

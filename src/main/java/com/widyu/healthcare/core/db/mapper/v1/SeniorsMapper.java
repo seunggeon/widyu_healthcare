@@ -28,5 +28,8 @@ public interface SeniorsMapper {
     public int updateProfile(@Param("userIdx") long userIdx, @Param("name") String name, @Param("birth") String birth, @Param("phoneNumber") String phoneNumber, @Param("address") String address, @Param("isDisease") Boolean isDisease);
     public int updateProfileImage(@Param("userIdx") long userIdx, @Param("profileImageUrl") String profileImageUrl);
     public void updateDisease(@Param("userIdx") long userIdx, @Param("disease") Disease diseases);
+    public int insertDisease(@Param("userIdx") long userIdx, @Param("disease") Disease diseases);
+    public void deleteDisease(@Param("userIdx") long userIdx, @Param("diseaseIdx") long diseaseIdx);
+
 
 }

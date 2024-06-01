@@ -10,7 +10,7 @@ import java.util.Optional;
 @Mapper
 public interface GoalsStatusMapper {
 
-    void insertGoalStatus(GoalStatus goalStatus);
+    int insertGoalStatus(GoalStatus goalStatus);
     void deleteGoalStatus(long goalIdx);
     void updateGoalStatusUrl(String url, long goalStatusIdx);
     void updateGoalStatus(GoalStatus goalStatus);
@@ -22,7 +22,9 @@ public interface GoalsStatusMapper {
     int updateStatus(long goalStatusIdx, long status);
     int updateTotalPoint(long userIdx, long value);
 
-
     Double getGoalRateDaily(long userIdx, int month, int day);
     List<Map<Integer, Double>> getGoalRateMonthly(long userIdx, int month);
+
+    List<GoalStatus> findStatusNotRegenerated();
+    void updateRegenerateComplete(long goalStatusIdx);
 }

@@ -11,13 +11,16 @@ import com.widyu.healthcare.core.db.mapper.v1.GoalsStatusMapper;
 import com.widyu.healthcare.core.db.mapper.v1.GoalsMapper;
 import com.widyu.healthcare.core.db.mapper.v1.GuardiansMapper;
 import com.widyu.healthcare.core.db.mapper.v1.SeniorsMapper;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.quartz.*;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.sql.Time;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.Calendar;
@@ -180,6 +183,15 @@ public class GoalsService {
     }
 
     private void scheduleTimerForGoalStatus(GoalStatus goalStatus) {
+
+        Date triggerStartTime = Date.from(goalStatus.getTime().toLocalTime().atDate(LocalDate.now()).atZone(ZoneId.systemDefault()).toInstant());
+
+        // 현재 시간 출력
+        Date now = new Date();
+
+        // 디버깅 로그 추가
+        log.info("Scheduled Trigger Start Time: " + triggerStartTime);
+
         JobDetail jobDetail = JobBuilder.newJob(StatusJob.class)
                 .usingJobData("goalStatusIdx", goalStatus.getGoalStatusIdx()) // GoalStatusIdx를 JobData로 전달
                 .withIdentity("GoalStatusUpdateJob_" + goalStatus.getGoalStatusIdx())
@@ -191,7 +203,7 @@ public class GoalsService {
         Trigger trigger = TriggerBuilder.newTrigger()
                 .usingJobData(jobDataMap)
                 .withIdentity("GoalStatusUpdateTrigger_" + goalStatus.getGoalStatusIdx())
-                .startAt(Date.from(goalStatus.getTime().toLocalTime().atDate(LocalDate.now()).atZone(ZoneId.systemDefault()).toInstant())) // GoalStatus의 time에 따라 실행 시간 설정
+                .startAt(triggerStartTime) // GoalStatus의 time에 따라 실행 시간 설정
                 .build();
 
         try {

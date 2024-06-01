@@ -23,12 +23,12 @@ public class GoalStatus {
     private String imgUrl;
     private long point;
     @Builder
-    public GoalStatus(long goalStatusIdx, long goalIdx, @NonNull Time time, int status, Long pillNum, String imgUrl, long point) {
+    public GoalStatus(long goalStatusIdx, long goalIdx, @NonNull Time time, Long pillNum, String imgUrl, long point) {
 
         this.goalStatusIdx = goalStatusIdx;
         this.goalIdx = goalIdx;
         this.time = time;
-        this.status = status;
+        this.status = 0;
         this.pillNum = pillNum;
         this.imgUrl = imgUrl;
         this.point = GOAL_POINT;

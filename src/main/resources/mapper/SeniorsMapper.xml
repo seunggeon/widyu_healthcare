@@ -69,13 +69,20 @@
         WHERE ud.inviteCode = #{inviteCode}
     </select>
 
-    <select id="findByIdx" resultMap="SeniorDetailResponseDtoMap">
+    <select id="findDetailByIdx" resultMap="SeniorDetailResponseDtoMap">
         SELECT ud.userIdx, u.name as name, u.profileImageUrl, u.type AS userType, ud.inviteCode, ud.phoneNumber, ud.address, ud.birth, ud.isDisease
         FROM usersdetail ud
         LEFT JOIN users u ON ud.userIdx = u.userIdx
         WHERE ud.userIdx = #{userIdx}
         AND u.status != 'DELETE'
         GROUP BY ud.userIdx;
+    </select>
+
+    <select id="findByIdx" resultType="com.widyu.healthcare.core.domain.domain.v1.User">
+        SELECT u.userIdx,  u.profileImageUrl, u.name
+        FROM users u
+        WHERE u.userIdx = #{userIdx}
+          AND u.status != 'DELETE'
     </select>
 
     <select id="findDiseasesByIdx" resultType="com.widyu.healthcare.core.domain.domain.v1.Disease">

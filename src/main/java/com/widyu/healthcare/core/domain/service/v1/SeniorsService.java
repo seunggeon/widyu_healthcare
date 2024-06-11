@@ -21,8 +21,6 @@ import com.widyu.healthcare.support.error.exception.DuplicateIdException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import static com.widyu.healthcare.core.domain.domain.v1.UserType.SENIOR;
-
 @Log4j2
 @Service
 @RequiredArgsConstructor
@@ -101,7 +99,7 @@ public class SeniorsService {
     }
     @Transactional(rollbackFor = RuntimeException.class)
     public FamilyInfoResponse getGuardiansAndTargetInfo(long userIdx){
-        SeniorInfoResponse targetInfo = seniorsMapper.findByIdx(userIdx);
+        SeniorInfoResponse targetInfo = seniorsMapper.findDetailByIdx(userIdx);
         List<GuardianInfoResponse> guardianInfoList = seniorsMapper.findGuardiansByIdx(userIdx);
 
         FamilyInfoResponse familyInfo = FamilyInfoResponse.builder()
@@ -124,7 +122,7 @@ public class SeniorsService {
             log.error("update senior profile ERROR! update fail, count is {}", updateCount);
             throw new DuplicateIdException("update senior profile ERROR! \n" + "update userIdx : " + userIdx);
         }
-        user.getDiseases().stream().forEach(disease -> seniorsMapper.updateDisease(userIdx, disease));
+        user.getDiseases().forEach(disease -> seniorsMapper.updateDisease(userIdx, disease));
     }
 
     public void updateProfileImage(long userIdx, MultipartFile multipartFile) throws IOException {

@@ -8,6 +8,7 @@ import com.widyu.healthcare.core.api.controller.v1.request.guardian.LoginGuardia
 import com.widyu.healthcare.core.api.controller.v1.request.guardian.UpdateGuardianProfileRequest;
 import com.widyu.healthcare.core.api.controller.v1.request.guardian.RegisterGuardianRequest;
 
+import com.widyu.healthcare.core.api.controller.v1.request.senior.UpdateSeniorProfileRequest;
 import com.widyu.healthcare.core.api.controller.v1.response.FamilyIdxResponse;
 import com.widyu.healthcare.core.api.controller.v1.response.SuccessResponse;
 import com.widyu.healthcare.core.api.controller.v1.response.CommonUserResponse;
@@ -101,6 +102,12 @@ public class GuardiansController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    /**
+     * 보호자 프로필 수정 (일부)
+     * @param profileRequest
+     * @param apiUser
+     * @return
+     */
     @PostMapping ("add/more-seniors")
     @LoginCheck(type = UserType.GUARDIAN)
     public ResponseEntity<?> addMoreSeniors(@RequestBody RegisterSeniorRequest seniorReq, HttpSession apiUser) {
@@ -110,6 +117,12 @@ public class GuardiansController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    /**
+     * 보호자 프로필 수정 (일부)
+     * @param profileRequest
+     * @param apiUser
+     * @return
+     */
     @GetMapping("add/other-guardians/{guardianIdx}")
     @LoginCheck(type = UserType.GUARDIAN)
     public ResponseEntity<?> addGuardian(@PathVariable Long guardianIdx, HttpSession apiUser) {
@@ -147,7 +160,7 @@ public class GuardiansController {
 
     @PatchMapping ("profile/of-senior/{seniorIdx}")
     @LoginCheck(type = UserType.GUARDIAN)
-    public ResponseEntity<?> editSeniorProfile(@RequestBody UpdateGuardianProfileRequest profileRequest,
+    public ResponseEntity<?> editSeniorProfile(@RequestBody UpdateSeniorProfileRequest profileRequest,
                                                @PathVariable Long seniorIdx) throws IOException {
         seniorsService.updateProfile(seniorIdx, profileRequest.toUser());
         SuccessResponse response = new SuccessResponse(true, "보호자의 프로필 수정 성공", null);

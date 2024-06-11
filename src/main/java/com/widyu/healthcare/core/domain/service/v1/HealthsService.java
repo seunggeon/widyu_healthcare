@@ -49,6 +49,18 @@ public class HealthsService {
 
     public SeniorMainHealthResponse getRecentHealthOfSenior(long userIdx) {
         Health healthResponse = healthsMapper.getRecentHealth(userIdx);
+        if (healthResponse == null) {
+            User userResponse = seniorsMapper.findByIdx(userIdx);
+            return SeniorMainHealthResponse.builder()
+                    .userIdx(userResponse.getUserIdx())
+                    .name(userResponse.getName())
+                    .profileImageUrl(userResponse.getProfileImageUrl())
+                    .longitude(0.0)
+                    .latitude(0.0)
+                    .recentHeartBit(0.0)
+                    .watchConnection(0)
+                    .build();
+        }
         return SeniorMainHealthResponse.builder()
                 .userIdx(healthResponse.getUserIdx())
                 .name(healthResponse.getName())
@@ -64,32 +76,44 @@ public class HealthsService {
         List<SeniorMainHealthResponse> seniorMainHealthResponseList = seniorsIdxOnFamily.stream()
                 .map(seniorIdx -> {
                     Health healthResponse = healthsMapper.getRecentHealth(seniorIdx);
-                    if (healthResponse != null) {
+                    if (healthResponse == null) {
+                        User userResponse = seniorsMapper.findByIdx(seniorIdx);
                         return SeniorMainHealthResponse.builder()
-                                .userIdx(seniorIdx)
-                                .name(healthResponse.getName())
-                                .profileImageUrl(healthResponse.getProfileImageUrl())
-                                .longitude(healthResponse.getLongitude())
-                                .latitude(healthResponse.getLatitude())
-                                .recentHeartBit(healthResponse.getAverageHeartBitData(healthResponse.getHealthData()))
-                                .watchConnection(1)
+                                .userIdx(userResponse.getUserIdx())
+                                .name(userResponse.getName())
+                                .profileImageUrl(userResponse.getProfileImageUrl())
+                                .longitude(0.0)
+                                .latitude(0.0)
+                                .recentHeartBit(0.0)
+                                .watchConnection(0)
                                 .build();
                     }
-                    return null;
+                    return SeniorMainHealthResponse.builder()
+                            .userIdx(seniorIdx)
+                            .name(healthResponse.getName())
+                            .profileImageUrl(healthResponse.getProfileImageUrl())
+                            .longitude(healthResponse.getLongitude())
+                            .latitude(healthResponse.getLatitude())
+                            .recentHeartBit(healthResponse.getAverageHeartBitData(healthResponse.getHealthData()))
+                            .watchConnection(1)
+                            .build();
                 })
-                .filter(response -> response != null)
+//                .filter(response -> response != null)
                 .collect(Collectors.toList());
         return GuardianMainHealthResponse.builder().seniorMainHealthResponseList(seniorMainHealthResponseList).build();
     }
 
     public SeniorDetailHealthResponse getSeniorDetailInfoAndHealthInfo(long userIdx) {
-        SeniorInfoResponse target = seniorsMapper.findByIdx(userIdx);
+        SeniorInfoResponse target = seniorsMapper.findDetailByIdx(userIdx);
         Health healthResponse = healthsMapper.getRecentHealth(userIdx);
+        double recentHeartBit = (healthResponse != null)
+                ? healthResponse.getAverageHeartBitData(healthResponse.getHealthData())
+                : 0.0;
 
         List<GuardianInfoResponse> guardians = seniorsMapper.findGuardiansByIdx(userIdx);
         return SeniorDetailHealthResponse.builder()
                 .target(target)
-                .recentHeartBit(healthResponse.getAverageHeartBitData(healthResponse.getHealthData()))
+                .recentHeartBit(recentHeartBit)
                 .guardians(guardians)
                 .build();
     }
@@ -100,7 +124,17 @@ public class HealthsService {
         int day = today.getDayOfMonth();
         Health healthResponse = healthsMapper.getDailyHealth(userIdx, month, day, String.valueOf(type));
 
-        if(healthResponse == null) return null;
+        if (healthResponse == null) {
+            User userResponse = seniorsMapper.findByIdx(userIdx);
+            return HealthTypeResponse.builder()
+                    .userIdx(userResponse.getUserIdx())
+                    .name(userResponse.getName())
+                    .profileImageUrl(userResponse.getProfileImageUrl())
+                    .timeGraphData(null)
+                    .dailyAverage(0.0)
+                    .healthType(type)
+                    .build();
+        }
 
         return HealthTypeResponse.builder()
                 .userIdx(healthResponse.getUserIdx())

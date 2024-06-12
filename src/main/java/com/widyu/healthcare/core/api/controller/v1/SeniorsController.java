@@ -2,7 +2,6 @@ package com.widyu.healthcare.core.api.controller.v1;
 
 import com.google.firebase.database.annotations.NotNull;
 import com.widyu.healthcare.core.api.controller.v1.request.senior.AppendDiseaseRequest;
-import com.widyu.healthcare.core.domain.domain.v1.UserStatus;
 import com.widyu.healthcare.core.api.controller.v1.request.senior.RegisterSeniorRequest;
 import com.widyu.healthcare.core.api.controller.v1.response.SuccessResponse;
 import com.widyu.healthcare.core.api.controller.v1.response.CommonUserResponse;
@@ -33,6 +32,14 @@ import java.io.IOException;
 @RequestMapping("/api/v1/senior")
 public class SeniorsController {
     private final SeniorsService seniorsService;
+
+    /**
+     * @author seunggeon
+     * @breif 시니어 회원가입
+     * @see
+     * @param guardianReq
+     * @return GuardianInfoResponse
+     */
     @PostMapping("register/{guardianIdx}")
     public ResponseEntity<?> register(@PathVariable long guardianIdx, @RequestBody @Valid RegisterSeniorRequest seniorInfo) {
         String loginCode = seniorsService.insertAndSetRelations(guardianIdx, seniorInfo.toEncryptedUser());
@@ -42,8 +49,8 @@ public class SeniorsController {
     }
 
     @PostMapping("login")
-    public ResponseEntity<?> login(@RequestBody @Valid LoginSeniorRequest loginReq, HttpSession session) {
-        CommonUserResponse seniorInfo = seniorsService.loginByInviteCode(loginReq.getInviteCode(), loginReq.getFcmToken(), session );
+    public ResponseEntity<?> login(@RequestBody @Valid LoginSeniorRequest loginReq, HttpSession apiUser) {
+        CommonUserResponse seniorInfo = seniorsService.loginByInviteCode(loginReq.getInviteCode(), loginReq.getFcmToken(), apiUser);
         SuccessResponse response = new SuccessResponse(true, "시니어 로그인 성공", seniorInfo);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -62,7 +69,7 @@ public class SeniorsController {
     @LoginCheck(type = LoginCheck.UserType.SENIOR)
     public ResponseEntity<?> getFamilyInfo(HttpSession apiUser) {
         FamilyInfoResponse guardiansAndTargetInfo = seniorsService.getGuardiansAndTargetInfo(SessionUtil.getLoginSeniorIdx(apiUser));
-        SuccessResponse response = new SuccessResponse(true, "보호자 및 내 정보 조회 성공", guardiansAndTargetInfo);
+        SuccessResponse response = new SuccessResponse(true, "유저(시니어) 및 유저의 보호자 정보 조회 성공", guardiansAndTargetInfo);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

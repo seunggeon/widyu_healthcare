@@ -4,6 +4,7 @@ import com.widyu.healthcare.core.domain.domain.v1.Disease;
 import com.widyu.healthcare.core.domain.domain.v1.User;
 import com.widyu.healthcare.core.domain.domain.v1.UserType;
 import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
@@ -24,9 +25,8 @@ public class AppendDiseaseRequest {
     private String name;
     @Nullable
     private String drugName;
-    @Nullable
+    @Size(max = 500, message = "explanation should be up to 500 characters")
     private String explanation;
-    @Nullable
     private String dosageTime;
     @Builder
     public AppendDiseaseRequest(String name, String drugName, String explanation, String dosageTime) {

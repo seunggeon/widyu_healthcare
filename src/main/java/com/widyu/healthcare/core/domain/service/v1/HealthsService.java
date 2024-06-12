@@ -11,6 +11,7 @@ import com.widyu.healthcare.core.db.mapper.v1.HealthsMapper;
 import com.widyu.healthcare.core.db.mapper.v1.SeniorsMapper;
 import com.widyu.healthcare.core.domain.domain.v1.*;
 import com.widyu.healthcare.support.utils.HealthUtil;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -30,8 +31,8 @@ public class HealthsService {
     public void insertRecentHeartBitAndStatus(long userIdx, HealthData heartBit) {
         int insertHealthCount = healthsMapper.insertRecentHeartBitAndStatus(userIdx, heartBit);
         if (insertHealthCount != 1){
-            log.error("insert heartBit ERROR! info from heartBit table is null {}", heartBit);
-            throw new RuntimeException("insert Goal ERROR! 심장 박동 수 추가 메서드를 확인해주세요\n" + "Params : " + heartBit);
+            log.error("healthsMapper.insertRecentHeartBitAndStatus method ERROR! userIdx : ", userIdx);
+            throw new RuntimeException("insert Goal ERROR! 심장 박동 수 추가 메서드를 확인해주세요\n" + "userIdx : " + userIdx);
         }
 
         if(heartBit.getStatus() == HealthStatus.EMERGENCY){
@@ -42,15 +43,16 @@ public class HealthsService {
     public void updateRecentLocation(long userIdx, Location location) {
         int updateHealthCount = healthsMapper.updateRecentLocation(userIdx, location);
         if (updateHealthCount != 1){
-            log.error("update location ERROR! info from location table is null {}", location);
-            throw new RuntimeException("insert location ERROR! 사용자 위치 정보 변경 메서드를 확인해주세요\n" + "Params : " + location);
+            log.error("healthsMapper.updateRecentLocation method ERROR! userIdx : ", userIdx);
+            throw new RuntimeException("insert location ERROR! 사용자 위치 정보 변경 메서드를 확인해주세요\n" + "userIdx : " + userIdx);
         }
     }
 
-    public SeniorMainHealthResponse getRecentHealthOfSenior(long userIdx) {
-        Health healthResponse = healthsMapper.getRecentHealth(userIdx);
+    public SeniorMainHealthResponse getRecentHealthOfSenior(long targetIdx) {
+        Health healthResponse = healthsMapper.getRecentHealth(targetIdx);
         if (healthResponse == null) {
-            User userResponse = seniorsMapper.findByIdx(userIdx);
+            // 건강 데이터 없을 시
+            User userResponse = seniorsMapper.findByIdx(targetIdx);
             return SeniorMainHealthResponse.builder()
                     .userIdx(userResponse.getUserIdx())
                     .name(userResponse.getName())
@@ -77,6 +79,7 @@ public class HealthsService {
                 .map(seniorIdx -> {
                     Health healthResponse = healthsMapper.getRecentHealth(seniorIdx);
                     if (healthResponse == null) {
+                        // 건강 데이터 없을 시
                         User userResponse = seniorsMapper.findByIdx(seniorIdx);
                         return SeniorMainHealthResponse.builder()
                                 .userIdx(userResponse.getUserIdx())
@@ -98,7 +101,6 @@ public class HealthsService {
                             .watchConnection(1)
                             .build();
                 })
-//                .filter(response -> response != null)
                 .collect(Collectors.toList());
         return GuardianMainHealthResponse.builder().seniorMainHealthResponseList(seniorMainHealthResponseList).build();
     }
@@ -106,6 +108,8 @@ public class HealthsService {
     public SeniorDetailHealthResponse getSeniorDetailInfoAndHealthInfo(long userIdx) {
         SeniorInfoResponse target = seniorsMapper.findDetailByIdx(userIdx);
         Health healthResponse = healthsMapper.getRecentHealth(userIdx);
+
+        // 건강 데이터 없을 시
         double recentHeartBit = (healthResponse != null)
                 ? healthResponse.getAverageHeartBitData(healthResponse.getHealthData())
                 : 0.0;
@@ -124,6 +128,7 @@ public class HealthsService {
         int day = today.getDayOfMonth();
         Health healthResponse = healthsMapper.getDailyHealth(userIdx, month, day, String.valueOf(type));
 
+        // 건강 데이터 없을 시
         if (healthResponse == null) {
             User userResponse = seniorsMapper.findByIdx(userIdx);
             return HealthTypeResponse.builder()

@@ -1,14 +1,15 @@
 package com.widyu.healthcare.core.domain.service.v1;
 
 import com.widyu.healthcare.core.db.client.mapper.RedisMapper;
-import com.widyu.healthcare.support.error.exception.DuplicateIdException;
+import com.widyu.healthcare.support.error.exception.FailSmsSendException;
+import com.widyu.healthcare.support.error.exception.MisMatchSmsCodeException;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import net.nurigo.sdk.message.model.Message;
 import net.nurigo.sdk.message.request.SingleMessageSendingRequest;
 import net.nurigo.sdk.message.response.SingleMessageSentResponse;
 import net.nurigo.sdk.message.service.DefaultMessageService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -36,7 +37,7 @@ public class SmsService {
             response = this.messageService.sendOne(new SingleMessageSendingRequest(message));
         } catch (Exception e){
             log.error("coolsms 서버 문자 전송 실패\n",e);
-            throw new DuplicateIdException("coolsms 서버 문자 전송 실패\n");
+            throw new FailSmsSendException("coolsms 서버 문자 전송 실패\n");
         }
 
         this.saveCertificationCode(phoneNumber, code);
@@ -48,7 +49,7 @@ public class SmsService {
         if(cerNumList.contains(json_code)){
             this.deleteCertificationCode(phoneNumber);
             return "문자 인증 성공";
-        } else throw new DuplicateIdException("일치하지 않는 인증 번호\n");
+        } else throw new MisMatchSmsCodeException("일치하지 않는 인증 번호\n");
     }
     public String generateCerNum(){
         Random rand = new Random();

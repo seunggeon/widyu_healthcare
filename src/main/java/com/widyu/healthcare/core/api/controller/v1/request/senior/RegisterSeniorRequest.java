@@ -4,6 +4,9 @@ import com.widyu.healthcare.core.domain.domain.v1.Disease;
 import com.widyu.healthcare.core.domain.domain.v1.User;
 import com.widyu.healthcare.core.domain.domain.v1.UserType;
 import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
@@ -31,11 +34,12 @@ public class RegisterSeniorRequest {
     private String birth;
     @NonNull
     private String address;
-    @Nullable
+    @Min(value = 6)
+    @Max(value = 6)
     private String inviteCode;
     @Nullable
     private UserType type;
-    @NonNull
+    @NotBlank(message = "isDisease cannot be blank")
     private Boolean isDisease;
     @Nullable
     private List<Disease> diseases;

@@ -24,17 +24,4 @@ public class User extends UserDetail {
     private UserType type;
     private Boolean isDisease;
     private List<Disease> diseases;
-
-//    public User(long userIdx, String name, String phoneNumber, int age, String birth, String address, String inviteCode, UserType type, Boolean isDisease, List<Disease> diseases) {
-//        this.userIdx = userIdx;
-//        this.name = name;
-//        this.phoneNumber = phoneNumber;
-//        this.age = age;
-//        this.birth = birth;
-//        this.address = address;
-//        this.inviteCode = inviteCode;
-//        this.type = type;
-//        this.isDisease = isDisease;
-//        this.diseases = diseases;
-//    }
 }

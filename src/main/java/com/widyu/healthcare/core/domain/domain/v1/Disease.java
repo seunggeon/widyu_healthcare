@@ -1,5 +1,7 @@
 package com.widyu.healthcare.core.domain.domain.v1;
 
+import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,10 +10,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Disease {
     private Long diseaseIdx;
+    @Nullable
     private String name;
+    @Nullable
     private String drugName;
+    @Nullable
     private String explanation;
+    @Nullable
     private String favoriteHospital;
+    @Nullable
     private String dosageTime;
 
     @Builder

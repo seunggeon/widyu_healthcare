@@ -2,13 +2,13 @@ package com.widyu.healthcare.core.api.controller.v1;
 
 import com.widyu.healthcare.core.api.controller.v1.response.SuccessResponse;
 import com.widyu.healthcare.core.api.controller.v1.response.reward.RewardResponse;
-import com.widyu.healthcare.core.domain.domain.v1.GoalStatus;
 import com.widyu.healthcare.core.domain.domain.v1.Reward;
 import com.widyu.healthcare.core.domain.domain.v1.RewardType;
 import com.widyu.healthcare.support.error.exception.InsufficientPointsException;
 import com.widyu.healthcare.core.domain.service.v1.RewardsService;
 import com.widyu.healthcare.core.domain.service.v1.S3Service;
 import com.widyu.healthcare.support.utils.SessionUtil;
+
 import jakarta.servlet.http.HttpSession;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 @Log4j2
 @RestController

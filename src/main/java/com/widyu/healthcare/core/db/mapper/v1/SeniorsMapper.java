@@ -3,7 +3,6 @@ package com.widyu.healthcare.core.db.mapper.v1;
 import com.widyu.healthcare.core.domain.domain.v1.Disease;
 import com.widyu.healthcare.core.domain.domain.v1.User;
 import com.widyu.healthcare.core.domain.domain.v1.UserType;
-import com.widyu.healthcare.core.api.controller.v1.request.senior.RegisterSeniorRequest;
 import com.widyu.healthcare.core.api.controller.v1.response.guardian.GuardianInfoResponse;
 import com.widyu.healthcare.core.api.controller.v1.response.senior.SeniorInfoResponse;
 import com.widyu.healthcare.core.api.controller.v1.response.CommonUserResponse;
@@ -20,7 +19,8 @@ public interface SeniorsMapper {
     public int insertRelationWithSenior(@Param("userIdx") long userIdx, @Param("seniorIdx") long seniorIdx);
     public String findFCM(@Param("userIdx") long userIdx);
     public CommonUserResponse findByInviteCode(@Param("inviteCode") String inviteCode);
-    public SeniorInfoResponse findByIdx(@Param("userIdx") long userIdx);
+    public SeniorInfoResponse findDetailByIdx(@Param("userIdx") long userIdx);
+    public User findByIdx(@Param("userIdx") long userIdx);
     public List<GuardianInfoResponse> findGuardiansByIdx(@Param("userIdx") long userIdx);
     public GuardianInfoResponse findGuardianByGuardianId(@Param("id") String id);
     public int update(@Param("userIdx") long seniorIdx, @Param("name") String name, @Param("type") UserType type);

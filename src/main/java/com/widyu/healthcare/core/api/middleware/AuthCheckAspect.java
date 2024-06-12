@@ -1,13 +1,16 @@
 package com.widyu.healthcare.core.api.middleware;
 
-import jakarta.servlet.http.HttpSession;
+import com.widyu.healthcare.support.error.exception.LoginSessionNullException;
 import com.widyu.healthcare.support.utils.SessionUtil;
+
+import jakarta.servlet.http.HttpSession;
 import lombok.extern.log4j.Log4j2;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.annotation.Aspect;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.aspectj.lang.annotation.Aspect;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -22,7 +25,7 @@ public class AuthCheckAspect {
 
         HttpSession session = ((ServletRequestAttributes)(RequestContextHolder.currentRequestAttributes())).getRequest().getSession();
         if(session == null) {
-            throw new IllegalStateException("Session is null");
+            throw new LoginSessionNullException("Session is null");
         }
         long id = SessionUtil.getLoginGuardianIdx(session);
         if (id == 0) {
@@ -35,7 +38,7 @@ public class AuthCheckAspect {
 
         HttpSession session = ((ServletRequestAttributes)(RequestContextHolder.currentRequestAttributes())).getRequest().getSession();
         if(session == null) {
-            throw new IllegalStateException("Session is null");
+            throw new LoginSessionNullException("Session is null");
         }
         long id = SessionUtil.getLoginSeniorIdx(session);
         if (id == 0) {
@@ -48,7 +51,7 @@ public class AuthCheckAspect {
 
         HttpSession session = ((ServletRequestAttributes)(RequestContextHolder.currentRequestAttributes())).getRequest().getSession();
         if(session == null) {
-            throw new IllegalStateException("Session is null");
+            throw new LoginSessionNullException("Session is null");
         }
 
         long commonIdx = SessionUtil.getLoginCommonIdx(session);

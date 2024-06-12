@@ -11,10 +11,12 @@ import com.widyu.healthcare.core.api.middleware.LoginCheck;
 import com.widyu.healthcare.core.domain.domain.v1.HealthType;
 import com.widyu.healthcare.core.domain.service.v1.HealthsService;
 import com.widyu.healthcare.support.utils.SessionUtil;
+
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

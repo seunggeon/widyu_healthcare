@@ -34,8 +34,7 @@ public class RegisterSeniorRequest {
     private String birth;
     @NonNull
     private String address;
-    @Min(value = 6)
-    @Max(value = 6)
+    @Nullable
     private String inviteCode;
     @Nullable
     private UserType type;

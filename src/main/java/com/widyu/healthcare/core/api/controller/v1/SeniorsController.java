@@ -34,11 +34,12 @@ public class SeniorsController {
     private final SeniorsService seniorsService;
 
     /**
-     * @author seunggeon
-     * @breif 시니어 회원가입
-     * @see
-     * @param guardianReq
-     * @return GuardianInfoResponse
+     * @version : 1.0.0
+     * @author : seunggeon
+     * @breif : 시니어 회원가입
+     * @see : Invite Code는 Entity 변환 시 설정
+     * @param : 보호자 INDEX, 보호자 기본 정보
+     * @return : GuardianInfoResponse
      */
     @PostMapping("register/{guardianIdx}")
     public ResponseEntity<?> register(@PathVariable long guardianIdx, @RequestBody @Valid RegisterSeniorRequest seniorInfo) {
@@ -47,7 +48,13 @@ public class SeniorsController {
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
-
+    /**
+     * @version : 1.0.0
+     * @author : seunggeon
+     * @breif : 시니어 로그인
+     * @param : Invite Code, FCM Token
+     * @return : 시니어 INDEX 및 기본 정보
+     */
     @PostMapping("login")
     public ResponseEntity<?> login(@RequestBody @Valid LoginSeniorRequest loginReq, HttpSession apiUser) {
         CommonUserResponse seniorInfo = seniorsService.loginByInviteCode(loginReq.getInviteCode(), loginReq.getFcmToken(), apiUser);

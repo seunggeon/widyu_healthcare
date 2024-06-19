@@ -10,7 +10,6 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 public class UserDetail {
-    @Size(max = 300, message = "profileImageUrl should be up to 500 characters")
     private String profileImageUrl;
     @Nullable
     private String id;

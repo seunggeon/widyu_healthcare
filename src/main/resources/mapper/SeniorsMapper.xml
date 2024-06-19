@@ -18,7 +18,7 @@
         </collection>
     </resultMap>
 
-    <insert id="insertDetail" parameterType="com.widyu.healthcare.core.api.controller.v1.request.senior.RegisterSeniorRequest">
+    <insert id="insertDetail" parameterType="com.widyu.healthcare.core.domain.domain.v1.User">
         INSERT INTO usersdetail(phoneNumber, birth, age, address, inviteCode, isDisease)
         VALUES(#{phoneNumber}, #{birth}, #{age}, #{address}, #{inviteCode}, #{isDisease})
         <selectKey resultType="long" keyProperty="userIdx" keyColumn="userIdx" order="AFTER">

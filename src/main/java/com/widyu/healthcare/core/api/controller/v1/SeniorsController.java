@@ -37,7 +37,7 @@ public class SeniorsController {
      * @version : 1.0.0
      * @author : seunggeon
      * @breif : 시니어 회원가입
-     * @see : Invite Code는 Entity 변환 시 설정
+     * @see : Invite Code는 Entity 변환 시 설정, userdetail insert 시 user 생성되는 trigger 설정
      * @param : 보호자 INDEX, 보호자 기본 정보
      * @return : GuardianInfoResponse
      */

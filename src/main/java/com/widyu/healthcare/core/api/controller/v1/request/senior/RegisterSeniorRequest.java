@@ -38,7 +38,7 @@ public class RegisterSeniorRequest {
     private String inviteCode;
     @Nullable
     private UserType type;
-    @NotBlank(message = "isDisease cannot be blank")
+    @NonNull
     private Boolean isDisease;
     @Nullable
     private List<Disease> diseases;

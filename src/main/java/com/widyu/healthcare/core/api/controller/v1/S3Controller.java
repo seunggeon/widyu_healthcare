@@ -3,9 +3,9 @@ package com.widyu.healthcare.core.api.controller.v1;
 import com.google.firebase.database.annotations.NotNull;
 import com.widyu.healthcare.core.api.controller.v1.response.SuccessResponse;
 import com.widyu.healthcare.core.domain.service.v1.S3Service;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

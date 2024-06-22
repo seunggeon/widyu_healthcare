@@ -1,21 +1,19 @@
 package com.widyu.healthcare.core.domain.service.v1;
 
 import com.widyu.healthcare.core.api.controller.v1.response.reward.RewardResponse;
+import com.widyu.healthcare.core.domain.domain.v1.RewardType;
 import com.widyu.healthcare.core.db.client.mapper.RedisMapper;
 import com.widyu.healthcare.core.db.mapper.v1.RewardsStatusMapper;
-import com.widyu.healthcare.core.domain.domain.v1.Reward;
-import com.widyu.healthcare.core.domain.domain.v1.RewardType;
-import com.widyu.healthcare.support.error.exception.InsufficientPointsException;
 import com.widyu.healthcare.core.db.mapper.v1.GoalsStatusMapper;
 import com.widyu.healthcare.core.db.mapper.v1.RewardsMapper;
+import com.widyu.healthcare.support.error.exception.InsufficientPointsException;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 
 import static com.widyu.healthcare.support.config.AppConfig.REWARD_POINT;
 
@@ -48,14 +46,14 @@ public class RewardsService {
     public void getReward(Long userIdx, Long rewardIdx) throws InsufficientPointsException {
         // 유저의 총 point redis에서 차감
         //if (redisMapper.getPoint(buildRedisKey(userIdx.toString())) - REWARD_POINT < 0)
-        //    throw new InsufficientPointsException("point 부족");
+        //    throw new InsufficientPointsException("보유 point 부족");
 
         //redisMapper.decrementPoint(userIdx.toString(), REWARD_POINT);
         int updateCount = goalsStatusMapper.updateTotalPoint(userIdx, -REWARD_POINT);
         if (updateCount != 1){
-            log.error("update Total point ERROR! userIdx: {} total point is not updated", userIdx);
+            log.error("goalsStatusMapper.updateTotalPoint method ERROR! userIdx: ", userIdx);
             //redisMapper.decrementPoint(buildRedisKey(userIdx.toString()), REWARD_POINT);
-            throw new RuntimeException("get reward ERROR! 리워드 구매 메서드를 확인해주세요\n" + "Params : userIdx:" + userIdx);
+            throw new RuntimeException("get reward ERROR! 리워드 구매 메서드를 확인해주세요\n" + "userIdx : " + userIdx);
         }
 
         rewardsStatusMapper.updateRewardStatus(rewardIdx, userIdx, 1);

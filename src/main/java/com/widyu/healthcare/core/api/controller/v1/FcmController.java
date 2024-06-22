@@ -24,7 +24,6 @@ import java.io.IOException;
 public class FcmController {
     private final FcmService fcmService;
     @PostMapping("/send")
-    // TODO: FCM 도메인 분리 -> .toFCM
     public ResponseEntity<?> pushMessage(@RequestBody @NotNull Fcm fcmDTO) throws IOException {
 
         if (Fcm.hasNullDataBeforeFcmSend(fcmDTO)){

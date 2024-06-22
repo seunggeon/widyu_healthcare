@@ -11,7 +11,7 @@ import java.util.List;
 @Component
 public class Scheduler {
     private final GoalsStatusMapper goalsStatusMapper;
-    @Scheduled(cron = "0 0 0 * * ?") // 자정에 따라 실행
+    @Scheduled(cron = "0 0 0 * * ?") // 요일 상관없이 00시 00분 00초에 실행
     public void generateGoalStatusAtMidnight() {
         // DB에 생성된 goalstatusIdx 조회 및 정보 받아오기 -> 과거에 생성된 적이 있던 애들은 제외
         List<GoalStatus> goalStatusList = goalsStatusMapper.findStatusNotRegenerated();

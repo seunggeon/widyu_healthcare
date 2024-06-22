@@ -20,12 +20,12 @@ public class UpdateGoalRequest {
         this.goal = goal;
         this.goalStatusList = goalStatusList;
     }
-    public Goal toGoal() {
-        Goal goal = this.goal;
-        return goal;
-    }
-    public List<GoalStatus> toGoalStatusList() {
-        List<GoalStatus> goalStatusList = this.goalStatusList;
-        return goalStatusList;
-    }
+//    public Goal toGoal() {
+//        Goal goal = this.goal;
+//        return goal;
+//    }
+//    public List<GoalStatus> toGoalStatusList() {
+//        List<GoalStatus> goalStatusList = this.goalStatusList;
+//        return goalStatusList;
+//    }
 }

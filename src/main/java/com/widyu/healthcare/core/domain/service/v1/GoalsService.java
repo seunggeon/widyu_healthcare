@@ -1,6 +1,5 @@
 package com.widyu.healthcare.core.domain.service.v1;
 
-import com.widyu.healthcare.core.db.client.mapper.RedisMapper;
 import com.widyu.healthcare.core.domain.domain.v1.Goal;
 import com.widyu.healthcare.core.api.controller.v1.response.goal.GuardianGoalResponse;
 import com.widyu.healthcare.core.api.controller.v1.response.goal.SeniorGoalResponse;
@@ -11,16 +10,14 @@ import com.widyu.healthcare.core.db.mapper.v1.GoalsStatusMapper;
 import com.widyu.healthcare.core.db.mapper.v1.GoalsMapper;
 import com.widyu.healthcare.core.db.mapper.v1.GuardiansMapper;
 import com.widyu.healthcare.core.db.mapper.v1.SeniorsMapper;
-import lombok.NonNull;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.quartz.*;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.sql.Time;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.Calendar;
@@ -37,7 +34,6 @@ public class GoalsService {
     private final SeniorsMapper seniorsMapper;
     private final GuardiansMapper guardiansMapper;
     private final GoalsStatusMapper goalsStatusMapper;
-    private final RedisMapper redisMapper;
     private final FcmService fcmService;
     private final Scheduler scheduler;
     private static final String POINT_CODE_PREFIX = "point_code:";
@@ -83,8 +79,8 @@ public class GoalsService {
 
         int insertGoalCount = goalsMapper.insertGoal(goal);
         if (insertGoalCount != 1){
-            log.error("insert Goal ERROR! info from Goal table is null {}", goal);
-            throw new RuntimeException("insert Goal ERROR! 목표 생성 메서드를 확인해주세요\n" + "Params : " + goal);
+            log.error("goalsMapper.insertGoal method ERROR! goalIdx : ", goal.getGoalIdx());
+            throw new RuntimeException("insert Goal ERROR! 목표 생성 메서드를 확인해주세요\n" + " goalIdx : " + goal.getGoalIdx());
         }
 
         // 현재 요일 구하기
@@ -101,8 +97,8 @@ public class GoalsService {
                 scheduleTimerForGoalStatus(goalStatus);
             });
         } catch (RuntimeException e) {
-            log.error("insert Goal Status ERROR!", e);
-            throw new RuntimeException("insert insert Goal Status ERROR! 목표 생성 메서드를 확인해주세요\n" + "Params : " + goalStatusList);
+            log.error("goalStatus scheduler ERROR!", e);
+            throw new RuntimeException("goalStatus scheduler ERROR! 하루 지났을 때 수행 안한 목표는 실패로 만드는 스케줄러를 확인해주세요\n");
         }
         return goal;
     }
@@ -113,8 +109,8 @@ public class GoalsService {
 
         int updateGoalCount = goalsMapper.updateGoal(goal);
         if (updateGoalCount != 1){
-            log.error("update Goal ERROR! info from Goal table is not updated {}", goal);
-            throw new RuntimeException("update Goal ERROR! 목표 수정 메서드를 확인해주세요\n" + "Params : " + goal);
+            log.error("goalsMapper.updateGoal method ERROR! goalIdx : ", goal.getGoalIdx());
+            throw new RuntimeException("update Goal ERROR! 목표 수정 메서드를 확인해주세요\n");
         }
 
         goalStatusList.forEach(goalStatus -> {goalsStatusMapper.updateGoalStatus(goalStatus);});
@@ -127,8 +123,8 @@ public class GoalsService {
 
         int deleteCount = goalsMapper.deleteGoal(goalIdx);
         if (deleteCount != 1){
-            log.error("delete Goal ERROR! goalIdx: {} has not been deleted", goalIdx);
-            throw new RuntimeException("delete Goal ERROR! 목표 삭제 메서드를 확인해주세요\n" + "Params : goalIdx: " + goalIdx);
+            log.error("goalsMapper.deleteGoal method ERROR! goalIdx : ", goalIdx);
+            throw new RuntimeException("delete Goal ERROR! 목표 삭제 메서드를 확인해주세요\n" + "goalIdx: " + goalIdx);
         }
     }
 
@@ -139,7 +135,7 @@ public class GoalsService {
         // 목표 상태 수정 -> 성공
         int updateStatusCount = goalsStatusMapper.updateStatus(goalStatusIdx, success);
         if (updateStatusCount != 1){
-            log.error("update Goal Status ERROR! goalStatusIdx: {} status is not updated", goalStatusIdx);
+            log.error("goalsStatusMapper.updateStatus method ERROR! goalStatusIdx: {} status is not updated", goalStatusIdx);
             throw new RuntimeException("delete Goal ERROR! 목표 상태 수정 메서드를 확인해주세요\n" + "Params : userIdx:" + userIdx);
         }
 
@@ -155,7 +151,8 @@ public class GoalsService {
 //            }
         } catch (RuntimeException e){
             //redisMapper.decrementPoint(buildRedisKey(userIdx.toString()), GOAL_POINT);
-            throw new RuntimeException("update status success ERROR! 목표 상태 수정(성공) 메서드를 확인해주세요\n" + "Params : userIdx:" + userIdx);
+            log.error("goalsStatusMapper.updateTotalPoint method ERROR! goalStatusIdx: {} status is not updated", goalStatusIdx);
+            throw new RuntimeException("update status success ERROR! 목표 상태 수정(성공) 메서드를 확인해주세요\n" + "userIdx :" + userIdx);
         }
 
         // 푸쉬 알림
@@ -209,11 +206,8 @@ public class GoalsService {
         try {
             scheduler.scheduleJob(jobDetail, trigger);
         } catch (SchedulerException e) {
+            log.error("scheduleTimerForGoalStatus scheduleJob Error!");
             e.printStackTrace();
         }
-    }
-
-    private static String buildRedisKey(String userIdx) {
-        return POINT_CODE_PREFIX + userIdx;
     }
 }

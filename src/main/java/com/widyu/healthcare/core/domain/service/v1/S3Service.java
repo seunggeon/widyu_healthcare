@@ -1,10 +1,6 @@
 package com.widyu.healthcare.core.domain.service.v1;
 
-import com.amazonaws.SdkClientException;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
+
 import com.widyu.healthcare.core.db.mapper.v1.GuardiansMapper;
 import com.widyu.healthcare.core.db.mapper.v1.RewardsStatusMapper;
 import com.widyu.healthcare.core.domain.domain.v1.Reward;
@@ -12,12 +8,17 @@ import com.widyu.healthcare.core.db.mapper.v1.GoalsStatusMapper;
 import com.widyu.healthcare.core.db.mapper.v1.RewardsMapper;
 import com.widyu.healthcare.core.domain.domain.v1.RewardType;
 import com.widyu.healthcare.support.error.exception.MissingFileException;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import com.amazonaws.SdkClientException;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -92,7 +93,7 @@ public class S3Service {
     public String upload(MultipartFile multipartFile) throws IOException {
 
         if (multipartFile.isEmpty())
-            throw new MissingFileException("file이 없습니다.");
+            throw new MissingFileException("업로드할 file이 없습니다.");
         String fileName = multipartFile.getOriginalFilename();
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentType(multipartFile.getContentType());

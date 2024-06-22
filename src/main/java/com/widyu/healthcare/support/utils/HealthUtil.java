@@ -5,7 +5,6 @@ import com.widyu.healthcare.core.domain.domain.v1.HealthStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static com.widyu.healthcare.core.domain.domain.v1.HealthStatus.*;

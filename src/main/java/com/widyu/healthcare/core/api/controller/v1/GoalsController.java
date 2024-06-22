@@ -1,27 +1,27 @@
 package com.widyu.healthcare.core.api.controller.v1;
 
-import com.widyu.healthcare.core.api.controller.v1.request.goal.AppendGoalRequest;
-import com.widyu.healthcare.core.api.controller.v1.request.goal.UpdateGoalRequest;
+
 import com.widyu.healthcare.core.api.controller.v1.response.goal.MainGoalResponse;
 import com.widyu.healthcare.core.api.controller.v1.response.goal.SeniorGoalResponse;
 import com.widyu.healthcare.core.api.controller.v1.response.SuccessResponse;
-
 import com.widyu.healthcare.core.domain.domain.v1.Goal;
 import com.widyu.healthcare.core.domain.service.v1.GoalsService;
 import com.widyu.healthcare.support.utils.SessionUtil;
 import com.widyu.healthcare.core.api.middleware.LoginCheck;
+
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-
 
 @Log4j2
 @RestController
@@ -81,7 +81,7 @@ public class GoalsController {
      */
     @PostMapping("/insert")
     //@LoginCheck(type = LoginCheck.UserType.COMMON)
-    public ResponseEntity<?> insertGoal(@RequestBody Goal goal) {
+    public ResponseEntity<?> insertGoal(@RequestBody @Valid Goal goal) {
 
         Goal resultGoal = goalsService.insertGoal(goal, goal.getGoalStatusList());
         SuccessResponse response = new SuccessResponse(true, "목표 추가 성공", resultGoal);
@@ -109,7 +109,7 @@ public class GoalsController {
      * @return
      */
     @PatchMapping("/edit")
-    public ResponseEntity<?> editGoal(@RequestBody Goal goal){
+    public ResponseEntity<?> editGoal(@RequestBody @Valid Goal goal){
 
         goalsService.deleteGoal(goal.getGoalIdx());
         Goal resultGoal = goalsService.insertGoal(goal, goal.getGoalStatusList());

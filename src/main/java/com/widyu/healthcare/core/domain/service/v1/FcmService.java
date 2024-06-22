@@ -1,13 +1,13 @@
 package com.widyu.healthcare.core.domain.service.v1;
 
+import com.widyu.healthcare.core.domain.domain.v1.Fcm;
+import com.widyu.healthcare.support.error.exception.MissingTokenException;
+
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.api.client.auth.oauth2.TokenResponseException;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.common.net.HttpHeaders;
-import com.widyu.healthcare.core.domain.domain.v1.Fcm;
-import com.widyu.healthcare.support.error.exception.MissingTokenException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import okhttp3.*;
@@ -28,7 +28,7 @@ public class FcmService {
 
     public void sendMessage(String targetToken, String title, String body) throws IOException {
         if (targetToken == null)
-            throw new MissingTokenException("token 값이 없습니다.");
+            throw new MissingTokenException("FCM token 값이 없습니다.");
 
         String message = makeMessage(targetToken, title, body);
 

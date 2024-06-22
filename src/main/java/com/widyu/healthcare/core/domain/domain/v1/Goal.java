@@ -1,6 +1,7 @@
 package com.widyu.healthcare.core.domain.domain.v1;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDateTime;

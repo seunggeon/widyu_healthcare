@@ -156,7 +156,8 @@ public class GoalsService {
         }
 
         // 푸쉬 알림
-        fcmService.sendMessage(seniorsMapper.findFCM(userIdx), "목표 달성", goalsMapper.getGoalByGoalIdx(goalsStatusMapper.getGoalStatusByGoalStatusIdx(goalStatusIdx).getGoalIdx()).getType().toString());
+        long goalIdx = goalsStatusMapper.getGoalStatusByGoalStatusIdx(goalStatusIdx).getGoalIdx();
+        fcmService.sendMessage(seniorsMapper.findFCM(userIdx), "목표 달성", goalsMapper.getGoalByGoalIdx(goalIdx).getType().toString());
     }
 
     // 오늘 목표 달성률 조회

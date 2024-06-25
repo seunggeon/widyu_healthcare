@@ -13,7 +13,7 @@ public interface GoalsMapper {
     SeniorGoalResponse findBySeniorIdx(long userIdx);
     GuardianGoalResponse findByGuardianIdx(long userIdx);
     List<Goal> getGoalsByUserIdx(@Param("userIdx") long userIdx);
-    Goal getGoalByGoalIdx(long userIdx);
+    Goal getGoalByGoalIdx(long goalIdx);
     int insertGoal(Goal goal);
     long getGoalIdx(Goal goal);
     int updateGoal(Goal goal);

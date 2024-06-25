@@ -1,6 +1,7 @@
 package com.widyu.healthcare.core.domain.service.v1;
 
 import com.widyu.healthcare.core.domain.domain.v1.Fcm;
+import com.widyu.healthcare.core.domain.domain.v1.GoalType;
 import com.widyu.healthcare.support.error.exception.MissingTokenException;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -26,38 +27,46 @@ public class FcmService {
     private final String API_URL = "https://fcm.googleapis.com/v1/projects/widyu-1fb84/messages:send";
     private final ObjectMapper objectMapper;
 
-    public void sendMessage(String targetToken, String title, String body) throws IOException {
+    public void sendMessage(String targetToken, String title, String type) throws IOException, MissingTokenException {
         if (targetToken == null)
             throw new MissingTokenException("FCM token 값이 없습니다.");
 
-        String message = makeMessage(targetToken, title, body);
+        String message = makeMessage(targetToken, title, new FcmBody(type));
 
         OkHttpClient client = new OkHttpClient();
         RequestBody requestBody = okhttp3.RequestBody.create(message,
                 MediaType.get("application/json; charset=utf-8"));
         Request request = new Request.Builder()
                 .url(API_URL)
-                .post((okhttp3.RequestBody) requestBody)
+                .post(requestBody)
                 .addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken())
                 .addHeader(HttpHeaders.CONTENT_TYPE, "application/json; UTF-8")
                 .build();
 
-        Response response = client.newCall(request).execute();
-        System.out.println("response = " + response);
-        if (!response.isSuccessful()) {
-            throw new IOException("FCM request failed with code: " + response.code() + ", message: " + response.message());
-
+        try (Response response = client.newCall(request).execute()) {
+            System.out.println("response = " + response);
+            if (!response.isSuccessful()) {
+                throw new IOException("FCM request failed with code: " + response.code() + ", message: " + response.message());
+            }
         }
     }
 
-    private String makeMessage(String targetToken, String title, String body) throws JsonParseException, JsonProcessingException {
+    private class FcmBody {
+        String type;
+
+        public FcmBody(String type) {
+            this.type = type;
+        }
+    }
+
+    private String makeMessage(String targetToken, String title, FcmBody body) throws JsonParseException, JsonProcessingException {
 
         Fcm fcmMessage = Fcm.builder()
                 .message(Fcm.Message.builder()
                         .token(targetToken)
                         .notification(Fcm.Notification.builder()
                                 .title(title)
-                                .body(body)
+                                .body(body.toString())
                                 .image(null)
                                 .build()
                         ).build()).validateOnly(false).build();

@@ -82,7 +82,6 @@ public class SeniorsController {
     }
 
     @GetMapping("find/guardians/{guardianId}")
-    @LoginCheck(type = LoginCheck.UserType.SENIOR)
     public ResponseEntity<?> getGuardianById(@PathVariable String guardianId) {
         GuardianInfoResponse guardianInfo = seniorsService.findGuardianByGuardianId(guardianId);
         SuccessResponse response = new SuccessResponse(true, "찾고자 하는 보호자 ID 조회 성공", guardianInfo);

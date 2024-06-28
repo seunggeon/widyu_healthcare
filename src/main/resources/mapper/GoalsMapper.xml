@@ -79,7 +79,7 @@
     </select>
 
     <select id="getGoalByGoalIdx" parameterType="java.lang.Long" resultType="com.widyu.healthcare.core.domain.domain.v1.Goal">
-        SELECT * FROM goals WHERE userIdx = #{userIdx} AND goalIdx = #{goalIdx}
+        SELECT * FROM goals WHERE goalIdx = #{goalIdx}
     </select>
 
     <insert id = "insertGoal" parameterType="com.widyu.healthcare.core.domain.domain.v1.Goal" >

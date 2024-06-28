@@ -94,7 +94,7 @@ public class GoalsService {
                 if (goal.getDay().toCharArray()[dayOfWeek - 1] == '1')
                     goalsStatusMapper.insertGoalStatus(goalStatus);
                 // 하루 지났을 때 수행 안한 목표는 실패로 만드는 스케줄러
-                scheduleTimerForGoalStatus(goalStatus);
+                scheduleTimerForGoalStatus(goalStatus, goal.getUserIdx());
             });
         } catch (RuntimeException e) {
             log.error("goalStatus scheduler ERROR!", e);
@@ -156,7 +156,8 @@ public class GoalsService {
         }
 
         // 푸쉬 알림
-        fcmService.sendMessage(seniorsMapper.findFCM(userIdx), "목표 달성", "축하드립니다");
+        long goalIdx = goalsStatusMapper.getGoalStatusByGoalStatusIdx(goalStatusIdx).getGoalIdx();
+        fcmService.sendMessage(seniorsMapper.findFCM(userIdx), "목표 달성", goalsMapper.getGoalByGoalIdx(goalIdx).getType().toString());
     }
 
     // 오늘 목표 달성률 조회
@@ -179,16 +180,7 @@ public class GoalsService {
         return goalsStatusMapper.getGoalRateMonthly(userIdx, month);
     }
 
-    private void scheduleTimerForGoalStatus(GoalStatus goalStatus) {
-
-        Date triggerStartTime = Date.from(goalStatus.getTime().toLocalTime().atDate(LocalDate.now()).atZone(ZoneId.systemDefault()).toInstant());
-
-        // 현재 시간 출력
-        Date now = new Date();
-
-        // 디버깅 로그 추가
-        log.info("Scheduled Trigger Start Time: " + triggerStartTime);
-
+    private void scheduleTimerForGoalStatus(GoalStatus goalStatus, Long userIdx) {
         JobDetail jobDetail = JobBuilder.newJob(StatusJob.class)
                 .usingJobData("goalStatusIdx", goalStatus.getGoalStatusIdx()) // GoalStatusIdx를 JobData로 전달
                 .withIdentity("GoalStatusUpdateJob_" + goalStatus.getGoalStatusIdx())
@@ -196,17 +188,17 @@ public class GoalsService {
 
         JobDataMap jobDataMap = new JobDataMap();
         jobDataMap.put("goalStatusIdx", goalStatus.getGoalStatusIdx());
+        jobDataMap.put("userIdx", userIdx);
 
         Trigger trigger = TriggerBuilder.newTrigger()
                 .usingJobData(jobDataMap)
                 .withIdentity("GoalStatusUpdateTrigger_" + goalStatus.getGoalStatusIdx())
-                .startAt(triggerStartTime) // GoalStatus의 time에 따라 실행 시간 설정
+                .startAt(Date.from(goalStatus.getTime().toLocalTime().atDate(LocalDate.now()).atZone(ZoneId.systemDefault()).toInstant())) // GoalStatus의 time에 따라 실행 시간 설정
                 .build();
 
         try {
             scheduler.scheduleJob(jobDetail, trigger);
         } catch (SchedulerException e) {
-            log.error("scheduleTimerForGoalStatus scheduleJob Error!");
             e.printStackTrace();
         }
     }

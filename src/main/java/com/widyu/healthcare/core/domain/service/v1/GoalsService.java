@@ -1,16 +1,19 @@
 package com.widyu.healthcare.core.domain.service.v1;
 
+import com.widyu.healthcare.core.api.controller.v1.response.guardian.GuardianInfoResponse;
 import com.widyu.healthcare.core.domain.domain.v1.Goal;
 import com.widyu.healthcare.core.api.controller.v1.response.goal.GuardianGoalResponse;
 import com.widyu.healthcare.core.api.controller.v1.response.goal.SeniorGoalResponse;
 import com.widyu.healthcare.core.api.controller.v1.response.goal.MainGoalResponse;
 import com.widyu.healthcare.core.domain.domain.v1.GoalStatus;
+import com.widyu.healthcare.support.jobs.GoalAlarmJob;
 import com.widyu.healthcare.support.jobs.StatusJob;
 import com.widyu.healthcare.core.db.mapper.v1.GoalsStatusMapper;
 import com.widyu.healthcare.core.db.mapper.v1.GoalsMapper;
 import com.widyu.healthcare.core.db.mapper.v1.GuardiansMapper;
 import com.widyu.healthcare.core.db.mapper.v1.SeniorsMapper;
 
+import com.widyu.healthcare.support.utils.GoalUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.quartz.*;
@@ -18,6 +21,8 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import org.quartz.DateBuilder;
+import static org.quartz.DateBuilder.*;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.Calendar;
@@ -93,7 +98,9 @@ public class GoalsService {
                 goalStatus.setGoalIdx(goal.getGoalIdx());
                 if (goal.getDay().toCharArray()[dayOfWeek - 1] == '1')
                     goalsStatusMapper.insertGoalStatus(goalStatus);
-                // 하루 지났을 때 수행 안한 목표는 실패로 만드는 스케줄러
+                // 목표 관련 스케줄러
+                // 1. 하루 지났을 때 수행 안한 목표는 실패
+                // 2. 목표 실행 시간 시 알림
                 scheduleTimerForGoalStatus(goalStatus, goal.getUserIdx());
             });
         } catch (RuntimeException e) {
@@ -155,9 +162,22 @@ public class GoalsService {
             throw new RuntimeException("update status success ERROR! 목표 상태 수정(성공) 메서드를 확인해주세요\n" + "userIdx :" + userIdx);
         }
 
-        // 푸쉬 알림
-        long goalIdx = goalsStatusMapper.getGoalStatusByGoalStatusIdx(goalStatusIdx).getGoalIdx();
-        fcmService.sendMessage(seniorsMapper.findFCM(userIdx), "목표 달성", goalsMapper.getGoalByGoalIdx(goalIdx).getType().toString());
+        // 푸쉬 알림: 시니어 본인에게 성공 알림
+        fcmService.sendMessage(seniorsMapper.findFCM(userIdx), "목표 달성", "SUCCESS");
+
+        // 푸쉬 알림: 시니어가 하루의 모든 목표 달성 시 가디언에게 성공 알림
+        if (getTargetSeniorGoals(userIdx).getPercentageOfGoal() == 1) {
+            List<GuardianInfoResponse> guardianInfoResponsesList = seniorsMapper.findGuardiansByIdx(userIdx);
+            guardianInfoResponsesList.forEach(guardianInfoResponse -> {
+                long guardianIdx = guardianInfoResponse.getUserIdx();
+                try {
+                    fcmService.sendMessage(seniorsMapper.findFCM(guardianIdx), "시니어 오늘의 목표 달성", "SUCCESS");
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        }
+
     }
 
     // 오늘 목표 달성률 조회
@@ -181,23 +201,35 @@ public class GoalsService {
     }
 
     private void scheduleTimerForGoalStatus(GoalStatus goalStatus, Long userIdx) {
-        JobDetail jobDetail = JobBuilder.newJob(StatusJob.class)
+        JobDetail jobDetail1 = JobBuilder.newJob(StatusJob.class)
                 .usingJobData("goalStatusIdx", goalStatus.getGoalStatusIdx()) // GoalStatusIdx를 JobData로 전달
                 .withIdentity("GoalStatusUpdateJob_" + goalStatus.getGoalStatusIdx())
+                .build();
+
+        JobDetail jobDetail2 = JobBuilder.newJob(GoalAlarmJob.class)
+                .usingJobData("goalStatusIdx", goalStatus.getGoalStatusIdx()) // GoalStatusIdx를 JobData로 전달
+                .withIdentity("GoalStatusAlarmJob_" + goalStatus.getGoalStatusIdx())
                 .build();
 
         JobDataMap jobDataMap = new JobDataMap();
         jobDataMap.put("goalStatusIdx", goalStatus.getGoalStatusIdx());
         jobDataMap.put("userIdx", userIdx);
 
-        Trigger trigger = TriggerBuilder.newTrigger()
+        Trigger trigger1 = TriggerBuilder.newTrigger()
                 .usingJobData(jobDataMap)
                 .withIdentity("GoalStatusUpdateTrigger_" + goalStatus.getGoalStatusIdx())
+                .startAt(todayAt(0, 0, 0)) // 자정에 실행
+                .build();
+
+        Trigger trigger2 = TriggerBuilder.newTrigger()
+                .usingJobData(jobDataMap)
+                .withIdentity("GoalStatusAlarmTrigger_" + goalStatus.getGoalStatusIdx())
                 .startAt(Date.from(goalStatus.getTime().toLocalTime().atDate(LocalDate.now()).atZone(ZoneId.systemDefault()).toInstant())) // GoalStatus의 time에 따라 실행 시간 설정
                 .build();
 
         try {
-            scheduler.scheduleJob(jobDetail, trigger);
+            scheduler.scheduleJob(jobDetail1, trigger1);
+            scheduler.scheduleJob(jobDetail2, trigger2);
         } catch (SchedulerException e) {
             e.printStackTrace();
         }

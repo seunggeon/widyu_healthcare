@@ -99,12 +99,12 @@
 
     <delete id="deleteGoal">
         DELETE
-        FROM Goals
+        FROM goals
         WHERE goalIdx = #{goalIdx}
     </delete>
 
     <update id = "updateGoal" parameterType="com.widyu.healthcare.core.domain.domain.v1.Goal">
-        UPDATE Goals
+        UPDATE goals
         SET title=#{title}, description=#{description}, type=#{type}, day=#{day}
         WHERE goalIdx = #{goalIdx}
     </update>

@@ -1,23 +1,42 @@
 package com.widyu.healthcare.support.utils;
 
+import com.widyu.healthcare.core.api.controller.v1.response.guardian.GuardianInfoResponse;
+import com.widyu.healthcare.core.db.mapper.v1.SeniorsMapper;
 import com.widyu.healthcare.core.domain.domain.v1.EmergencyDeterminable;
 import com.widyu.healthcare.core.domain.domain.v1.HealthStatus;
+import com.widyu.healthcare.core.domain.service.v1.FcmService;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.widyu.healthcare.core.domain.domain.v1.HealthStatus.*;
 
+@Component
 public class HealthUtil {
     static final double criteriaOfEmergency = 95; // 심장 박동수 응급 상황 기준치
     static final double criteriaOfAverages = 95; // 심장 박동수 평균 기준치
+    private static FcmService fcmService;
+    private static SeniorsMapper seniorsMapper;
 
+    public HealthUtil(FcmService fcmService, SeniorsMapper seniorsMapper) {
+        HealthUtil.fcmService = fcmService;
+        HealthUtil.seniorsMapper = seniorsMapper;
+    }
 
-    public static HealthStatus determineEmergency(double heartBit) {
+    public static HealthStatus determineEmergency(double heartBit, long seniorIdx) {
+
         if (heartBit > criteriaOfEmergency) {
+            try {
+                fcmService.sendMessage(seniorsMapper.findFCM(seniorIdx), "심장박동 수 증가 위험", "DIFFERENT");
+                fcmService.sendMessageToGuardians(seniorIdx, "부모님 심장박동 수 증가 위험", "DIFFERENT");
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             return EMERGENCY;
-        } else if(heartBit > criteriaOfEmergency) {
+        } else if(heartBit == criteriaOfEmergency) {
             return DAILY;
         }
         else {

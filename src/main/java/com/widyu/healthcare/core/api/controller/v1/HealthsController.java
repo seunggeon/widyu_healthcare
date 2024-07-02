@@ -30,7 +30,8 @@ public class HealthsController {
 
     @PostMapping("append/heart-bit")
     public ResponseEntity<?> appendHeartBitFromWatch(@RequestBody @Valid AppendSeniorHeartBitRequest heartBitReq, HttpSession apiUser) {
-        healthsService.insertRecentHeartBitAndStatus(SessionUtil.getLoginSeniorIdx(apiUser), heartBitReq.toHealthData());
+        long targetIdx = SessionUtil.getLoginSeniorIdx(apiUser);
+        healthsService.insertRecentHeartBitAndStatus(targetIdx, heartBitReq.toHealthData(targetIdx));
         SuccessResponse response = new SuccessResponse(true, "심장 박동수 DB 저장", null);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);

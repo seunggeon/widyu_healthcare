@@ -164,20 +164,8 @@ public class GoalsService {
 
         // 푸쉬 알림: 시니어 본인에게 성공 알림
         fcmService.sendMessage(seniorsMapper.findFCM(userIdx), "목표 달성", "SUCCESS");
-
-        // 푸쉬 알림: 시니어가 하루의 모든 목표 달성 시 가디언에게 성공 알림
-        if (getTargetSeniorGoals(userIdx).getPercentageOfGoal() == 1) {
-            List<GuardianInfoResponse> guardianInfoResponsesList = seniorsMapper.findGuardiansByIdx(userIdx);
-            guardianInfoResponsesList.forEach(guardianInfoResponse -> {
-                long guardianIdx = guardianInfoResponse.getUserIdx();
-                try {
-                    fcmService.sendMessage(seniorsMapper.findFCM(guardianIdx), "시니어 오늘의 목표 달성", "SUCCESS");
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-        }
-
+        // 푸쉬 알림: 시니어가 하루의 모든 목표 달성 시 보조자에게 성공 알림
+        fcmService.sendMessageToGuardians(userIdx, "부모님 오늘의 목표 달성", "SUCCESS");
     }
 
     // 오늘 목표 달성률 조회

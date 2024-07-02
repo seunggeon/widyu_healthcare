@@ -5,6 +5,8 @@ import com.widyu.healthcare.support.utils.HealthUtil;
 import jakarta.annotation.Nullable;
 import lombok.Getter;
 
+import java.io.IOException;
+
 /**
  *
  */
@@ -13,10 +15,10 @@ public class AppendSeniorHeartBitRequest {
     @Nullable
     private double heartBit;
 
-    public HealthData toHealthData() {
+    public HealthData toHealthData(long userIdx) {
         HealthData healthData = HealthData.builder()
                 .data(this.heartBit)
-                .status(HealthUtil.determineEmergency(this.heartBit))
+                .status(HealthUtil.determineEmergency(this.heartBit, userIdx))
                 .build();
         return healthData;
     }

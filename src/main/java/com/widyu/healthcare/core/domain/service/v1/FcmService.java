@@ -1,5 +1,7 @@
 package com.widyu.healthcare.core.domain.service.v1;
 
+import com.widyu.healthcare.core.api.controller.v1.response.guardian.GuardianInfoResponse;
+import com.widyu.healthcare.core.db.mapper.v1.SeniorsMapper;
 import com.widyu.healthcare.core.domain.domain.v1.Fcm;
 import com.widyu.healthcare.core.domain.domain.v1.GoalType;
 import com.widyu.healthcare.support.error.exception.MissingTokenException;
@@ -26,6 +28,7 @@ public class FcmService {
 
     private final String API_URL = "https://fcm.googleapis.com/v1/projects/widyu-1fb84/messages:send";
     private final ObjectMapper objectMapper;
+    private final SeniorsMapper seniorsMapper;
 
     public void sendMessage(String targetToken, String title, String type) throws IOException, MissingTokenException {
         if (targetToken == null)
@@ -49,6 +52,18 @@ public class FcmService {
                 throw new IOException("FCM request failed with code: " + response.code() + ", message: " + response.message());
             }
         }
+    }
+
+    public void sendMessageToGuardians(long seniorIdx, String title, String type){
+        List<GuardianInfoResponse> guardianInfoResponsesList = seniorsMapper.findGuardiansByIdx(seniorIdx);
+        guardianInfoResponsesList.forEach(guardianInfoResponse -> {
+            long guardianIdx = guardianInfoResponse.getUserIdx();
+            try {
+                this.sendMessage(seniorsMapper.findFCM(guardianIdx), title, type);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     private class FcmBody {

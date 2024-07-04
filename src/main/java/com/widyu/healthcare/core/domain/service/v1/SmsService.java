@@ -30,9 +30,9 @@ public class SmsService {
         try{
             Message message = new Message();
             // 발신번호 및 수신번호는 반드시 01012345678 형태로 입력되어야 합니다.
-            message.setFrom("01023279226");
+            message.setFrom("01050944289");
             message.setTo(phoneNumber);
-            message.setText("[위듀] 인증 번호는" + "["+code+"]" + " 입니다.");
+            message.setText("Widyu 문자 인증 번호는" + "["+code+"]" + " 입니다. 인증 번호를 입력해주세요");
 
             response = this.messageService.sendOne(new SingleMessageSendingRequest(message));
         } catch (Exception e){

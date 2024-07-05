@@ -1,6 +1,7 @@
 package com.widyu.healthcare.core.domain.service.v1;
 
 import com.widyu.healthcare.core.api.controller.v1.response.guardian.GuardianInfoResponse;
+import com.widyu.healthcare.core.db.client.mapper.RedisMapper;
 import com.widyu.healthcare.core.domain.domain.v1.Goal;
 import com.widyu.healthcare.core.api.controller.v1.response.goal.GuardianGoalResponse;
 import com.widyu.healthcare.core.api.controller.v1.response.goal.SeniorGoalResponse;
@@ -39,6 +40,7 @@ public class GoalsService {
     private final SeniorsMapper seniorsMapper;
     private final GuardiansMapper guardiansMapper;
     private final GoalsStatusMapper goalsStatusMapper;
+    private final RedisMapper redisMapper;
     private final FcmService fcmService;
     private final Scheduler scheduler;
     private static final String POINT_CODE_PREFIX = "point_code:";
@@ -147,17 +149,17 @@ public class GoalsService {
         }
 
         // 목표 달성 포인트 임시 저장
-        //redisMapper.incrementPoint(buildRedisKey(userIdx.toString()), GOAL_POINT);
+        redisMapper.incrementPoint(buildRedisKey(userIdx.toString()), GOAL_POINT);
 
         // 총 포인트 변경
         try {
             int updateCount = goalsStatusMapper.updateTotalPoint(userIdx, GOAL_POINT);
-//            if (updateCount != 1) {
-//                log.error("update Total point ERROR! userIdx: {} total point is not updated", userIdx);
-//                throw new RuntimeException("update status success ERROR! 목표 상태 수정(성공) 메서드를 확인해주세요\n" + "Params : userIdx:" + userIdx);
-//            }
+            if (updateCount != 1) {
+                log.error("update Total point ERROR! userIdx: {} total point is not updated", userIdx);
+                throw new RuntimeException("update status success ERROR! 목표 상태 수정(성공) 메서드를 확인해주세요\n" + "Params : userIdx:" + userIdx);
+            }
         } catch (RuntimeException e){
-            //redisMapper.decrementPoint(buildRedisKey(userIdx.toString()), GOAL_POINT);
+            redisMapper.decrementPoint(buildRedisKey(userIdx.toString()), GOAL_POINT);
             log.error("goalsStatusMapper.updateTotalPoint method ERROR! goalStatusIdx: {} status is not updated", goalStatusIdx);
             throw new RuntimeException("update status success ERROR! 목표 상태 수정(성공) 메서드를 확인해주세요\n" + "userIdx :" + userIdx);
         }
@@ -221,5 +223,9 @@ public class GoalsService {
         } catch (SchedulerException e) {
             e.printStackTrace();
         }
+    }
+
+    private static String buildRedisKey(String userIdx) {
+        return POINT_CODE_PREFIX + userIdx;
     }
 }

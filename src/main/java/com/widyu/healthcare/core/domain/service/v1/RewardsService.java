@@ -45,10 +45,10 @@ public class RewardsService {
     // 리워드 open (=구매)
     public void getReward(Long userIdx, Long rewardIdx) throws InsufficientPointsException {
         // 유저의 총 point redis에서 차감
-        //if (redisMapper.getPoint(buildRedisKey(userIdx.toString())) - REWARD_POINT < 0)
-        //    throw new InsufficientPointsException("보유 point 부족");
+        if (redisMapper.getPoint(buildRedisKey(userIdx.toString())) - REWARD_POINT < 0)
+            throw new InsufficientPointsException("보유 point 부족");
 
-        //redisMapper.decrementPoint(userIdx.toString(), REWARD_POINT);
+        redisMapper.decrementPoint(userIdx.toString(), REWARD_POINT);
         int updateCount = goalsStatusMapper.updateTotalPoint(userIdx, -REWARD_POINT);
         if (updateCount != 1){
             log.error("goalsStatusMapper.updateTotalPoint method ERROR! userIdx: ", userIdx);

@@ -80,6 +80,15 @@
         AND DAY(gs.createdDate) = #{day}
     </select>
 
+    <select id="getGoalCntDaily">
+        SELECT SUM(CASE WHEN gs.status = 1 THEN 1 ELSE 0 END)
+        FROM goalsstatus gs
+        JOIN goals g ON gs.goalIdx = g.goalIdx
+        WHERE g.userIdx = #{userIdx}
+        AND MONTH(gs.createdDate) = #{month}
+        AND DAY(gs.createdDate) = #{day}
+    </select>
+
     <select id="getGoalRateMonthly">
         SELECT
         DAY(gs.createdDate) AS day,

@@ -23,6 +23,7 @@ public interface GoalsStatusMapper {
     int updateTotalPoint(long userIdx, long value);
 
     Double getGoalRateDaily(long userIdx, int month, int day);
+    int getGoalCntDaily(long userIdx, int month, int day);
     List<Map<Integer, Double>> getGoalRateMonthly(long userIdx, int month);
 
     List<GoalStatus> findStatusNotRegenerated();

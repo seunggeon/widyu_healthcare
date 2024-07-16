@@ -184,6 +184,18 @@ public class GoalsService {
         return percentage;
     }
 
+    // 오늘 획득한 목표 포인트 조회
+    public Double getGoalPointToday(long userIdx){
+        // 오늘 날짜 가져오기
+        LocalDate today = LocalDate.now();
+        int month = today.getMonthValue();
+        int day = today.getDayOfMonth();
+
+        int goalCnt = goalsStatusMapper.getGoalCntDaily(userIdx, month, day);
+
+        return (double) (goalCnt * GOAL_POINT);
+    }
+
     // 월별 목표 달성률 조회
     public List<Map<Integer, Double>> getGoalRateMonthly(long userIdx, int month){
 

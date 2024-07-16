@@ -146,6 +146,18 @@ public class GoalsController {
     }
 
     /**
+     * 목표 일별 획득한 포인트 달성률
+     */
+    @GetMapping("/point/today/{userIdx}")
+    public ResponseEntity<?> getPointDaily(@PathVariable("userIdx") @NonNull long userIdx){
+
+        Double todayTotalGoalPoint = goalsService.getGoalPointToday(userIdx);
+        SuccessResponse response = new SuccessResponse(true, "reward 일별 목표 포인트 조회 완료", todayTotalGoalPoint);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    /**
      * 목표 월별 달성률
      */
     @GetMapping("/rate/monthly/{userIdx}/{month}")

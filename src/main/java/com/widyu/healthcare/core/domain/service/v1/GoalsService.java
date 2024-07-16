@@ -208,7 +208,7 @@ public class GoalsService {
         Trigger trigger1 = TriggerBuilder.newTrigger()
                 .usingJobData(jobDataMap)
                 .withIdentity("GoalStatusUpdateTrigger_" + goalStatus.getGoalStatusIdx())
-                .startAt(todayAt(0, 0, 0)) // 자정에 실행
+                .startAt(tomorrowAt(0, 0, 0)) // 자정에 실행
                 .build();
 
         Trigger trigger2 = TriggerBuilder.newTrigger()

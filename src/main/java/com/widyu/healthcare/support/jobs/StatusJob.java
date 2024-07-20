@@ -1,6 +1,7 @@
 package com.widyu.healthcare.support.jobs;
 
 import com.widyu.healthcare.core.api.controller.v1.response.guardian.GuardianInfoResponse;
+import com.widyu.healthcare.core.db.mapper.v1.GoalsMapper;
 import com.widyu.healthcare.core.db.mapper.v1.SeniorsMapper;
 import com.widyu.healthcare.core.domain.domain.v1.GoalStatus;
 import com.widyu.healthcare.core.db.mapper.v1.GoalsStatusMapper;
@@ -28,6 +29,8 @@ public class StatusJob implements Job {
     @Autowired
     private GoalsStatusMapper goalsStatusMapper;
     @Autowired
+    private GoalsMapper goalsMapper;
+    @Autowired
     private FcmService fcmService;
     @Autowired
     private SeniorsMapper seniorsMapper;
@@ -40,28 +43,23 @@ public class StatusJob implements Job {
         JobDataMap jobDataMap = context.getTrigger().getJobDataMap();
         Long goalStatusIdx = jobDataMap.getLong("goalStatusIdx");
         Long userIdx = jobDataMap.getLong("userIdx");
+        String userName = jobDataMap.getString("userName");
 
         if (goalStatusIdx != null) {
             GoalStatus goalStatus = goalsStatusMapper.getGoalStatusByGoalStatusIdx(goalStatusIdx);
             if (goalStatus.getStatus() == 0){
                 goalsStatusMapper.updateStatus(goalStatusIdx, -1L);
-
+                long goalIdx = goalStatus.getGoalIdx();
                 //시니어 fcm 알림
                 try {
-                    fcmService.sendMessage(seniorsMapper.findFCM(userIdx), "목표 실패", "FAIL");
+                    // 푸쉬 알림(senior): 시니어 본인에게 목표 실패
+                    fcmService.sendMessage(seniorsMapper.findFCM(userIdx), FcmService.Situation.GOAL_FAILURE, userName, goalsMapper.getGoalByGoalIdx(goalIdx).getTitle());
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
 
-                //가디언 fcm 알림
-                List<GuardianInfoResponse> guardians = seniorsMapper.findGuardiansByIdx(userIdx);
-                guardians.forEach(guardian -> {
-                    try {
-                        fcmService.sendMessage(seniorsMapper.findFCM(userIdx), "목표 실패", "FAIL");
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                });
+                // 푸쉬 알림(guardian): 가디언에게 목표 실패s
+                fcmService.sendMessageToGuardians(userIdx, FcmService.Situation.GOAL_FAILURE, userName, goalsMapper.getGoalByGoalIdx(goalIdx).getTitle());
             }
         } else {
             log.error("goalStatusIdx is null");

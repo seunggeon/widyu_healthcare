@@ -80,7 +80,6 @@ public class GoalsController {
      * @return
      */
     @PostMapping("/insert")
-    //@LoginCheck(type = LoginCheck.UserType.COMMON)
     public ResponseEntity<?> insertGoal(@RequestBody @Valid Goal goal) {
 
         Goal resultGoal = goalsService.insertGoal(goal, goal.getGoalStatusList());

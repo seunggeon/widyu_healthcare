@@ -93,7 +93,6 @@ public class GoalsService {
         // 현재 요일 구하기
         Calendar calendar = Calendar.getInstance();
         int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
-        log.info("[week]: {}", dayOfWeek);
 
         try {
             goalStatusList.forEach(goalStatus -> {
@@ -103,7 +102,8 @@ public class GoalsService {
                 // 목표 관련 스케줄러
                 // 1. 하루 지났을 때 수행 안한 목표는 실패
                 // 2. 목표 실행 시간 시 알림
-                scheduleTimerForGoalStatus(goalStatus, goal.getUserIdx());
+                long userIdx = goal.getUserIdx();
+                scheduleTimerForGoalStatus(goalStatus, userIdx, seniorsMapper.findDetailByIdx(userIdx).getName());
             });
         } catch (RuntimeException e) {
             log.error("goalStatus scheduler ERROR!", e);
@@ -164,10 +164,11 @@ public class GoalsService {
             throw new RuntimeException("update status success ERROR! 목표 상태 수정(성공) 메서드를 확인해주세요\n" + "userIdx :" + userIdx);
         }
 
-        // 푸쉬 알림: 시니어 본인에게 성공 알림
-        fcmService.sendMessage(seniorsMapper.findFCM(userIdx), "목표 달성", "SUCCESS");
-        // 푸쉬 알림: 시니어가 하루의 모든 목표 달성 시 보조자에게 성공 알림
-        fcmService.sendMessageToGuardians(userIdx, "부모님 오늘의 목표 달성", "SUCCESS");
+        long goalIdx = goalsStatusMapper.getGoalStatusByGoalStatusIdx(goalStatusIdx).getGoalIdx();
+        // 푸쉬 알림(senior): 시니어 본인에게 성공 알림
+        fcmService.sendMessage(seniorsMapper.findFCM(userIdx), FcmService.Situation.GOAL_COMPLETION, seniorsMapper.findDetailByIdx(userIdx).getName(), goalsMapper.getGoalByGoalIdx(goalIdx).getTitle());
+        // 푸쉬 알림(guardian): 시니어가 하루의 모든 목표 달성 시 보조자에게 성공 알림
+        fcmService.sendMessageToGuardians(userIdx, FcmService.Situation.GOAL_ALL_COMPLETION, seniorsMapper.findDetailByIdx(userIdx).getName(), goalsMapper.getGoalByGoalIdx(goalIdx).getTitle());
     }
 
     // 오늘 목표 달성률 조회
@@ -202,7 +203,7 @@ public class GoalsService {
         return goalsStatusMapper.getGoalRateMonthly(userIdx, month);
     }
 
-    private void scheduleTimerForGoalStatus(GoalStatus goalStatus, Long userIdx) {
+    private void scheduleTimerForGoalStatus(GoalStatus goalStatus, Long userIdx, String userName) {
         JobDetail jobDetail1 = JobBuilder.newJob(StatusJob.class)
                 .usingJobData("goalStatusIdx", goalStatus.getGoalStatusIdx()) // GoalStatusIdx를 JobData로 전달
                 .withIdentity("GoalStatusUpdateJob_" + goalStatus.getGoalStatusIdx())
@@ -216,6 +217,7 @@ public class GoalsService {
         JobDataMap jobDataMap = new JobDataMap();
         jobDataMap.put("goalStatusIdx", goalStatus.getGoalStatusIdx());
         jobDataMap.put("userIdx", userIdx);
+        jobDataMap.put("userName", userName);
 
         Trigger trigger1 = TriggerBuilder.newTrigger()
                 .usingJobData(jobDataMap)

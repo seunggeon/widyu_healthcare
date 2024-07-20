@@ -48,10 +48,10 @@ public class GoalAlarmJob implements Job {
             GoalStatus goalStatus = goalsStatusMapper.getGoalStatusByGoalStatusIdx(goalStatusIdx);
             if (goalStatus.getStatus() == 0){
 
-                //시니어 fcm 알림: 목표 실행 알림
                 try {
                     long goalIdx = goalsStatusMapper.getGoalStatusByGoalStatusIdx(goalStatusIdx).getGoalIdx();
-                    fcmService.sendMessage(seniorsMapper.findFCM(userIdx), "목표 달성", goalsMapper.getGoalByGoalIdx(goalIdx).getType().toString());
+                    // 푸쉬 알림(senior): 시니어 본인에게 목표 실행 시간 알림
+                    fcmService.sendMessage(seniorsMapper.findFCM(userIdx), FcmService.Situation.GOAL_TIME, null, goalsMapper.getGoalByGoalIdx(goalIdx).getTitle());
 
                 } catch (IOException e) {
                     throw new RuntimeException(e);

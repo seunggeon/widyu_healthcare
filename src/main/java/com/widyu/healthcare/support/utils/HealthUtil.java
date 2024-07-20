@@ -30,8 +30,9 @@ public class HealthUtil {
 
         if (heartBit > criteriaOfEmergency) {
             try {
-                fcmService.sendMessage(seniorsMapper.findFCM(seniorIdx), "심장박동 수 증가 위험", "DIFFERENT");
-                fcmService.sendMessageToGuardians(seniorIdx, "부모님 심장박동 수 증가 위험", "DIFFERENT");
+                String username = seniorsMapper.findDetailByIdx(seniorIdx).getName();
+                fcmService.sendMessage(seniorsMapper.findFCM(seniorIdx), FcmService.Situation.HEALTH_ALERT, username, null);
+                fcmService.sendMessageToGuardians(seniorIdx, FcmService.Situation.HEALTH_ALERT, username, null);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

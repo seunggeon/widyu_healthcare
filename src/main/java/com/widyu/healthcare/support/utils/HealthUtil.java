@@ -60,6 +60,7 @@ public class HealthUtil {
         if(input.isEmpty()) return null;
 
         List<Double> result = new ArrayList<>(24);
+        // 1분에 센서 데이터 하나씩 전송
         int chunkSize = 60;
         int maxChunks = 24;
         double sum = 0;
@@ -82,10 +83,15 @@ public class HealthUtil {
                 break;
             }
         }
-        // chunkSize보다 적은 chunk 데이터 평균
+        // 60분이 다 채워지지 않은 데이터의 평균
         if (count > 0 && result.size() < maxChunks) {
             average = sum / chunkSize;
             result.add(HealthUtil.decimalPointFirst(average));
+        }
+
+        // 빈 시간대는 0으로 채우기
+        while (result.size() < maxChunks) {
+            result.add(0.0);
         }
 
         return result;
